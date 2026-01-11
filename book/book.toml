@@ -1,4 +1,7 @@
 [book]
 title = "Kriptografija"
 authors = ["Ivan Drecun"]
-language = "en"
+language = "sr"
+
+[output.html]
+mathjax-support = true

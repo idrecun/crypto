@@ -1,6 +1,6 @@
 # Summary
 
-[Introduction](intro.md)
+[Uvod](intro.md)
 
 - [Osnovne kriptografske primitive](chapter01-basics.md)
   - [Klasične i protočne šifre](lec01-stream-ciphers.md)
