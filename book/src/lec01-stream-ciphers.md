@@ -193,7 +193,157 @@ svakom od njih, prethodno opisanim postupkom.
 
 ### Jednokratna šifra (One-time pad)
 
+Jednokratna šifra je šifra koja je teoretski neprobojna ako se koristi na
+pravilan način. Ključ je slučajan niz bitova koji je jednako dug kao i poruka.
+Enkripcija se vrši tako što se poruka kombinuje sa ključem pomoću operacije
+XOR, odnosno \\(E(k,m) = k \oplus m\\). Jasno, dekripcija se vrši na isti
+način, tj. \\(D(k, c) = k \oplus c\\).
+
+Kako bi šifra zaista bila neprobojna, ključ mora biti slučajno generisan, iste
+dužine kao i poruka, korišćen samo jednom i čuvan u tajnosti. Ako bar jedan od
+ovih uslova nije ispunjen, šifra postaje podložna napadima.
+
+Primera radi, recimo da smo poslali dve poruke \\(m_{1}\\) i \\(m_{2}\\)
+enkriptovane istim ključem \\(k\\). Neka su šifrati \\(c_{1} = E(k, m_{1})\\) i
+\\(c_{2} = E(k, m_{2})\\). Tada je \\(c_{1} \oplus c_{2} = (k \oplus m_{1})
+\oplus (k \oplus m_{2}) = m_{1} \oplus m_{2}\\). Kako bismo najbolje prikazali
+koliko je ovo katastrofalno, posmatrajmo šta se dobije ako su \\(m_{1}\\) i
+\\(m_{2}\\) dve slike iste veličine:
+
+![OTP](images/otp.png)
+
+Iako su slike pomešane XOR operacijom, moguće je tačno razaznati šta se nalazi
+na kojoj slici (lav na jednoj, put u pustinji na drugoj).
+
+Jasno je da ove uslove nije lako ispuniti u praksi. Jedan od pokušaja da se
+napravi praktična jednokratna šifra je korišćenje generatora slučajnih
+bitova. Ukoliko je generator dovoljno dobar, moguće je generisati dugačke
+nizove bitova koji izgledaju nasumično i koristiti ih kao ključeve za OTP.
+
 ## Protočne šifre
+
+Protočne šifre zasnivaju se na generisanju pseudoslučajnog niza bitova na
+osnovu datog ključa, koji se na neki način kombinuje sa porukom, uglavnom XOR
+operacijom. Preciznije, neka je \\(G\\) pseudoslučajni generator koji na osnovu
+ključa \\(k\\) generiše niz bitova \\(b_{1}, b_{2}, \dots\\). Tada možemo
+definisati protočnu šifru kao par algoritama \\((E, D)\\) gde je \\(E(k, m) =
+G(k) \oplus m\\) i \\(D(k, c) = G(k) \oplus c\\). Primetimo da je ovo suštinski
+jednokratna šifra, pri čemu sada ključ može biti kraći od poruke. Naglasimo da
+ovim još uvek nismo rešili problem ponovnog korišćenja ključa.
+
+Obradićemo konstrukciju protočne šifre zasnovane na linearnim povratnim šift
+registrima. Ovakve protočne šifre nisu pogodne za kriptografske primene, ali su
+zgodne za ilustraciju osnovnih principa.
+
+### LFSR
+
+Linearni povratni šift registar (eng. linear feedback shift register) drži
+stanje od \\(n\\) bitova \\(s_{1}, \dots, s_{n}\\). Svaki naredni bit
+pseudoslučajnog stanja računa se po formuli \\(s_{i} = c_n s_{i - n} \oplus
+\dots \oplus c_1 s_{i-1}\\) gde su \\(c_1, \dots, c_n\\) bitovi koji definišu
+registar i služe da odaberu bitove trenutnog stanja na osnovu kojih se računa
+naredni bit stanja.
+
+Na primer, neka je LFSR dužine \\(n=4\\) definisan sa \\(c=[1, 0, 1, 1]\\). To
+znači da se naredni bit stanja računa po formuli \\(s_i = s_{i-4} \oplus
+s_{i-3} \oplus s_{i-1}\\).
+
+~~~text
+ ┌──>s[i-1] s[i-2] s[i-3] s[i-4]───> output
+ │     │             │      │
+ └───[          XOR          ]
+~~~
+
+Ako je početno stanje \\(s_{i-1}, s_{i-2}, s_{i-3}, s_{i-4} = 1, 0, 0, 0\\),
+prvih nekoliko koraka pomeranja registra izgleda ovako:
+
+~~~text
+ 1 0 0 0       1 1 0 0       1 1 1 0       0 1 1 1       0 0 1 1    
+ |   | |       |   | |       |   | |       |   | |       |   | |    
+ +---+-+-> 1   +---+-+-> 1   +---+-+-> 0   +---+-+-> 0   +---+-+-> 0
+~~~
+
+Naredna funkcija implementira jedan korak LFSR generatora.
+
+~~~python
+def lfsr_step(state, positions):
+    feedback = 0
+    for position in positions:
+        feedback ^= state[position]
+    output = state[0]  # Izlaz je najnizi bit stanja
+    state = state[1:] + [feedback]  # Shiftujemo i dodajemo povratni bit
+    return state, output
+~~~
+
+Od LFSR generatora možemo napraviti protočnu šifru tako što
+ključ koristimo kao početno stanje registra, a zatim generišemo niz
+bitova koji se kombinuju sa porukom pomoću XOR operacije.
+
+~~~python
+# TODO: implement LFSR-based stream cipher
+~~~
+
+Kako bismo rešili problem ponovnog korišćenja ključa, moramo osigurati da LFSR
+ne koristi isto početno stanje za različite poruke. Jedan od načina da se to
+izbegne je korišćenjem inicijalizacionog vektora (IV). Inicializacioni vektor
+je slučajni niz bitova koji se koristi zajedno sa ključem da bi se generisalo
+početno stanje LFSR. Na primer, početno stanje registra se može inicijalizovati
+kao konkatenacija ključa i inicijalizacionog vektora. Inicializacioni vektor se
+šalje zajedno sa šifratom kao javno dostupan podatak, kako bi primalac mogao da
+rekonstruiše početno stanje LFSR i dešifruje poruku. Ovo ne umanjuje bezbednost
+šifre, već samo osigurava da se za različite poruke koristi različito početno
+stanje LFSR.
+
+~~~python
+# TODO: implement LFSR init with IV
+~~~
+
+Primetimo da ukoliko znamo \\(n\\) uzastopnih bitova generisanih LFSR
+generatorom dužine \\(n\\), možemo lako odrediti i sve naredne bitove
+generatora (pošto su pozicije registra fiksirani, javni podaci). Prema tome,
+LFSR generatori nisu pogodni za kriptografske primene.
+
+### NLFSR
+
+Jedan od načina da ojačamo LFSR generator je nelinearnim kombinovanjem više
+LFSR generatora u takozvani NLFSR (nelinearni povratni šift registar)
+generator. Prikazaćemo par primera NLFSR generatora.
+
+#### Umanjujući generator
+
+Umanjujući generator koristi dva LFSR. U svakom koraku pomeramo oba generatora
+za jedan korak. Ukoliko prvi generator vrati 1, na izlaz NLFSR generatora
+ispisujemo bit drugog generatora. Ako prvi generator vrati 0, bit drugog
+generatora se preskače.
+
+~~~text
+ [LFSR A]───────┐
+ [LFSR B]──[if A = 1]──> output
+
+Primer:
+ A: 0110101110
+ B: 1010011100
+ O:  01 0 110
+~~~
+
+#### Naizmenični generator
+
+Naizmenični generator je NLFSR koji koristi tri LFSR generatora. Kontrolni
+generator se pomera u svakom koraku. U zavisnosti od toga da li je generisao 0
+ili 1 bira se koji od druga dva LFSR generatora se pomera. Na izlaz NLFSR se
+ispisuje XOR izlaznih bitova drugog i trećeg LFSR (u XOR se koristi poslednji
+generisan bit generatora koji nije pomeren).
+
+~~~text
+ [LFSR C]─┬─[LFSR A, clock if C = 0]─[XOR]─> output
+          └─[LFSR B, clock if C = 1]───┘
+
+Primer:
+ C:  01100011
+ A: 01..011..
+ B: 1.01...01
+ O:  01010010
+~~~
 
 ## Zadaci
 
