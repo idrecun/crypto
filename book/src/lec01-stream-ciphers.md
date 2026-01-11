@@ -232,8 +232,8 @@ jednokratna šifra, pri čemu sada ključ može biti kraći od poruke. Naglasimo
 ovim još uvek nismo rešili problem ponovnog korišćenja ključa.
 
 Obradićemo konstrukciju protočne šifre zasnovane na linearnim povratnim šift
-registrima. Ovakve protočne šifre nisu pogodne za kriptografske primene, ali su
-zgodne za ilustraciju osnovnih principa.
+registrima. Ovakve protočne šifre su istoriјski bile veoma značajne, ali se
+danas ne koriste u kriptografske svrhe zbog svojih slabosti.
 
 ### LFSR
 
