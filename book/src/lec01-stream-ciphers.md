@@ -112,12 +112,86 @@ pomerajem 17, `E` šifruje Cezarovom šifrom sa pomerajem 4, itd. Rezultat
 da se ključ ponavlja dovoljan broj puta da pokrije celu poruku.
 
 Vižnerova šifra je znatno bezbednija od Cezarove šifre, ali i dalje postoje
-efikasni napadi na nju. Na primer, ako je dužina ključa \\(n\\) poznata, možemo
-podeliti šifrovanu poruku u \\(n\\) grupa, gde svaka grupa sadrži karaktere
-koji su šifrovani pomoću istog pomeraja. Na primer, ako pretpostavljamo da je
-dužina ključa 3, onda delimo poruku `HELLOWORLD` u grupe `H..L..O..D`,
-`.E..O..R..` i `..L..W..L.`. Za svaku grupu onda možemo primeniti analizu
-učestalosti slova kao u Cezarovoj šifri da bismo otkrili odgovarajući pomeraj.
+efikasni napadi na nju. Na primer, možemo pokušati takozvani napad rečnikom.
+Ako je ključ kratak i poznatog je oblika (npr. jedna reč engleskog jezika, ili
+neka reč sa spiska korišćenih i otkrivenić ključeva), možemo pokušati da
+dešifrujemo poruku svim rečima iz rečnika. Zbog ovoga je najbolje koristiti
+nasumične, dugačke ključeve i ne upotrebljavati isti ključ više puta.
+
+~~~python
+with open("dictionary.txt", "r") as file:
+  for word in file:
+    key = word.strip()
+    message = "".join(dec(c, key[i % len(key)]) for i, c in enumerate(ciphertext))
+    score = analyze(message, freq_eng)
+    if score < 0.01:
+      print(f"Possible decryption for key {key} with score {score}")
+      print(f"{message}")
+~~~
+
+Postoje i sofisticiraniji napadi na Vižnerovu šifru. Na primer, ako je dužina
+ključa \\(n\\) poznata, možemo podeliti šifrovanu poruku u \\(n\\) grupa, gde
+svaka grupa sadrži karaktere koji su šifrovani pomoću istog pomeraja. Na
+primer, ako pretpostavljamo da je dužina ključa 3, onda delimo poruku
+`HELLOWORLD` u grupe `H..L..O..D`, `.E..O..R..` i `..L..W..L.`. Za svaku grupu
+onda možemo primeniti analizu učestalosti slova kao u Cezarovoj šifri da bismo
+otkrili odgovarajući pomeraj.
+
+~~~python
+subtexts = [ciphertext[i::length] for i in range(length)]
+key_candidates = [get_caesar_keys(subtext, freq_eng) for subtext in subtexts]
+
+for key in ["".join(prod) for prod in product(*key_candidates)]:
+  message = "".join(dec(c, key[i % len(key)]) for i, c in enumerate(ciphertext))
+  score = analyze(message, freq_eng)
+  if score < 0.01:
+    print(f"Possible decryption for key {key} with score {score}")
+    print(f"{message}")
+~~~
+
+Možemo pokušati sve moguće dužine ključeva redom dok ne pronađemo smislen
+rezultat. Ipak, dužinu ključa možemo pokušati i da procenimo pametnije.
+Primetimo da ako u šifrovanoj poruci postoji segment koji se ponavlja, moguće
+je da je u pitanju ista reč teksta koja je šifrovana istim delom ključa. Ako je
+tako, to znači da je razmak između ta dva ponavljanja deljiv sa dužinom ključa.
+Naravno, ne mora svako ponavljanje značiti da se ovaj scenario desio (ovo
+postaje očigledno ako gledamo segmente dužine jedan karakter), ali što je duži
+taj ponovljeni segment, to je verovatnije da se radi o takvom poklapanju.
+Možemo odabrati dužinu \\(L\\) i pronaći sve ponovljene segmente dužine \\(L\\)
+u šifrovanoj poruci. \\(L\\) biramo tako da bude dovoljno veliko da izbegnemo
+previše slučajnih ponavljanja, ali i dovoljno malo kako bismo uhvatili dovoljan
+broj ponavljanja. Dužina ključa je onda verovatno delilac nekog od razmaka
+između pronađenih ponavljanja. Radi ubrzanja postupka možemo preskočiti sve
+delioce koji se ne pojavljuju više od jednom. Ovaj postupak je poznat kao napad
+Kasiskog. U nastavku je njegova implementacija.
+
+~~~python
+L = 5
+gaps = []
+for i in range(len(ciphertext) - L + 1):
+  substring = ciphertext[i : i + L]
+  gaps.extend(
+    match.start() - i for match in re.finditer(substring, ciphertext[i + 1 :])
+  )
+
+divisors = {}
+for gap in gaps:
+  for d in get_divisors(gap):
+    if d in divisors:
+      divisors[d] += 1
+    else:
+      divisors[d] = 1
+
+candidates = set()
+for d in divisors:
+  if divisors[d] > 1:
+    candidates.add(d)
+~~~
+
+Nakon određivanja mogućih dužina ključeva, možemo pokušati da otkrijemo poruku
+svakom od njih, prethodno opisanim postupkom.
+
+### Jednokratna šifra (One-time pad)
 
 ## Protočne šifre
 
