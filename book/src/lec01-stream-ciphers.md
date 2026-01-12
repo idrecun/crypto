@@ -239,13 +239,14 @@ danas ne koriste u kriptografske svrhe zbog svojih slabosti.
 
 Linearni povratni šift registar (eng. linear feedback shift register) drži
 stanje od \\(n\\) bitova \\(s_{1}, \dots, s_{n}\\). Svaki naredni bit
-pseudoslučajnog stanja računa se po formuli \\(s_{i} = c_n s_{i - n} \oplus
-\dots \oplus c_1 s_{i-1}\\) gde su \\(c_1, \dots, c_n\\) bitovi koji definišu
-registar i služe da odaberu bitove trenutnog stanja na osnovu kojih se računa
-naredni bit stanja.
+pseudoslučajnog stanja računa se po formuli \\(s_{i} = c_{n} s_{i - n} \oplus
+\dots \oplus c_{1} s_{i-1}\\) gde su \\(c_{1}, \dots, c_{n}\\) bitovi koji
+definišu registar i služe da odaberu bitove trenutnog stanja na osnovu kojih se
+računa naredni bit stanja. Za LFSR je usko vezan polinom \\(C(x) = c_{n} x^n +
+\dots + c_{1} x + 1\\) sa koeficijentima u \\(\mathbb{F}_{2}\\).
 
-Na primer, neka je LFSR dužine \\(n=4\\) definisan sa \\(c=[1, 0, 1, 1]\\). To
-znači da se naredni bit stanja računa po formuli \\(s_i = s_{i-4} \oplus
+Na primer, neka je LFSR dužine \\(n=4\\) definisan polinomom \\(x^4+x^3+x+1\\).
+To znači da se naredni bit stanja računa po formuli \\(s_i = s_{i-4} \oplus
 s_{i-3} \oplus s_{i-1}\\).
 
 ~~~text
@@ -263,16 +264,14 @@ prvih nekoliko koraka pomeranja registra izgleda ovako:
  +---+-+-> 1   +---+-+-> 1   +---+-+-> 0   +---+-+-> 0   +---+-+-> 0
 ~~~
 
-Naredna funkcija implementira jedan korak LFSR generatora.
+Naredna funkcija implementira jedan korak ovog LFSR generatora.
 
 ~~~python
-def lfsr_step(state, positions):
-    feedback = 0
-    for position in positions:
-        feedback ^= state[position]
-    output = state[0]  # Izlaz je najnizi bit stanja
-    state = state[1:] + [feedback]  # Shiftujemo i dodajemo povratni bit
-    return state, output
+def lfsr_step(state):
+  feedback = state[-1] ^ state[-3] ^ state[-4]
+  output = state[0]  # Izlaz je najnizi bit stanja
+  state = state[1:] + [feedback]  # Shiftujemo i dodajemo povratni bit
+  return state, output
 ~~~
 
 Od LFSR generatora možemo napraviti protočnu šifru tako što
@@ -280,7 +279,23 @@ ključ koristimo kao početno stanje registra, a zatim generišemo niz
 bitova koji se kombinuju sa porukom pomoću XOR operacije.
 
 ~~~python
-# TODO: implement LFSR-based stream cipher
+def lfsr(seed):
+  state = seed[:]  # Inicijalizujemo pocetno stanje
+  while True:
+    state, output = lfsr_step(state)
+    yield output
+
+def encrypt(key: bytes, message: bytes) -> bytes:
+  generator = lfsr(bytes_to_bits(key))
+  keystream = [next(generator) for _ in range(len(message) * 8)]
+  keystream_bytes = bits_to_bytes(keystream)
+  return xor(keystream_bytes, message)
+
+def decrypt(key: bytes, ciphertext: bytes) -> bytes:
+  generator = lfsr(bytes_to_bits(key))
+  keystream = [next(generator) for _ in range(len(ciphertext) * 8)]
+  keystream_bytes = bits_to_bytes(keystream)
+  return xor(keystream_bytes, ciphertext)
 ~~~
 
 Kako bismo rešili problem ponovnog korišćenja ključa, moramo osigurati da LFSR
@@ -295,13 +310,45 @@ rekonstruiše početno stanje LFSR i dešifruje poruku. Ovo ne umanjuje bezbedno
 stanje LFSR.
 
 ~~~python
-# TODO: implement LFSR init with IV
+def lfsr(seed, iv):
+  state = seed + iv  # Inicijalizujemo pocetno stanje sa kljucem i IV
+  while True:
+    state, output = lfsr_step(state)
+    yield output
+
+def encrypt(key: bytes, message: bytes) -> (bytes, bytes):
+  iv = random.randbytes(4) # Uzimamo 4 bajta za IV kao primer
+  generator = lfsr(bytes_to_bits(key), bytes_to_bits(iv))
+  keystream = [next(generator) for _ in range(len(message) * 8)]
+  keystream_bytes = bits_to_bytes(keystream)
+  return xor(keystream_bytes, message), iv
+
+def decrypt(key: bytes, ciphertext: bytes, iv: bytes) -> bytes:
+  generator = lfsr(bytes_to_bits(key), bytes_to_bits(iv))
+  keystream = [next(generator) for _ in range(len(ciphertext) * 8)]
+  keystream_bytes = bits_to_bytes(keystream)
+  return xor(keystream_bytes, ciphertext)
 ~~~
 
 Primetimo da ukoliko znamo \\(n\\) uzastopnih bitova generisanih LFSR
-generatorom dužine \\(n\\), možemo lako odrediti i sve naredne bitove
-generatora (pošto su pozicije registra fiksirani, javni podaci). Prema tome,
-LFSR generatori nisu pogodni za kriptografske primene.
+generatorom dužine \\(n\\), možemo lako odrediti sve bitove generatora (pošto
+su pozicije registra fiksirani, javni podaci). Sve naredne bitove možemo
+izračunati direktno primenom generatora. Prethodne bitove možemo izračunati
+obrtanjem relacije. Na primer, ako se naredni bit računa kao \\(s_i = s_{i-1}
+\oplus s_{i-3} \oplus s_{i-4}\\), onda važi \\(s_{i-4} = s_i \oplus s_{i-1}
+\oplus s_{i-3}\\), odnosno \\(s_{j} = s_{j+4} \oplus s_{j+3} \oplus s_{j+1}\\)
+uvođenjem smene \\(j=i-4\\). Naredna funkcija implementira određivanje
+prethodnih \\(b\\) bitova LFSR generatora na osnovu datih \\(n\\) bitova
+stanja.
+
+~~~python
+def lfsr_reverse(state, b):
+  stream = [0] * b + state[:]
+  for j in range(b - 1, -1, -1):
+    feedback = stream[j + 4] ^ stream[j + 3] ^ stream[j + 1]
+    stream[j] = feedback
+  return stream
+~~~
 
 ### NLFSR
 
@@ -347,4 +394,79 @@ Primer:
 
 ## Zadaci
 
-- zadatak gde se koristi protocna sifra sa premalim periodom
+- data dva sifrata, znamo da je u pitanju protokol sa konacnim skupom komandi, otkriti poruke
+- dato n sifrata, znamo da je u pitanju protokol sa konacnim skupom komandi + proizvoljnim porukama, otkriti kljuc (moze da se kombinuje sa lfsr za otkrivanje celog kljuca)
+- lfsr, poznat deo poruke (n bitova), rekonstruisi celu poruku
+- lfsr, poznat deo poruke (n-k bitova), rekonstruisi celu poruku (brute force nad k bitova + analiza ucestalosti)
+- lfsr, poznat deo poruke i IV, otkriti kljuc i desifrovati drugu poruku sa drugim IV
+- zadatak gde se koristi protocna sifra sa premalim periodom, otkriti kljuc
+
+### Zadatak 1
+
+Data je implementacija protočne šifre zasnovane na pseudoslučajnom generatoru
+\\(G\\). Objasniti slabost ove implementacije i ispraviti je.
+
+~~~python
+def encrypt(key: bytes, message: bytes) -> bytes:
+  generator = G(key)
+  keystream = generator.generate(len(message))
+  return xor(keystream, message)
+
+def decrypt(key: bytes, ciphertext: bytes) -> bytes:
+  generator = G(key)
+  keystream = generator.generate(len(ciphertext))
+  return xor(keystream, ciphertext)
+~~~
+
+### Zadatak 2
+
+Klijent i server komuniciraju koristeći ključ \\(k\\) i šifru iz Zadatka 1.
+Poruke koje razmenjuju definisane su nekim protokolom. Svaka poruka se
+dopunjava slučajnim bajtovima do 16 bajtova pre šifrovanja. Spisak validnih
+poruka je sledeći:
+
+~~~text
+LOGIN|<id>
+LOGOUT
+PING
+SYNC
+GET_STATUS
+GET_TIMESTAMP
+~~~
+
+Poznate su šifrovane poruke:
+
+~~~hex
+b83f0d799979e6a47f4681d646e7143f
+a7290475db7e3e56edd221347d73acbf
+b83f0d7f825185169f6daa2bd7c9b9a8
+b3351e699864a920a85fda54f346db8d
+b83f0d7f825185019662f52865572129
+~~~
+
+Odrediti ID svih korisnika iz LOGIN poruka, ako je poznato da je dužina ID-a 6 bajta.
+
+### Zadatak 3
+
+Dat je šifrat `` dobijen šifrovanjem poruke pomoću LFSR sa poznatim parametrima
+\\(c=\\). Poznat je deo poruke (n)... Odrediti celu poruku.
+
+### Zadatak 4
+
+Dat je šifrat dobijen šifrovanjem poruke `` pomoću LFSR sa poznatim parametrima
+\\(c=\\). Poznat je deo poruke (n-k)... Odrediti celu poruku.
+
+### Zadatak 5
+
+Dat je šifrat dobijen šifrovanjem poruke `` pomoću LFSR sa poznatim parametrima
+\\(c=\\) i inicijalnim vektorom \\(IV=\\). Poznat je deo poruke (n)... Odrediti
+ključ i dešifrovati drugu poruku šifrovanu sa istim ključem, ali različitim IV.
+
+### Zadatak 6
+
+Tekst engleskog jezika se šifruje pomoću protočne šifre zasnovane na LFSR sa
+poznatim parametrima (mali period)... Dat je šifrat, odrediti celu poruku.
+
+### Zadatak 7
+
+Dato je N poruka, LFSR+IV enkripcija, poruka je formata `gomilu podataka | type=neki mali enum | gomilu podataka`. Taj mali enum je duzine n i velicine l < 10 (dovojlno da se razbije lfsr brute force-om po l).
