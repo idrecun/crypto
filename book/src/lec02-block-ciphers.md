@@ -1,1 +1,1 @@
-# Block Ciphers, Modes, MACs
+# Blok šifre, operacioni modovi i autentifikacija

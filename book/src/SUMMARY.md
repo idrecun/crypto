@@ -4,7 +4,7 @@
 
 - [Osnovne kriptografske primitive](chapter01-basics.md)
   - [Klasične i protočne šifre](lec01-stream-ciphers.md)
-  - [Blok šifre, operacioni modovi, autentifikacija](lec02-block-ciphers.md)
+  - [Blok šifre, operacioni modovi i autentifikacija](lec02-block-ciphers.md)
   - [Heš funkcije i obavezivanje](lec03-hashes.md)
 
 - [Kriptografija javnog ključa](chapter02-public-key.md)
