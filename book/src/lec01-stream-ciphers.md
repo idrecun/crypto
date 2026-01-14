@@ -378,13 +378,6 @@ Primer:
 
 ## Zadaci
 
-- data dva sifrata, znamo da je u pitanju protokol sa konacnim skupom komandi, otkriti poruke
-- dato n sifrata, znamo da je u pitanju protokol sa konacnim skupom komandi + proizvoljnim porukama, otkriti kljuc (moze da se kombinuje sa lfsr za otkrivanje celog kljuca)
-- lfsr, poznat deo poruke (n bitova), rekonstruisi celu poruku
-- lfsr, poznat deo poruke (n-k bitova), rekonstruisi celu poruku (brute force nad k bitova + analiza ucestalosti)
-- lfsr, poznat deo poruke i IV, otkriti kljuc i desifrovati drugu poruku sa drugim IV
-- zadatak gde se koristi protocna sifra sa premalim periodom, otkriti kljuc
-
 ### Zadatak 1
 
 Data je implementacija protočne šifre zasnovane na pseudoslučajnom generatoru
