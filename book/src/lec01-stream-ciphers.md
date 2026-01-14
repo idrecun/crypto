@@ -224,12 +224,13 @@ nizove bitova koji izgledaju nasumično i koristiti ih kao ključeve za OTP.
 
 Protočne šifre zasnivaju se na generisanju pseudoslučajnog niza bitova na
 osnovu datog ključa, koji se na neki način kombinuje sa porukom, uglavnom XOR
-operacijom. Preciznije, neka je \\(G\\) pseudoslučajni generator koji na osnovu
-ključa \\(k\\) generiše niz bitova \\(b_{1}, b_{2}, \dots\\). Tada možemo
-definisati protočnu šifru kao par algoritama \\((E, D)\\) gde je \\(E(k, m) =
-G(k) \oplus m\\) i \\(D(k, c) = G(k) \oplus c\\). Primetimo da je ovo suštinski
-jednokratna šifra, pri čemu sada ključ može biti kraći od poruke. Naglasimo da
-ovim još uvek nismo rešili problem ponovnog korišćenja ključa.
+operacijom. Preciznije, neka je \\(G\\) pseudoslučajni generator (eng.
+pseudorandom generator, PRG) koji na osnovu ključa \\(k\\) generiše niz bitova
+\\(b_{1}, b_{2}, \dots\\). Tada možemo definisati protočnu šifru kao par
+algoritama \\((E, D)\\) gde je \\(E(k, m) = G(k) \oplus m\\) i \\(D(k, c) =
+G(k) \oplus c\\). Primetimo da je ovo suštinski jednokratna šifra, pri čemu
+sada ključ može biti kraći od poruke. Naglasimo da ovim još uvek nismo rešili
+problem ponovnog korišćenja ključa.
 
 Obradićemo konstrukciju protočne šifre zasnovane na linearnim povratnim šift
 registrima. Ovakve protočne šifre su istoriјski bile veoma značajne, ali se
