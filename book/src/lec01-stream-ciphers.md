@@ -264,38 +264,30 @@ prvih nekoliko koraka pomeranja registra izgleda ovako:
  +---+-+-> 1   +---+-+-> 1   +---+-+-> 0   +---+-+-> 0   +---+-+-> 0
 ~~~
 
-Naredna funkcija implementira jedan korak ovog LFSR generatora.
+Naredna funkcija implementira LFSR generator sa početnim stanjem `state`.
+Generiše se `b` bitova pseudoslučajnog niza.
 
 ~~~python
-def lfsr_step(state):
-  feedback = state[-1] ^ state[-3] ^ state[-4]
-  output = state[0]  # Izlaz je najnizi bit stanja
-  state = state[1:] + [feedback]  # Shiftujemo i dodajemo povratni bit
-  return state, output
+def lfsr(state: list[int], b: int) -> list[int]:
+  stream = state + [0] * b
+  for i in range(len(state), len(stream)):
+    stream[i] = stream[i - 1] ^ stream[i - 3] ^ stream[i - 4]
+  return stream[len(state):]
 ~~~
 
-Od LFSR generatora možemo napraviti protočnu šifru tako što
-ključ koristimo kao početno stanje registra, a zatim generišemo niz
-bitova koji se kombinuju sa porukom pomoću XOR operacije.
+Od LFSR generatora možemo napraviti protočnu šifru tako što ključ koristimo kao
+početno stanje registra, a zatim generišemo niz bitova koji se kombinuju sa
+porukom pomoću XOR operacije. Veličina ključa mora da odgovara veličini
+registra.
 
 ~~~python
-def lfsr(seed):
-  state = seed[:]  # Inicijalizujemo pocetno stanje
-  while True:
-    state, output = lfsr_step(state)
-    yield output
-
 def encrypt(key: bytes, message: bytes) -> bytes:
-  generator = lfsr(bytes_to_bits(key))
-  keystream = [next(generator) for _ in range(len(message) * 8)]
-  keystream_bytes = bits_to_bytes(keystream)
-  return xor(keystream_bytes, message)
+  keystream = lfsr(bytes_to_bits(key), 8 * len(message))
+  return xor(bits_to_bytes(keystream), message)
 
 def decrypt(key: bytes, ciphertext: bytes) -> bytes:
-  generator = lfsr(bytes_to_bits(key))
-  keystream = [next(generator) for _ in range(len(ciphertext) * 8)]
-  keystream_bytes = bits_to_bytes(keystream)
-  return xor(keystream_bytes, ciphertext)
+  keystream = lfsr(bytes_to_bits(key), 8 * len(ciphertext))
+  return xor(bits_to_bytes(keystream), ciphertext)
 ~~~
 
 Kako bismo rešili problem ponovnog korišćenja ključa, moramo osigurati da LFSR
@@ -309,25 +301,18 @@ rekonstruiše početno stanje LFSR i dešifruje poruku. Ovo ne umanjuje bezbedno
 šifre, već samo osigurava da se za različite poruke koristi različito početno
 stanje LFSR.
 
-~~~python
-def lfsr(seed, iv):
-  state = seed + iv  # Inicijalizujemo pocetno stanje sa kljucem i IV
-  while True:
-    state, output = lfsr_step(state)
-    yield output
+Naredne funkcije implementiraju enkripciju i dekripciju pomoću LFSR sa
+inicializacionim vektorom. Veličina registra treba da bude jednaka zbiru
+veličine ključa i veličine inicijalizacionog vektora.
 
-def encrypt(key: bytes, message: bytes) -> (bytes, bytes):
-  iv = random.randbytes(4) # Uzimamo 4 bajta za IV kao primer
-  generator = lfsr(bytes_to_bits(key), bytes_to_bits(iv))
-  keystream = [next(generator) for _ in range(len(message) * 8)]
-  keystream_bytes = bits_to_bytes(keystream)
-  return xor(keystream_bytes, message), iv
+~~~python
+def encrypt(key: bytes, message: bytes, iv: bytes) -> bytes:
+  keystream = lfsr(bytes_to_bits(key+iv), 8 * len(message))
+  return xor(bits_to_bytes(keystream), message)
 
 def decrypt(key: bytes, ciphertext: bytes, iv: bytes) -> bytes:
-  generator = lfsr(bytes_to_bits(key), bytes_to_bits(iv))
-  keystream = [next(generator) for _ in range(len(ciphertext) * 8)]
-  keystream_bytes = bits_to_bytes(keystream)
-  return xor(keystream_bytes, ciphertext)
+  keystream = lfsr(bytes_to_bits(key+iv), 8 * len(ciphertext))
+  return xor(bits_to_bytes(keystream), ciphertext)
 ~~~
 
 Primetimo da ukoliko znamo \\(n\\) uzastopnih bitova generisanih LFSR
@@ -342,12 +327,11 @@ prethodnih \\(b\\) bitova LFSR generatora na osnovu datih \\(n\\) bitova
 stanja.
 
 ~~~python
-def lfsr_reverse(state, b):
-  stream = [0] * b + state[:]
+def lfsr_reverse(state: list[int], b: int) -> list[int]:
+  stream = [0] * b + state
   for j in range(b - 1, -1, -1):
-    feedback = stream[j + 4] ^ stream[j + 3] ^ stream[j + 1]
-    stream[j] = feedback
-  return stream
+    stream[j] = stream[j + 4] ^ stream[j + 3] ^ stream[j + 1]
+  return stream[:b]
 ~~~
 
 ### NLFSR
@@ -444,29 +428,155 @@ b3351e699864a920a85fda54f346db8d
 b83f0d7f825185019662f52865572129
 ~~~
 
-Odrediti ID svih korisnika iz LOGIN poruka, ako je poznato da je dužina ID-a 6 bajta.
+Odrediti ID svih korisnika iz LOGIN poruka, ako je poznato da je dužina ID-a 6
+bajta.
 
 ### Zadatak 3
 
-Dat je šifrat `` dobijen šifrovanjem poruke pomoću LFSR sa poznatim parametrima
-\\(c=\\). Poznat je deo poruke (n)... Odrediti celu poruku.
+Dat je šifrat `7dda6f65ea2aebf23a88925f66` dobijen šifrovanjem poruke pomoću
+LFSR kom odgovara polinom \\(x^{16}+x^{15}+x^{13}+x^4+1\\). Poznat je deo
+poruke `.........f2c2.............`. Odrediti celu poruku.
 
 ### Zadatak 4
 
-Dat je šifrat dobijen šifrovanjem poruke `` pomoću LFSR sa poznatim parametrima
-\\(c=\\). Poznat je deo poruke (n-k)... Odrediti celu poruku.
+Dat je šifrat `296a9e72bc5a98f910274dafeff61c5bd3` dobijen šifrovanjem poruke
+pomoću LFSR kom odgovara polinom \\(x^{16}+x^{15}+x^{13}+x^4+1\\). Poznat je
+deo poruke `......6.77.......................`. Odrediti celu poruku.
 
 ### Zadatak 5
 
-Dat je šifrat dobijen šifrovanjem poruke `` pomoću LFSR sa poznatim parametrima
-\\(c=\\) i inicijalnim vektorom \\(IV=\\). Poznat je deo poruke (n)... Odrediti
-ključ i dešifrovati drugu poruku šifrovanu sa istim ključem, ali različitim IV.
+Dat je šifrat `dfa9dfc3a06c9506b6fcc1ad0d290af6fb92047d` dobijen šifrovanjem
+poruke pomoću LFSR kom odgovara polinom \\(x^{16}+x^{15}+x^{13}+x^4+1\\), sa
+četvorobitnim inicijalnim vektorom `7`. Poznat je deo poruke
+`.........d617...........................`. Odrediti dvanaestobitni ključ i
+dešifrovati `2c3641c356038d362309704493c938221789db47` sa inicializacionim
+vektorom `9`.
 
 ### Zadatak 6
 
-Tekst engleskog jezika se šifruje pomoću protočne šifre zasnovane na LFSR sa
-poznatim parametrima (mali period)... Dat je šifrat, odrediti celu poruku.
+Poruka se šifruje pomoću protočne šifre zasnovane na LFSR kom odgovara polinom
+\\(x^{32}+1\\). Odrediti celu poruku. Pretpostaviti da je poruka tekst na
+engleskom jeziku.
+
+~~~hex
+190f53071804531b15000107500e155304091653121400071c081d145002
+1a07094d53041804011650151b1650131b0a04091e531f07531f19071653
+12041207034101161c041d071c0400001c185f53040916011541160b1912
+07005000530205001a1d04411f1a04151f1650031c1c1b12071c0204531d
+110c16175043041b190c001a13001f5300001416034f51531e0400071c04
+17531204070415041d53040e041602081d145012180a0302011200040100
+5c41071b191253101800011e190f1453180005161e410701110f00031f13
+07005008070050171a0019151c010341071c500053041f131f17500e1553
+1c0807160200010a50041d1018001d071d041d075e41071b1541001b150d
+0516034d531f190f161750161a071841111c1f0a00531f0753121c0d5300
+180003160341121d1441001a0a04005f50161b1a031116015015121f1512
+531c1641121706041d070513165f50131c1e110f10165c41121d14411e0a
+03151601094f530718045312020e1e12500e155311061617501112031513
+53121e055307180453001f070753131316121b081d14500e1553070e1c17
+150f53151c0e1c01120e12011412531002041207154112531e0e0007110d
+141a1341121e1208121d1304530718000753150c11011102160050040516
+0218530519121a071f135d530409165300131c03020816071f135f53110f
+53161302161d04131a1050031a111c081c0318081f1650161a0718411253
+00041d1018001d0750071c015012071c021807161c0d1a1d174d53140204
+16070341100603151c1e151300530708071b5000530411131e53030c1a1f
+1541121d1441125317041d06190f165300000000190e1d53160e01530409
+165307131a0704041d53070e01175e41120050111207020e1d00500c1612
+1e05160150151b011f14141b50151b1650001a001c04005f50151b160941
+1e1209410007050c111f154106031f0f531b190517161e41121f130e0516
+034112171f131d161441041a04095305190f07121704531f1500071b1513
+5e111f141d1750021f1203121a1003411c0150021c090941011611051a1d
+17411d1c1f0a0053070916011541071a1d04530015041e0050151c530315
+121d14410007190d1f5d50081d5304091a00500c12141902121f50120312
+13045f5304091653120e061d1400011a1512531115150416150f53011500
+1f1a041853121e0553151902071a1f0f53111c14015f50001d1750040516
+021853111f0e18531204101c1d0400531141031c0215121f50151c531141
+171a16071601150f07530204121f1d4d531a1e171a07190f145302041217
+15130053040e53161d0312011b411c1d500d1a07151312010941191c0513
+1d1609125307180007530413121d0302161d1441071b1541101c1e071a1d
+1512531c1641071b1541160515130a1711185d5307091a1e030810121c41
+0312170400530315121d141253120341125304040007110c161d0441071c
+50151b1650041d1705131a1d1741031c070401531f07531f191516011115
+06011541071c501501121e12031c02155f53190f00031913165f50001d17
+50021c1d1e04100750140053040e53071804530511120753040003160315
+010a500e155318141e121e411a1e11061a1d11151a1c1e4f
+~~~
 
 ### Zadatak 7
 
-Dato je N poruka, LFSR+IV enkripcija, poruka je formata `gomilu podataka | type=neki mali enum | gomilu podataka`. Taj mali enum je duzine n i velicine l < 10 (dovojlno da se razbije lfsr brute force-om po l).
+Slika se šifruje pomoću protočne šifre zasnovane na LFSR kom odgovara polinom
+\\(x^{16}+x^{15}+x^{13}+x^4+1\\). Odrediti sadržaj slike.
+
+~~~hex
+89504e470d0a1a0a0000000d494844520000002000000020080600000073
+7a7af4000008344944415478019d9503942449d7869f1b9199c5665563b4
+36ffffb36ddbb66ddbb66dae6ddbf66eef748faa594ade2f3aebd49999fe
+3078ce79cf1b75e3aa2cec02e71efdedc3cebfe08a0f6edcb8e511d56ab9
+f4f8c73df4add65a5cec07ebd76f6c4f8cd7ce79d8c3eef765e03a761239
+e7a86fb3334c4f6f7cd509279efd7d552dfbbec7c8c8107beeb99a72a9c4
+cccc26a6a66668b53b00eda73dedd16f057ec54ee0ad9fdec08e58985ffa
+e459675ff229cfb3186350057776f272172379dc9d4992b47cd451a7fef2
+518f7ad09ec0a777b8c0fcfc123be26c373c087c8c114028b873a55ca25a
+29532806944a4582424018c5f87ebe8cabb9f8533bb5804b64474c4cd4ef
+eab4bb7b0179f3ea4085e1e1410607ab78bec7d0d000032e962489530aaa
+d46ac377b313789393636cba73fa88854efb2b5112ff7f9ca6e3d6983b2a
+85c2ef064b956f02f3071cb0f71937df7cc76b008220606464905a7da4b7
+80e71185118b8b4d9238a11b86a82afbefbfd7d900179e76d1f062a7f59e
+5618be34d36c1fcfd84d05dfbf72b054fe00708dd972d7cc91cdb07b09f0
+44cfdaf1c0f310619f66b7fb8999f9d99bba71f4bcf1b1daadeec3963fcb
+d1d1212627c6a88d0ee78f2b95621e1b1f1bcdbd5aade07271afd0f49927
+9ef3dce51eaed7c745649fc07a2ccf009ed80ec34b8c9823bd4cf56305cf
+2fb8ed483327e7997317c7f9c442bbf5d7a3fe767c541fafbba643d446dc
+02abea0c0d0f502c161011b24ca9bb05daad0eeda536cd668be38e3af93d
+ae36f08cc138d9651783977b1e5b9ef93179f9a3dcabaeeaa96a7f68ee4e
+f942bd78df357785dc0114107a88482ed3573ea8e7769b733fc779e2edb5
+571027a97a619cd1eaa634dbc2fa2d29c82263e58472118200bc0258df60
+82218c3700a60cf4be829a46a46907d22669b4e094118710c7d0ee0a8d8e
+c1c808ab460c036543a968280406cf48ec8970a167e531990ad60869aaf8
+a23cffd02e6375a5320ed5baa138fe50ccd043105bc688413503a4b740d6
+7b7500d2788974fe22a22d17d06a6474362b9b1bc2df6fcc5031f8bea154
+b0582b085ce401bf53784c962971a28409bce4b02d3cfcb098ca3ab7f19a
+2ac19e6fc5940f00117254c911430fa51f5304d503a1f360a27b7e487766
+91e63d29816ce1a83b27e84619e582c917007e6b803fb9e1d3d1f2f03863
+9f6a9b271ddea5b68761745d81f23e6fc22bafc5d0e2862b2ee7154f7e39
+375c7939860e469bf4d4e2c6abaee0e5eeeefacb2fc593b6ab59e36adfc6
+e09a02a3aed7538fecb0ef609b6ea88489a2ca34f027037444787b1465c4
+b1f282c3e629d52ca5bae04d3c1dec30244bb98efae3df182b2efbdf2159
+a0a7c55cc7fcf91f4c949a1cf3a7fedd12980a76e29904a3823fecf18243
+e70963258a3380b7674a473ef6aa07021086d90ba4bbf8c38f3e76e3a85d
+ed51585bc7ae7ed5769ff3b7bcf4534c56ba6cea96f8de6f3e01f411def2
+f24f3359eab0b1b3fd9d08a433bf219cda4c3a9df0d95327e6a432f826e0
+2f005e1865fd1e7f79df03661ea045ffbdb60cb6b23fc4b3f42f55152fed
+620cd8b88b46b380d043b151075301cfdd113700d32fc596f777da4c52b4
+7ce08133bf80997c3880f7fec36ea64fb1c07db460b005c094d1a88188a2
+2ace61682820cb2286470af97222a04a4ead5e2473c37b7773f450100153
+c21604712a16b92fdbe0b9401fd4b307892f58ab48febd8e001055489798
+dcb7cefa1ba659bdef2866f604344bc911cbc43e35a6ae5dcfea834791ce
+5da8ad60b6f996580bc61732cf1eb8dd026e287d32919a674144206a201a
+e71f284d1611521ef7ccbdf8f94db33cfe596bd1f42e008c902ff2d8a7ad
+e367d73778dc33d642f35a442c78834e4360825e4fdb9bb1dd022e401f44
+7a42a1732baa6c730707d5e7f9ea3f9f81de76352c41afb4e707aebc2345
+e3392499fbb7fedbe2ad0834346395eaf6b9aa8000ad79f4aab37a7103fd
+3cf8f73bd8be3e57060a8deddf02b641f5a634d1555906c628aaf0d2b736
+087ca8568c93e43e50153c0be5b201857627234961a9a9345b9953cfe304
+7efffd1a02a4b1e07a83eacddb2db0edeb2ca99e9b453c3a0e1553501058
+b32660af87bf97fd0f3a82c3eff3202657ad0311fe23aa6c9899e2da2b2e
+e2b69bafe5eef3be868a824212814692cf601b8c0bd097c9d27f68ac2421
+6428586560cc67eaa6cb99befb166ebfe92aeebdfb3616e71bc451481f77
+c6c5dcddaddc76e35579ee3d375ee66a83bc4746afa7c6f98cbf3bd1972c
+7c63906d8902ff5c53b30f2b4da60403cae957f97ce71b1b0953c8145421
+0350507a0880800164d9058a16def5fe091e79584cda16da33166da4e701
+0f671bbca4e0b37d20fd58dcb667c64b22b6a83cecff956b1e31c435972e
+602d880165c59fa280d0539a39a5f0c0478ef0e0233234866851485ba8eb
+fd71562073df1e662589b13f66c8bca1389e51ac65844375bef9897bd93c
+d5a15c846200be07c6000a99429c402784b6d3c49e65def3a955f80bb384
+b386ee46038bd94f8037b2022fb596950471fceea81d1c19cdda078a85c0
+ccf28ecfedc5efbe33cd0dee95e846e0d97c819c2ceb2d10a7f0ff0f1fe1
+c56f9ec49bdd44386f081b166d67172ff7e43f200bdf1ce43f911953736f
+cff152950706231985bae0adad73f32d09179dd2e08eeb9b2cccc5880883
+a33efb1f5ee5c14facb3dfde104d35881acee70cdad48bbd307e2ad000d8
+f15bb03da524f0bea94579835741fcaae24f14f0c7ab48b988580b802609
+daee126f6a3a45c44d2169a1d2d59f7851f21ea00db03b0be4a4d63e32f3
+ede708789809c01614e32b62c9d114b2584843218b8088f34c9c7fe0ce62
+07c896efd5d8050e5023cf526b9e80e5108cf48a336d907283a4d92992e9
+51c02dec24ff02a26611a245b370220000000049454e44ae426082
+~~~
