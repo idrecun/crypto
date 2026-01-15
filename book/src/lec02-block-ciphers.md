@@ -161,7 +161,7 @@ AES je primer blok šifre zasnovane na SPN konstrukciji. Radi nad blokovima
 veličine 128 bita, sa ključevima veličine 128, 192 ili 256 bita i izvršava se u
 10, 12 ili 14 rundi, zavisno od veličine ključa. Supstitucija (SubBytes korak)
 u AES se radi nad bajtovima. Konstruisana je kao kombinacija multiplikativnog
-inverzao u \\(F_{2^8}\\) i afine transformacije. Permutacija u AES se vrši u
+inverza u \\(F_{2^8}\\) i afine transformacije. Permutacija u AES se vrši u
 dva koraka. Blok se posmatra kao matrica dimenzije 4x4 bajta. Prvo se vrši
 ciklično pomeranje redova matrice (ShiftRows korak), nakon čega se svaka kolona
 transformiše množenjem sa fiksnom invertibilnom matricom nad \\(F_{2^8}\\)
@@ -181,24 +181,89 @@ deli na blokove i svaki blok se šifruje zasebno.
 
 ~~~python
 def encrypt(key: bytes, message: bytes) -> bytes:
-  blocks = split_into_blocks(message)
+  blocks = bytes_to_blocks(message)
   ciphertext = bytes()
   for block in blocks:
     ciphertext += encrypt_block(key, block)
   return ciphertext
 
 def decrypt(key: bytes, ciphertext: bytes) -> bytes:
-  blocks = split_into_blocks(ciphertext)
+  blocks = bytes_to_blocks(ciphertext)
   message = bytes()
   for block in blocks:
     message += decrypt_block(key, block)
   return message
 ~~~
 
+Primetimo da ukoliko veličina poruke nije deljiva veličinom bloka, ne možemo
+direktno primeniti ovaj pristup. Zato se svaka poruka dopunjava (eng. padding)
+do veličine deljive veličinom bloka. Ovaj postupak mora biti invertibilan kako
+bismo mogli da uklonimo dopunu prilikom dešifrovanja. Jedan od najčešće
+korišćenih načina za dopunu poruke je PKCS#7 standard, gde ukoliko je potrebno
+dodati \\(p\\) bajtova dopune, dodajemo tih \\(p\\) bajtova na kraj poruke, a
+svaki od tih bajtova ima vrednost \\(p\\). Na primer, ako je veličina bloka 8
+bajtova, poruka `48 45 4C 4C 4F` se dopunjuje sa tri bajta `03 03 03`. Kako bi
+dopuna bila invertibilna, u slučaju da je poruka već deljiva veličinom bloka,
+dodaje se ceo novi blok. Recimo da treba šifrovati poruku `57 4F 52 4C 44 03 03
+03`. Ako je ne bismo dopunili, ne bismo mogli da razlikujemo između originalne
+poruke i poruke `57 4F 52 4C 44` koja je dopunjena sa tri bajta `03 03 03`.
+Stoga, poruka se dopunjuje blokom `08 08 08 08 08 08 08 08`.
+
+Naglasimo da ECB mod nije bezbedan za upotrebu u praksi, zbog toga što se
+isti blokovi poruke šifruju u isti blok šifrata. Sledeća slika najbolje
+illustruje ovaj problem.
+
+![ECB mod](images/ecb.png)
 
 ### CBC
 
+Jedan od načina da se prevaziđu nedostaci ECB moda je korišćenjem CBC (eng.
+Cipher Block Chaining) moda. Blok poruke se pre šifrovanja kombinuje sa
+prethodnim blokom šifrata pomoću xor operacije. Za prvi blok se koristi
+nasumični inicijalizacioni vektor (IV). Slično kao i kod ECB moda, poruka se
+dopunjava do veličine deljive veličinom bloka.
+
+~~~python
+def encrypt(key: bytes, message: bytes, iv: bytes) -> bytes:
+  blocks = bytes_to_blocks(message)
+  cipher = [iv]
+  for block in blocks:
+    cipher.append(encrypt_block(key, xor(block, cipher[-1])))
+  return blocks_to_bytes(cipher)
+
+def decrypt(key: bytes, ciphertext: bytes) -> bytes:
+  blocks = bytes_to_blocks(ciphertext)
+  message = bytes()
+  for i in range(1, len(blocks)):
+    message += xor(decrypt_block(key, blocks[i]), blocks[i-1])
+  return message
+~~~
+
 ### CTR
+
+Moderaniji pristup šifrovanju blok šifrom je CTR (eng. Counter) mod. Ovo je
+način da se od blok šifre konstruiše protočna šifra. Počevši od nekog slučajno
+odabranog brojača, odnosno inicijalizacionog vektora \\(n\\) (eng. nonce),
+generiše se niz blokova \\(E(k, n), E(k, n+1), E(k, n+2), \dots\\). Poruka se
+kombinuje sa ovim blokovima pomoću xor operacije. Za razliku od prethodna dva
+moda, ovde nije potrebna dopuna poruke. Još jedna prednost CTR moda je što se
+blokovi mogu šifrovati paralelno, što nije slučaj kod CBC moda. Takođe,
+dešifrovanje se ne oslanja na algoritam dešifrovanja blok šifre, što može
+pojednostaviti implementaciju.
+
+~~~python
+def encrypt(key: bytes, message: bytes, n: int) -> bytes:
+  keystream = bytes()
+  for i in range(0, 1 + len(message) // block_size):
+    keystream += encrypt_block(key, int.to_bytes(n + i, block_size))
+  return xor(message, keystream)
+
+def decrypt(key: bytes, ciphertext: bytes, n: int) -> bytes:
+  keystream = bytes()
+  for i in range(0, 1 + len(ciphertext) // block_size):
+    keystream += encrypt_block(key, int.to_bytes(n + i, block_size))
+  return xor(ciphertext, keystream)
+~~~
 
 ## Kodovi za autentifikaciju poruka
 
