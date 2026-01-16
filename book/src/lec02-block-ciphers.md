@@ -265,6 +265,78 @@ def decrypt(key: bytes, ciphertext: bytes, n: int) -> bytes:
   return xor(ciphertext, keystream)
 ~~~
 
-## Kodovi za autentifikaciju poruka
+## Kodovi za autentifikaciju
+
+Blok šifre možemo koristiti kao osnovu za konstrukciju kodova za
+autentifikaciju poruka (eng. message authentication code, MAC). Ukratko, uz
+svaku poruku \\(m\\) pomoću tajnog ključa \\(k\\) računamo kratak podatak, tzv.
+tag \\(t = \text{MAC}(k, m)\\), koji šaljemo uz poruku. Primalac, koji takođe
+poseduje ključ \\(k\\), može da proveri da li je poruka autentična tako što
+nezavisno izračuna tag primljene poruke i uporedi ga sa primljenim tagom.
+Ukoliko se tagovi ne poklapaju, znamo da je poruka izmenjena ili da ne potiče
+od pošiljaoca koji poseduje ključ.
+
+### CBC-MAC
+
+Jedan od najjednostavnijih načina da se konstruše MAC je korišćenjem CBC
+operacionog moda. CBC-MAC se računa tako što se poruka transformiše u CBC modu
+sa inicijalizacionim vektorom postavljenim na nulu, a kao tag se uzima
+poslednji izračunat blok. Naglasimo da se ovde CBC mod ne koristi za šifrovanje
+poruke, kao i da sama poruka ne mora uopšte biti tajna ako to nije neophodno.
+
+~~~python
+def mac(key: bytes, message: bytes) -> bytes:
+  blocks = bytes_to_blocks(message)
+  cipher = [int.to_bytes(0, block_size)] # Prvi blok je IV = 0
+  for block in blocks:
+    cipher.append(encrypt_block(key, xor(block, cipher[-1])))
+  return cipher[-1]
+
+def verify(key: bytes, message: bytes, tag: bytes) -> bool:
+  return mac(key, message) == tag
+~~~
+
+Napomenimo da je CBC-MAC u ovom obliku bezbedan samo za poruke fiksne dužine. U
+suprotnom, moguće je izvesti napade na autentičnost poruka. Neka su poznate dve
+poruke \\(m_{1}\\) i \\(m_{2}\\) sa odgovarajućim tagovima \\(t_{1}\\) i
+\\(t_{2}\\). Napadač može da konstruše novu poruku \\(m_{3} = m_{1} \parallel
+m'_{2}\\) gde se \\(m'_{2}\\) dobija od \\(m_{2}\\) tako što se prvi blok
+xor-uje sa \\(t_{1}\\). Odgovarajući tag za ovu poruku \\(t_{3}\\) biće jednak
+\\(t_{2}\\) zato što prilikom računanja CBC za prvi blok \\(b'\\) poruke
+\\(m'_2\\) važi \\(E(k, b' \oplus t_{1}) = E(k, b \oplus t_{1} \oplus t_{1}) =
+E(k, b)\\) gde je \\(b\\) prvi blok poruke \\(m_{2}\\). To znači da napadač
+može da konstruiše poruku sa validnim tagom bez poznavanja ključa.
+
+Jedan od načina da se ovaj problem izbegne je da se na početak svake poruke
+doda jedan blok koji sadrži dužinu poruke. Na taj način, prethodni napad nije
+moguć jer dužina poruke \\(m_{3}\\) ne bi odgovarala dužini poruke \\(m_{2}\\),
+što znači da tag \\(t_{2}\\) ne bi bio validan za poruku \\(m_{3}\\).
+
+~~~python
+def mac(key: bytes, message: bytes) -> bytes:
+  length = int.to_bytes(len(message), block_size)
+  blocks = [length] + bytes_to_blocks(message)
+  cipher = [int.to_bytes(0, block_size)]
+  for block in blocks:
+    cipher.append(encrypt_block(key, xor(block, cipher[-1])))
+  return cipher[-1]
+
+def verify(key: bytes, message: bytes, tag: bytes) -> bool:
+  return mac(key, message) == tag
+~~~
+
+### Enkripcija i autentifikacija
+
+Ukoliko želimo da ostvarimo i poverljivost i autentčnost poruka, možemo
+kombinovati šifrovanje i MAC. Postoje tri osnovna pristupa:
+
+- Encrypt-then-MAC: Prvo se poruka šifruje, a zatim se nad šifratom računa MAC.
+- Encrypt-and-MAC: Poruka se šifruje i nad njom se računa MAC.
+- MAC-then-encrypt: Prvo se računa MAC nad porukom, zatim se poruka i tag
+  kombinuju i šifruju zajedno.
+
+Od ova tri pristupa, Encrypt-then-MAC je najotporniji na napade. Bez ulaženja u
+detalje, na intuitivnom nivou možemo razumeti princip da ne želimo uopšte da
+pokušamo da dešifrujemo poruku ukoliko nismo sigurni da je autentična.
 
 ## Zadaci
