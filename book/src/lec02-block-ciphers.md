@@ -328,7 +328,8 @@ def verify(key: bytes, message: bytes, tag: bytes) -> bool:
 ### Enkripcija i autentifikacija
 
 Ukoliko želimo da ostvarimo i poverljivost i autentčnost poruka, možemo
-kombinovati šifrovanje i MAC. Postoje tri osnovna pristupa:
+kombinovati šifrovanje i MAC. Koristimo dva različita ključa za ove dve
+operacije. Postoje tri osnovna pristupa:
 
 - Encrypt-then-MAC: Prvo se poruka šifruje, a zatim se nad šifratom računa MAC.
 - Encrypt-and-MAC: Poruka se šifruje i nad njom se računa MAC.
@@ -340,3 +341,15 @@ detalje, na intuitivnom nivou možemo razumeti princip da ne želimo uopšte da
 pokušamo da dešifrujemo poruku ukoliko nismo sigurni da je autentična.
 
 ## Zadaci
+
+Napadi:
+
+- spn bez s-box izracunavanje kljuca
+- spn bez p-box izracunavanje kljuca
+- spn sa linearnim s-box izracunavanje kljuca
+- feistel sa linearnom f izracunavanje kljuca
+- napad na ecb
+- cbc-mac napad
+- cbc-mac napad na losu implementaciju gde se duzina dodaje na kraj poruke
+- neki encrypt-and-mac error/padding oracle napad (data je gotova
+implementacija servera sa kojom studenti mogu da interaguju)
