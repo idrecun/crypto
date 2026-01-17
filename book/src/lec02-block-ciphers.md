@@ -209,6 +209,22 @@ dodaje se ceo novi blok. Recimo da treba šifrovati poruku `57 4F 52 4C 44 03 03
 poruke i poruke `57 4F 52 4C 44` koja je dopunjena sa tri bajta `03 03 03`.
 Stoga, poruka se dopunjuje blokom `08 08 08 08 08 08 08 08`.
 
+~~~python
+def bytes_to_blocks(message: bytes) -> list[bytes]:
+  padding = block_size - (len(message) % block_size)
+  message += bytes([padding] * padding)
+  return [message[i:i+block_size] for i in range(0, len(message), block_size)]
+
+def check_and_remove_padding(message: bytes) -> bytes:
+  padding = message[-1]
+  if padding < 1 or padding > block_size:
+    raise ValueError("Invalid padding")
+  for i in range(1, padding + 1):
+    if message[-i] != padding:
+      raise ValueError("Invalid padding")
+  return message[:-padding]
+~~~
+
 Naglasimo da ECB mod nije bezbedan za upotrebu u praksi, zbog toga što se
 isti blokovi poruke šifruju u isti blok šifrata. Sledeća slika najbolje
 illustruje ovaj problem.
