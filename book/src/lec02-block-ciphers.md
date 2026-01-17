@@ -359,14 +359,119 @@ pokušamo da dešifrujemo poruku ukoliko nismo sigurni da je autentična.
 
 ## Zadaci
 
-Napadi:
+### Zadatak 1
 
-- spn bez s-box izracunavanje kljuca
-- spn bez p-box izracunavanje kljuca
-- spn sa linearnim s-box izracunavanje kljuca
-- feistel sa linearnom f izracunavanje kljuca
+Definisana je blok šifra na sledeći način:
+
+~~~python
+# P-box permutuje bajtove
+pbox_table = [3, 0, 1, 2, 7, 4, 5, 6]
+
+def pbox(block: bytes) -> bytes:
+  return bytes(block[i] for i in pbox_table)
+
+def encrypt_block(key: bytes, block: bytes) -> bytes:
+  assert len(block) == 8
+  assert len(key) == 16
+  keys = [key[i:i+8] for i in range(0, 16, 8)]
+  for k in keys[0:-1]:
+    block = xor(block, k)
+    block = pbox(block)
+  block = xor(block, keys[-1])
+  return block
+~~~
+
+Neka je poznato da se šifrovanjem bloka `62 6c 6f 6b 73 69 66 72` dobija blok
+`6d 64 64 3b 7d 7f 63 61`. Odrediti blok koji se šifruje u `72 76 7a 3b 6e 63
+69 69`.
+
+### Zadatak 2
+
+Definisana je blok šifra na sledeći način:
+
+~~~python
+# P-box permutuje bajtove
+pbox_table = [3, 0, 1, 2, 7, 4, 5, 6]
+
+def pbox(block: bytes) -> bytes:
+  return bytes(block[i] for i in pbox_table)
+
+def encrypt_block(key: bytes, block: bytes) -> bytes:
+  assert len(block) == 8
+  assert len(key) == 24
+  keys = [key[i:i+8] for i in range(0, 24, 8)]
+  for k in keys[0:-1]:
+    block = xor(block, k)
+    block = pbox(block)
+  block = xor(block, keys[-1])
+  return block
+~~~
+
+Neka je poznato da se šifrovanjem bloka `6a 61 3c 33 6d 61 74 66` dobija blok
+`1f 4c 06 10 1c 14 5a 05`. Odrediti blok koji se šifruje u `59 1b 1c 1e 1e 53
+45 05`.
+
+### Zadatak 3
+
+Definisana je blok šifra na sledeći način:
+
+~~~python
+def sbox(block: bytes) -> bytes:
+  return bytes(sbox_table[b] for b in block)
+
+def encrypt_block(key: bytes, block: bytes) -> bytes:
+  assert len(block) == 8
+  assert len(key) == 8
+  keys = key_expansion(key, 3)
+  for k in keys[0:-1]:
+    block = xor(block, k)
+    block = sbox(block)
+  block = xor(block, keys[-1])
+  return block
+~~~
+
+Neka je poznato da se šifrovanjem bloka `todo` dobija blok `todo`. Odrediti
+ključ korišćen za šifrovanje.
+
+### Zadatak 4
+
+Data je blok šifra konstruisana Fajstelovom konstrukcijom u dve runde, sa
+funkcijom runde \\(f(k, r) = r \oplus k\\), nad blokom veličine 8 bajtova.
+Ključ ima 8 bajtova, od toga se prva 4 koriste u prvoj rundi, a poslednja 4 u
+drugoj rundi. Ako je poznato da se šifrovanjem bloka `3c 6b 72 69 70 74 6f 3e`
+dobija blok `21 7e 69 31 60 38 35 3b`, odrediti ključ korišćen za šifrovanje.
+
+### Zadatak 5
+
 - napad na ecb
-- cbc-mac napad
-- cbc-mac napad na losu implementaciju gde se duzina dodaje na kraj poruke
+
+### Zadatak 6
+
+Poznate su dve poruke `...` sa CBC-MAC tagom `...` i `...` sa tagom `...`. Konstruisati
+novu poruku sa validnim tagom.
+
+### Zadatak 7
+
+CBC-MAC je implementiran tako da na kraj poruke dodaje blok sa dužinom poruke.
+
+~~~python
+def mac(key: bytes, message: bytes) -> bytes:
+  length = int.to_bytes(len(message), block_size)
+  blocks = bytes_to_blocks(message) + [length]
+  cipher = [int.to_bytes(0, block_size)]
+  for block in blocks:
+    cipher.append(encrypt_block(key, xor(block, cipher[-1])))
+  return cipher[-1]
+~~~
+
+Poznate su dve poruke `...` sa CBC-MAC tagom `...` i `...` sa tagom `...`. Konstruisati
+novu poruku sa validnim tagom.
+
+### Zadatak 8
+
 - neki encrypt-and-mac error/padding oracle napad (data je gotova
 implementacija servera sa kojom studenti mogu da interaguju)
+
+Dodatni zadaci - spn bez s, sa lfsr key schedule
+               - spn sa linearnim s
+               - feistel sa lfsr key schedule
