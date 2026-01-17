@@ -64,7 +64,7 @@ da proširi ako je \\(n>m\\), odnosno kompresuje ako je \\(m>n\\).
 ~~~
 
 S-tabela je komponenta koja vrši supstituciju, odnosno preslikava \\(m\\)
-ulaznih bitova u \\(n\\) izlaznih bitova, najčešće definisane pomoću lookup
+ulaznih bitova u \\(n\\) izlaznih bitova, najčešće definisana pomoću lookup
 tabele. Dobro odabrana S-box funkcija uvodi nelinearnost u šifru, otežavajući
 kriptoanalizu i pokušaje napada. Nelinearnost podrazumeva da se izlazni bitovi
 ne mogu izraziti kao linearne funkcije ulaznih bitova. Za razliku od S-tabele,
@@ -344,7 +344,7 @@ def verify(key: bytes, message: bytes, tag: bytes) -> bool:
 
 ### Enkripcija i autentifikacija
 
-Ukoliko želimo da ostvarimo i poverljivost i autentčnost poruka, možemo
+Ukoliko želimo da ostvarimo i poverljivost i autentičnost poruka, možemo
 kombinovati šifrovanje i MAC. Koristimo dva različita ključa za ove dve
 operacije. Postoje tri osnovna pristupa:
 
