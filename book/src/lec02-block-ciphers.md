@@ -93,7 +93,7 @@ r\\). U jednoj rundi Fajstelove mreže se blok transformiše po formuli \\(l
 transformacija invertibilna, bez obzira na to da li je funkcija \\(f\\)
 invertibilna.
 
-![Fajstelova mreža](images/fiestel.png)
+![Fajstelova mreža](images/feistel.png)
 
 ~~~python
 def round_function(key: bytes, block: bytes) -> bytes:
@@ -300,12 +300,13 @@ Napomenimo da je CBC-MAC u ovom obliku bezbedan samo za poruke fiksne dužine. U
 suprotnom, moguće je izvesti napade na autentičnost poruka. Neka su poznate dve
 poruke \\(m_{1}\\) i \\(m_{2}\\) sa odgovarajućim tagovima \\(t_{1}\\) i
 \\(t_{2}\\). Napadač može da konstruše novu poruku \\(m_{3} = m_{1} \parallel
-m'_{2}\\) gde se \\(m'_{2}\\) dobija od \\(m_{2}\\) tako što se prvi blok
-xor-uje sa \\(t_{1}\\). Odgovarajući tag za ovu poruku \\(t_{3}\\) biće jednak
-\\(t_{2}\\) zato što prilikom računanja CBC za prvi blok \\(b'\\) poruke
-\\(m'_2\\) važi \\(E(k, b' \oplus t_{1}) = E(k, b \oplus t_{1} \oplus t_{1}) =
-E(k, b)\\) gde je \\(b\\) prvi blok poruke \\(m_{2}\\). To znači da napadač
-može da konstruiše poruku sa validnim tagom bez poznavanja ključa.
+m_{2}^{\prime}\\) gde se \\(m_{2}^{\prime}\\) dobija od \\(m_{2}\\) tako što se
+prvi blok xor-uje sa \\(t_{1}\\). Odgovarajući tag \\(t_{3}\\) za ovu poruku
+biće jednak \\(t_{2}\\) zato što prilikom računanja CBC za prvi blok
+\\(b^{\prime}\\) poruke \\(m_{2}^{\prime}\\) važi \\(E(k, b^{\prime} \oplus
+t_{1}) = E(k, b \oplus t_{1} \oplus t_{1}) = E(k, b)\\) gde je \\(b\\) prvi
+blok poruke \\(m_{2}\\). To znači da napadač može da konstruiše poruku sa
+validnim tagom bez poznavanja ključa.
 
 Jedan od načina da se ovaj problem izbegne je da se na početak svake poruke
 doda jedan blok koji sadrži dužinu poruke. Na taj način, prethodni napad nije
