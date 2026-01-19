@@ -478,7 +478,11 @@ Neka je poznato da se šifrovanjem bloka `726163756e617269` dobija blok
 `c11cdfed6a6a42a0` i šifrovanjem bloka `6173646667686b6c` dobija se blok
 `fd809dee3393e9c5`. Odrediti ključ korišćen prilikom šifrovanja.
 
-### Zadatak 5
+### Zadatak 5 (u izradi)
+
+SPN sa linearnim S
+
+### Zadatak 6
 
 Data je blok šifra konstruisana Fajstelovom konstrukcijom u dve runde, sa
 funkcijom runde \\(f(k, r) = r \oplus k\\), nad blokom veličine 8 bajtova.
@@ -486,11 +490,32 @@ Ključ ima 8 bajtova, od toga se prva 4 koriste u prvoj rundi, a poslednja 4 u
 drugoj rundi. Ako je poznato da se šifrovanjem bloka `3c 6b 72 69 70 74 6f 3e`
 dobija blok `21 7e 69 31 60 38 35 3b`, odrediti ključ korišćen za šifrovanje.
 
-### Zadatak 6
-
-- napad na ecb
-
 ### Zadatak 7
+
+Disk je enkriptovan pomoću AES blok šifre u ECB modu. Odrediti:
+
+- Koliko ima fajlova na disku
+- Koliko ima različitih tipova fajlova
+- Koje su veličine fajlova
+
+Pretpostaviti da se neiskorišćeni bajtovi na disku pojavljuju kao `0x00` i
+`0xff`. Sadržaj diska je moguće učitati na sledeći način:
+
+~~~python
+from kurs import enkriptovan_disk
+~~~
+
+### Zadatak 8 (u izradi)
+
+Baza podataka sa transakcijama jednog podzemnog marketa je enkriptovana AES
+šifrom u ECB modu. Shema baze nije enkriptovana i data je sledećim:
+`kupac string(16) | prodavac string(16) | vreme | jos neki podaci`
+
+- Odrediti koliko postoji velikih prodavaca.
+- Odrediti da li postoji velika grupa umreženih korisnika (prodavaca ili
+kupaca).
+
+### Zadatak 9
 
 CBC-MAC je implementiran na sledeći način:
 
@@ -507,10 +532,9 @@ duzina...` sa CBC-MAC tagom `05 ae 56 04 bb 4a cb 84 c1 df e1 58 1b 44 30 7c` i
 `osim, naravno, ako zelimo da demonstriramo napad` sa tagom `bc 20 e1 ed 5c 02
 74 98 f9 d8 ec bb 71 cb 74 d7`. Konstruisati novu poruku sa validnim tagom.
 
-### Zadatak 8
+### Zadatak 10 (u izradi)
 
-- neki encrypt-and-mac error/padding oracle napad (data je gotova
-implementacija servera sa kojom studenti mogu da interaguju)
+Dat je server koji prihvata poruke u encrypt-and-mac modu. Server prvo proverava
+padding, a zatim MAC i vraća odgovarajuću grešku ukoliko je do nje došlo.
 
-Dodatni zadaci - spn bez s, sa lfsr key schedule
-               - spn sa linearnim s
+Neka je data šifrovana poruka `todo`. Odrediti sadržaj poruke.
