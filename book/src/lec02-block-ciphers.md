@@ -416,13 +416,15 @@ Neka je poznato da se šifrovanjem bloka `6a 61 3c 33 6d 61 74 66` dobija blok
 Definisana je blok šifra na sledeći način:
 
 ~~~python
+import aes
+
 def sbox(block: bytes) -> bytes:
-  return bytes(sbox_table[b] for b in block)
+  return bytes(aes.sbox[b] for b in block)
 
 def encrypt_block(key: bytes, block: bytes) -> bytes:
-  assert len(block) == 8
-  assert len(key) == 8
-  keys = key_expansion(key, 3)
+  assert len(block) == 16
+  assert len(key) == 16
+  keys = [key] * 4
   for k in keys[0:-1]:
     block = xor(block, k)
     block = sbox(block)
@@ -430,10 +432,53 @@ def encrypt_block(key: bytes, block: bytes) -> bytes:
   return block
 ~~~
 
-Neka je poznato da se šifrovanjem bloka `todo` dobija blok `todo`. Odrediti
-ključ korišćen za šifrovanje.
+Neka je poznato da se šifrovanjem bloka `43 6f 6d 70 75 74 65 72 20 73 63 69 65
+6e 63 65` dobija blok `a1 38 56 72 9f 84 99 a5 54 c5 84 1f 1b b5 28 99`, kao i
+da se šifrovanjem bloka `52 61 63 75 6e 61 72 73 6b 65 20 6e 61 75 6b 65`
+dobija blok `d7 26 85 bb 4b 80 cf 49 ed a0 55 cc 26 ee 31 99`. Odrediti ključ
+korišćen prilikom šifrovanja.
 
 ### Zadatak 4
+
+Definisana je blok šifra na sledeći način:
+
+~~~python
+import aes
+
+def sbox(block: bytes) -> bytes:
+  return bytes(aes.sbox[b] for b in block)
+
+# P-box permutuje bajtove
+pbox_table = [3, 0, 1, 2, 7, 4, 5, 6]
+
+# P tabela prvo rasporedjuje bitove tako da j-ti bit i-tog bajta
+# postane i-ti bit j-tog bajta
+# Zatim se vrsi permutacija bajtova
+def pbox(block: bytes) -> bytes:
+  bits = bytes_to_bits(block)
+  shuffled = [0] * len(bits)
+  for i in range(8):
+    for j in range(8):
+      shuffled[i * 8 + j] = bits[j * 8 + i]
+  shuffled_bytes = bits_to_bytes(shuffled)
+  return bytes(shuffled_bytes[i] for i in pbox_table)
+
+def encrypt_block(key: bytes, block: bytes) -> bytes:
+  assert len(block) == 8
+  assert len(key) == 8
+  block = xor(block, key)
+  block = sbox(block)
+  block = pbox(block)
+  block = xor(block, key)
+  return block
+~~~
+
+Neka je poznato da se šifrovanjem bloka `726163756e617269` dobija blok
+`49c69a043f667533`, šifrovanjem bloka `73706d72657a613b` dobija se blok
+`c11cdfed6a6a42a0` i šifrovanjem bloka `6173646667686b6c` dobija se blok
+`fd809dee3393e9c5`. Odrediti ključ korišćen prilikom šifrovanja.
+
+### Zadatak 5
 
 Data je blok šifra konstruisana Fajstelovom konstrukcijom u dve runde, sa
 funkcijom runde \\(f(k, r) = r \oplus k\\), nad blokom veličine 8 bajtova.
@@ -441,31 +486,26 @@ Ključ ima 8 bajtova, od toga se prva 4 koriste u prvoj rundi, a poslednja 4 u
 drugoj rundi. Ako je poznato da se šifrovanjem bloka `3c 6b 72 69 70 74 6f 3e`
 dobija blok `21 7e 69 31 60 38 35 3b`, odrediti ključ korišćen za šifrovanje.
 
-### Zadatak 5
+### Zadatak 6
 
 - napad na ecb
 
-### Zadatak 6
-
-Poznate su dve poruke `...` sa CBC-MAC tagom `...` i `...` sa tagom `...`. Konstruisati
-novu poruku sa validnim tagom.
-
 ### Zadatak 7
 
-CBC-MAC je implementiran tako da na kraj poruke dodaje blok sa dužinom poruke.
+CBC-MAC je implementiran na sledeći način:
 
 ~~~python
+from Crypto.Cipher import AES
+
 def mac(key: bytes, message: bytes) -> bytes:
-  length = int.to_bytes(len(message), block_size)
-  blocks = bytes_to_blocks(message) + [length]
-  cipher = [int.to_bytes(0, block_size)]
-  for block in blocks:
-    cipher.append(encrypt_block(key, xor(block, cipher[-1])))
-  return cipher[-1]
+  aes = AES.new(key, AES.MODE_CBC, iv=int.to_bytes(0, 16))
+  return aes.encrypt(message)[-16:]
 ~~~
 
-Poznate su dve poruke `...` sa CBC-MAC tagom `...` i `...` sa tagom `...`. Konstruisati
-novu poruku sa validnim tagom.
+Poznate su poruke `CBC-MAC je nebezbedno koristiti sa porukama razlicitih
+duzina...` sa CBC-MAC tagom `05 ae 56 04 bb 4a cb 84 c1 df e1 58 1b 44 30 7c` i
+`osim, naravno, ako zelimo da demonstriramo napad` sa tagom `bc 20 e1 ed 5c 02
+74 98 f9 d8 ec bb 71 cb 74 d7`. Konstruisati novu poruku sa validnim tagom.
 
 ### Zadatak 8
 
@@ -474,4 +514,3 @@ implementacija servera sa kojom studenti mogu da interaguju)
 
 Dodatni zadaci - spn bez s, sa lfsr key schedule
                - spn sa linearnim s
-               - feistel sa lfsr key schedule
