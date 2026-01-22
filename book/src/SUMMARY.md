@@ -14,7 +14,7 @@
   - [Eliptičke krive](lec07-elliptic-curves.md)
 
 - [Napredne teme](chapter03-advanced.md)
-  - [Σ-protokoli i Fiat–Šamir heuristika](lec08-sigma.md)
+  - [Sigma protokoli i Fiat–Šamir heuristika](lec08-sigma.md)
   - [Deljenje tajni](lec09-threshold.md)
-  - [Moderne teme u kriptografiji](lec10-modern.md)
+  - [Pregled modernih tema](lec10-modern.md)
   - [Primena kriptografije u blokčejnu](lec11-blockchain.md)

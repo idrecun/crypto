@@ -1,1 +1,1 @@
-# Elliptic Curves
+# Eliptičke krive

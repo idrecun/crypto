@@ -1,1 +1,1 @@
-# Blockchain Cryptography
+# Primena kriptografije u blokčejnu

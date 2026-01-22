@@ -1,1 +1,11 @@
-# Threshold Cryptography
+# Deljenje tajni
+
+## Definicija problema
+
+## Šamir
+
+## Feldman
+
+## Pedersen
+
+## Zadaci
