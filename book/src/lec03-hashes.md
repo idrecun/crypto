@@ -135,17 +135,23 @@ pronaći podatak \\(m'\\) iz kojeg se takođe izvodi obavezujuća vrednost \\(c\
 
 Heš funkcije se prirodno nameću kao primitiva u izgradnji ovakve šeme. Korisnik
 može da se obaveže na podatak \\(m\\) objavljivanjem heš vrednosti \\(c =
-h(m)\\). Međutim, ovaj pristup nije u potpunosti bezbedan. Recimo da korisnik
-želi da se obaveže na podatak \\(m\\) iz nekog malog skupa, npr. \\({1, 2, 3,
-4}\\). Napadač može lako da izračuna heš vrednosti \\(h(1), h(2), h(3), h(4)\\)
-i da proveri sa kojom od ovih vrednosti se poklapa objavljena vrednost \\(c\\),
+h(m)\\).
+
+~~~python
+~~~
+
+Međutim, ovaj pristup nije u potpunosti bezbedan. Recimo da korisnik želi da se
+obaveže na podatak \\(m\\) iz nekog malog skupa, npr. \\({1, 2, 3, 4}\\).
+Napadač može lako da izračuna heš vrednosti \\(h(1), h(2), h(3), h(4)\\) i da
+proveri sa kojom od ovih vrednosti se poklapa objavljena vrednost \\(c\\),
 narušavajući svojstvo skrivanja. Sa druge strane, čak i ako je skup vrednosti
 dovoljno velik, ako se korisnik više puta obaveže na istu vrednost, napadač će
-to moći da prepozna bez ikakvog napora.
+to moći da prepozna bez ikakvog napora. Rešenje prethodno navedenih problema je
+dodavanje pseudoslučajnog podatka \\(r\\) prilikom vezivanja. Obavezujuća
+vrednost se računa kao \\(c = h(m \mid r)\\).
 
-Rešenje prethodno navedenih problema je dodavanje pseudoslučajnog podatka
-\\(r\\) prilikom vezivanja. Obavezujuća vrednost se računa kao \\(c = h(m \mid
-r)\\).
+~~~python
+~~~
 
 ## Zadaci
 
