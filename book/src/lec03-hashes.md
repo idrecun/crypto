@@ -95,10 +95,143 @@ se koristi sa heš funkcijama konstruisanim Merkle-Damgard konstrukcijom.
 
 ## Identifikacija i integritet podataka
 
-Heš funkcije imaju široku primenu u kriptografiji. 
+Heš funkcije imaju široku primenu u kriptografiji. Jedna od tipičnih primena je
+identifikacija velikih podataka. Na primer, česta je pojava da se različiti
+softverski paketi (npr. distribucije Linuxa) mogu preuzeti pomoću BitTorrent
+protokla. Proizvođači softvera u tom slučaju objavljuju heš vrednost
+instalacionog fajla, a korisnici fajl mogu preuzeti od bilo kojih učesnika u
+mreži. U integritet preuzetih podataka moguće je uveriti se izračunavanjem heš
+vrednost preuzetog fajla i upoređivanjem sa objavljenom hešom. Na ovaj način
+korisnik ne mora verovati drugim učesnicima u mreži, kao ni konkretnoj
+implementaciji BitTorrent klijenta, da bi se uverio da je preuzeo željeni fajl
+u potpunosti.
+
+Još jedna tipična primena heš funkcija je prilikom prijavljivanja na sajt
+pomoću lozinke. Najjednostavniji način da se omogući prijavljivanje pomoću
+lozinke je da se u bazi podataka uz nalog čuva i sama lozinka. Ovo naravno nije
+bezbedno, jer bilo koji napadač koji dobije pristup bazi podataka automatski
+dobija pristup lozinkama svih korisnika. Bolji pristup je čuvanje heš vrednosti
+loozinke. Prilikom prijavljivanja, korisnik unosi lozinku, a server računa heš
+vrednost unete lozinke i omogućava pristup korisniku ukoliko se dobijena
+vrednost poklapa sa vrednošću iz baze.
 
 ## Kriptografsko obavezivanje
 
+Kriptografska šema za obavezivanje (eng. *commitment scheme*) je postupak koji
+omogućava korisniku da se obaveže na neki podatak, bez da mora taj podatak
+odmah da otkrije. Sastoji se iz dve faze:
+
+1. *Vezivanje*: Korisnik objavljuje vrednost \\(c\\) koja je na neki način
+   izvedena iz podatka \\(m\\) na koji se obavezuje, bez otkrivanja podatka
+   \\(m\\).
+2. *Otkrivanje*: Korisnik otkriva podatak \\(m\\) i dokazuje da je \\(c\\)
+   izveden iz \\(m\\).
+
+Vrednost \\(c\\) je potrebno odabrati tako da je sakriva podatak \\(m\\),
+odnosno da se na osnovu \\(c\\) ne može izračunati \\(m\\) (svojstvo
+sakrivanja), ali i da nije moguće lažirati vezivanje, odnosno da nije moguće
+pronaći podatak \\(m'\\) iz kojeg se takođe izvodi obavezujuća vrednost \\(c\\)
+(svojstvo vezivanja).
+
+Heš funkcije se prirodno nameću kao primitiva u izgradnji ovakve šeme. Korisnik
+može da se obaveže na podatak \\(m\\) objavljivanjem heš vrednosti \\(c =
+h(m)\\). Međutim, ovaj pristup nije u potpunosti bezbedan. Recimo da korisnik
+želi da se obaveže na podatak \\(m\\) iz nekog malog skupa, npr. \\({1, 2, 3,
+4}\\). Napadač može lako da izračuna heš vrednosti \\(h(1), h(2), h(3), h(4)\\)
+i da proveri sa kojom od ovih vrednosti se poklapa objavljena vrednost \\(c\\),
+narušavajući svojstvo skrivanja. Sa druge strane, čak i ako je skup vrednosti
+dovoljno velik, ako se korisnik više puta obaveže na istu vrednost, napadač će
+to moći da prepozna bez ikakvog napora.
+
+Rešenje prethodno navedenih problema je dodavanje pseudoslučajnog podatka
+\\(r\\) prilikom vezivanja. Obavezujuća vrednost se računa kao \\(c = h(m \mid
+r)\\).
+
 ## Zadaci
 
-<!-- 0 padding -> break collision and second preimage resistance -->
+<!--
+1. 0* padding -> break collision and second preimage resistance for md construction
+2. hmac break with md construction
+3. hmac break with md construction (non-divisible message length)
+4. pronadji problem i ispravi ga u commitment semi (random se objavljuje, a ne bi trebalo)
+5. napravljen je commitment malog skupa, pronadji vrednost
+6, 7, 8. commitment primeri
+-->
+
+### Zadatak 1
+
+Odrediti dve različite poruke \\(m_1\\) i \\(m_2\\) koje imaju istu vrednost
+heš funkcije definisane na sledeći način:
+
+~~~python
+~~~
+
+### Zadatak 2
+
+Neka je tag poruke `TODO` vrednost `TODO` izračunat pomoću HMAC-a definisanog u
+nastavku. Bez poznavanja ključa, odrediti novu poruku čiji je tag validan za
+taj ključ.
+
+~~~python
+TODO
+~~~
+
+
+### Zadatak 3
+
+Neka je tag poruke `TODO` vrednost `TODO` izračunat pomoću HMAC-a iz prethodnog
+zadatka. Bez poznavanja ključa, odrediti novu poruku čiji je tag validan za taj
+ključ.
+
+~~~python
+TODO
+~~~
+
+### Zadatak 4
+
+Definisana je šema za obavezivanje na sledeći način:
+
+1. Korisnik objavljuje par vrednost \\((c, r)\\) gde je \\(c = h(m \mid r)\\),
+   a \\(r\\) je pseudoslučajna vrednost.
+2. Korisnik otkvira vrednost \\(m\\) i proverava se da li je \\(c = h(m \mid r)\\).
+
+Da li je ova šema bezbedna? Ako jeste, obrazložiti.
+Ako nije, navesti napad i predložiti ispravku.
+
+### Zadatak 5
+
+Korisnik se prilikom glasanja obavezuje za svoj glas iz skupa niski `DA`, `NE`,
+`SUZDRZAN` objavljivanjem vrednosti \\(c = h(m)\\), gde je \\(h\\) definisano
+na sledeći način. Odrediti glas korisnika pre završetka glasanja ukoliko je
+objavljena vrednost \\(c\\) jednaka `TODO`.
+
+### Zadatak 6
+
+U okviru peer-to-peer mreže potrebno je implementirati mehanizam za održavanje
+aukcije sa skrivenim ponudama. Svaki učesnik u mreži može da ponudi neki iznos
+za predmet aukcije, ali ponudu ne otkvira do kraja aukcije. Nakon završetka
+aukcije, sve ponude se otkrivaju i pobednik je onaj učesnik sa najvećom
+ponudom. Implementirati funkcije `bid` i `reveal` koje omogućavaju ovu
+funkcionalnost.
+
+~~~python
+~~~
+
+### Zadatak 7
+
+Implementirati igru Papir, kamen, makaze preko peer-to-peer konekcije.
+Obezbediti da igrači ne mogu da varaju.
+
+~~~python
+~~~
+
+### Zadatak 8
+
+U američkoj emisiji "The Price is Right", učesnici se takmiče u pogađanju cene
+proizvoda. Prikazuje se jedan proizvod, a učesnici redom pogađaju cenu.
+Učesniku nije dozvoljeno da predloži cenu koja je prethodno već predložena, a
+pobednik je onaj koji je najbliži stvarnoj ceni proizvoda bez da je premaši.
+Implementirati varijantu ove igre u okviru peer-to-peer mreže.
+
+~~~python
+~~~
