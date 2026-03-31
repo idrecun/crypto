@@ -39,17 +39,30 @@ vrednost funkcije \\(h(m)\\) se uzima poslednje stanje \\(s_k\\). Kako bi
 funkcija \\(h\\) ispunjavala željena svojstva, dovoljno je da ih zadovoljava i
 funkcija \\(f\\).
 
-<!-- TODO -->
 ~~~python
+def md_hash(message: bytes) -> bytes:
+  state = iv
+  for block in bytes_to_blocks(message):
+    state = f(state, block)
+  return state
 ~~~
 
 Primetimo da dužina poruke \\(m\\) ne mora biti deljiva sa \\(n\\). U tom
 slučaju je potrebno dopuniti poruku, npr. dodavanjem niza bitova oblika
 `100...0`.
 
-<!-- TODO -->
 ~~~python
+def pad(message: bytes) -> bytes:
+  padded = message + b"\x80"
+  pad_len = (-len(padded)) % block_size
+  return padded + (b"\x00" * pad_len)
 ~~~
+
+Neke od najpoznatijih heš funkcija, kao što su MD5 i SHA-1, su konstruisane
+Merkle-Damgard konstrukcijom. Zbog određenih slabosti njihovih funkcija \\(f\\)
+koje su otkrivene tokom godina, više se ne smatraju bezbednim. SHA-2 je primer
+heš funkcije konstruisane Merkle-Damgard konstrukcijom koja se još uvek smatra
+bezbednom i koja je još uvek u upotrebi.
 
 ### Sunđer konstrukcija
 
@@ -68,8 +81,27 @@ f([r_{i-1} \oplus m_i, c_{i-1}])\\). Nakon upijanja svih blokova, vrednost heš
 funkcije se "istiskuje", odnosno čitaju se blokovi iz \\(r\\) do željene dužine heš
 vrednosti.
 
+Najpoznatiji primer heš funkcije konstruisane sunđer konstrukcijom je SHA-3,
+koja se takođe smatra bezbednom i koja je u širokoj upotrebi.
+
 <!-- TODO -->
 ~~~python
+def absorb(state, block):
+  absorbed = xor(state[:r], block) + state[r:]
+  return f(absorbed)
+
+def squeeze(state):
+  return state[:r], f(state)
+
+def sponge(data, output_blocks):
+  state = [0] * (r + c)
+  for block in bytes_to_blocks(pad(data), r):
+    state = absorb(state, block)
+  hash = []
+  for _ in range(output_blocks):
+    output, state = squeeze(state)
+    hash.append(output)
+  return bytes_from_blocks(hash)
 ~~~
 
 ## HMAC
@@ -138,6 +170,11 @@ može da se obaveže na podatak \\(m\\) objavljivanjem heš vrednosti \\(c =
 h(m)\\).
 
 ~~~python
+def commit(message: bytes) -> bytes:
+  return h(message)
+
+def verify(commitment: bytes, message: bytes) -> bool:
+  return h(message) == commitment
 ~~~
 
 Međutim, ovaj pristup nije u potpunosti bezbedan. Recimo da korisnik želi da se
@@ -151,18 +188,16 @@ dodavanje pseudoslučajnog podatka \\(r\\) prilikom vezivanja. Obavezujuća
 vrednost se računa kao \\(c = h(m \mid r)\\).
 
 ~~~python
+def commit(message: bytes) -> tuple[bytes, bytes]:
+  r = secrets.token_bytes(16)
+  c = h(message + r)
+  return c, r # Objavljujemo samo c
+
+def verify(commitment: bytes, message: bytes, r: bytes) -> bool:
+  return h(message + r) == commitment
 ~~~
 
 ## Zadaci
-
-<!--
-1. 0* padding -> break collision and second preimage resistance for md construction
-2. hmac break with md construction
-3. hmac break with md construction (non-divisible message length)
-4. pronadji problem i ispravi ga u commitment semi (random se objavljuje, a ne bi trebalo)
-5. napravljen je commitment malog skupa, pronadji vrednost
-6, 7, 8. commitment primeri
--->
 
 ### Zadatak 1
 
@@ -170,27 +205,44 @@ Odrediti dve različite poruke \\(m_1\\) i \\(m_2\\) koje imaju istu vrednost
 heš funkcije definisane na sledeći način:
 
 ~~~python
+import kurs
+
+def h(message: bytes) -> bytes:
+  state = kurs.md_iv
+  for block in bytes_to_blocks(message):
+    state = kurs.md_f(state, block)
+  return state
 ~~~
 
 ### Zadatak 2
 
-Neka je tag poruke `TODO` vrednost `TODO` izračunat pomoću HMAC-a definisanog u
-nastavku. Bez poznavanja ključa, odrediti novu poruku čiji je tag validan za
-taj ključ.
+Neka je data poruka `TODO` i njen tag `TODO` izračunat pomoću HMAC-a
+definisanog u nastavku. Bez poznavanja ključa, odrediti novu poruku čiji je tag
+validan za taj ključ.
 
 ~~~python
-TODO
+def mac(key: bytes, message: bytes) -> bytes:
+  return md_hash(key + message)
+
+def verify(key: bytes, message: bytes, tag: bytes) -> bool:
+  return mac(key, message) == tag
 ~~~
 
 
 ### Zadatak 3
 
-Neka je tag poruke `TODO` vrednost `TODO` izračunat pomoću HMAC-a iz prethodnog
-zadatka. Bez poznavanja ključa, odrediti novu poruku čiji je tag validan za taj
-ključ.
+Neka je data poruka `TODO` i njen tag `TODO` izračunat pomoću HMAC-a iz
+prethodnog zadatka. Bez poznavanja ključa, odrediti novu poruku čiji je tag
+validan za taj ključ.
 
 ~~~python
-TODO
+block_size = 16
+
+def mac(key: bytes, message: bytes) -> bytes:
+  return md_hash(pad10(key + message, block_size))
+
+def verify(key: bytes, message: bytes, tag: bytes) -> bool:
+  return mac(key, message) == tag
 ~~~
 
 ### Zadatak 4
@@ -208,8 +260,16 @@ Ako nije, navesti napad i predložiti ispravku.
 
 Korisnik se prilikom glasanja obavezuje za svoj glas iz skupa niski `DA`, `NE`,
 `SUZDRZAN` objavljivanjem vrednosti \\(c = h(m)\\), gde je \\(h\\) definisano
-na sledeći način. Odrediti glas korisnika pre završetka glasanja ukoliko je
-objavljena vrednost \\(c\\) jednaka `TODO`.
+kao u nastavku. Odrediti glas korisnika pre završetka glasanja ukoliko je
+objavljena vrednost \\(c\\) jednaka
+`d539cd97ca1a108f9f5e3f611d7606d84c0aa35ea1973304e479b99025124e16`.
+
+~~~python
+import hashlib
+
+def h(message: string) -> bytes:
+  return hashlib.sha256(message.encode()).digest()
+~~~
 
 ### Zadatak 6
 
@@ -221,6 +281,7 @@ ponudom. Implementirati funkcije `bid` i `reveal` koje omogućavaju ovu
 funkcionalnost.
 
 ~~~python
+TODO!
 ~~~
 
 ### Zadatak 7
@@ -229,6 +290,7 @@ Implementirati igru Papir, kamen, makaze preko peer-to-peer konekcije.
 Obezbediti da igrači ne mogu da varaju.
 
 ~~~python
+TODO!
 ~~~
 
 ### Zadatak 8
@@ -240,4 +302,5 @@ pobednik je onaj koji je najbliži stvarnoj ceni proizvoda bez da je premaši.
 Implementirati varijantu ove igre u okviru peer-to-peer mreže.
 
 ~~~python
+TODO!
 ~~~
