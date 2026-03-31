@@ -59,6 +59,8 @@ svojstva pseudoslučajne permutacije. Tokom konstrukcije održava se stanje \\(s
 sa ulaznom porukom operacijom xor, dok \\(c\\) predstavlja unutrašnje stanje
 heša.
 
+![Sunđer konstrukcija](images/sponge.png)
+
 Heš funkcija se dobija tako što se prvo "upija" poruka, odnosno tako što se
 svaki blok poruke XOR-uje sa trenutnim \\(r\\). Između svaka dva bloka se
 stanje \\([ r, c ]\\) transformiše funkcijom \\(f\\), odnosno \\(s_i = [r_i, c_i] =
@@ -72,7 +74,28 @@ vrednosti.
 
 ## HMAC
 
+Jedan pokušaj da se konstruiše MAC na osnovu heš funkcije \\(h\\) za poruku
+\\(m\\) i ključ \\(k\\) bi bio da se tag izračuna kao heš konkatenacije ključa
+i poruke, tj. \\(h(k \mid m)\\). Ispostavlja se da za heš funkcije konstruisane
+Merkle-Damgard konstrukcijom ovaj pristup nije bezbedan.
+
+Pretpostavimo da je poruka \\(m\\) autentifikovana ključem \\(k\\) i da je tag
+\\(t = h(k \mid m)\\). Jednostavnosti radi, pretpostavimo da se \\(k \mid m\\)
+može tačno podeliti na blokove. Vrednost \\(t\\) je zapravo poslednje stanje u
+Merkle-Damgard konstrukciji, tj. \\(t = s_k\\). Napadač može izračunati tag za
+bilo koju poruku \\(m' = m \mid e\\) izračunavajući naredne blokove stanja
+počevši od stanja \\(t\\) za produžetak \\(e\\) poruke. Poslednje stanje
+\\(t'\\) je validan tag za poruku \\(m'\\) i ključ \\(k\\), iako napadač ne zna
+vrednost ključa.
+
+Jedan način da se reši ovaj problem je korišćenjem HMAC konstrukcije. HMAC se
+računa kao \\(h((k \oplus opad) \mid h((k \oplus ipad) \mid m))\\), gde su \\(opad\\)
+i \\(ipad\\) predefinisane konstante. Ova konstrukcija je bezbedna čak i kada
+se koristi sa heš funkcijama konstruisanim Merkle-Damgard konstrukcijom.
+
 ## Identifikacija i integritet podataka
+
+Heš funkcije imaju široku primenu u kriptografiji. 
 
 ## Kriptografsko obavezivanje
 
