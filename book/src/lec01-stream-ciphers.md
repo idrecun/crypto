@@ -447,7 +447,7 @@ poruke `.........f2c2.............`. Odrediti celu poruku.
 
 Dat je šifrat `296a9e72bc5a98f910274dafeff61c5bd3` dobijen šifrovanjem poruke
 pomoću LFSR kom odgovara polinom \\(x^{16}+x^{15}+x^{13}+x^4+1\\). Poznat je
-deo poruke `......6.77.......................`. Odrediti celu poruku.
+deo poruke `......6.75.......................`. Odrediti celu poruku.
 
 ### Zadatak 5
 
