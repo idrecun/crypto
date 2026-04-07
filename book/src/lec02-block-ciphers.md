@@ -478,11 +478,13 @@ Neka je poznato da se šifrovanjem bloka `726163756e617269` dobija blok
 `c11cdfed6a6a42a0` i šifrovanjem bloka `6173646667686b6c` dobija se blok
 `fd809dee3393e9c5`. Odrediti ključ korišćen prilikom šifrovanja.
 
+<!--
 ### Zadatak 5 (u izradi)
 
 SPN sa linearnim S
+-->
 
-### Zadatak 6
+### Zadatak 5
 
 Data je blok šifra konstruisana Fajstelovom konstrukcijom u dve runde, sa
 funkcijom runde \\(f(k, r) = r \oplus k\\), nad blokom veličine 8 bajtova.
@@ -490,7 +492,7 @@ Ključ ima 8 bajtova, od toga se prva 4 koriste u prvoj rundi, a poslednja 4 u
 drugoj rundi. Ako je poznato da se šifrovanjem bloka `3c 6b 72 69 70 74 6f 3e`
 dobija blok `21 7e 69 31 60 38 35 3b`, odrediti ključ korišćen za šifrovanje.
 
-### Zadatak 7
+### Zadatak 6
 
 Disk je enkriptovan pomoću AES-128 blok šifre u ECB modu. Poznato je da je
 veličina stranice na sistemu 1KB. Proceniti ukupnu količinu podataka na disku.
@@ -507,7 +509,7 @@ Baza podataka sa transakcijama jednog podzemnog marketa je enkriptovana AES
 kupaca).
 -->
 
-### Zadatak 8
+### Zadatak 7
 
 CBC-MAC je implementiran na sledeći način:
 
