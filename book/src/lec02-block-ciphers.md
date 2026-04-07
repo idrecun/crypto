@@ -257,7 +257,7 @@ def decrypt(key: bytes, ciphertext: bytes) -> bytes:
 
 ### CTR
 
-Moderaniji pristup šifrovanju blok šifrom je CTR (eng. Counter) mod. Ovo je
+Moderniji pristup šifrovanju blok šifrom je CTR (eng. Counter) mod. Ovo je
 način da se od blok šifre konstruiše protočna šifra. Počevši od nekog slučajno
 odabranog brojača, odnosno inicijalizacionog vektora \\(n\\) (eng. nonce),
 generiše se niz blokova \\(E(k, n), E(k, n+1), E(k, n+2), \dots\\). Poruka se
@@ -492,19 +492,10 @@ dobija blok `21 7e 69 31 60 38 35 3b`, odrediti ključ korišćen za šifrovanje
 
 ### Zadatak 7
 
-Disk je enkriptovan pomoću AES blok šifre u ECB modu. Odrediti:
+Disk je enkriptovan pomoću AES-128 blok šifre u ECB modu. Poznato je da je
+veličina stranice na sistemu 1KB. Proceniti ukupnu količinu podataka na disku.
 
-- Koliko ima fajlova na disku
-- Koliko ima različitih tipova fajlova
-- Koje su veličine fajlova
-
-Pretpostaviti da se neiskorišćeni bajtovi na disku pojavljuju kao `0x00` i
-`0xff`. Sadržaj diska je moguće učitati na sledeći način:
-
-~~~python
-from kurs import enkriptovan_disk
-~~~
-
+<!--
 ### Zadatak 8 (u izradi)
 
 Baza podataka sa transakcijama jednog podzemnog marketa je enkriptovana AES
@@ -514,8 +505,9 @@ Baza podataka sa transakcijama jednog podzemnog marketa je enkriptovana AES
 - Odrediti koliko postoji velikih prodavaca.
 - Odrediti da li postoji velika grupa umreženih korisnika (prodavaca ili
 kupaca).
+-->
 
-### Zadatak 9
+### Zadatak 8
 
 CBC-MAC je implementiran na sledeći način:
 
@@ -531,10 +523,3 @@ Poznate su poruke `CBC-MAC je nebezbedno koristiti sa porukama razlicitih
 duzina...` sa CBC-MAC tagom `05 ae 56 04 bb 4a cb 84 c1 df e1 58 1b 44 30 7c` i
 `osim, naravno, ako zelimo da demonstriramo napad` sa tagom `bc 20 e1 ed 5c 02
 74 98 f9 d8 ec bb 71 cb 74 d7`. Konstruisati novu poruku sa validnim tagom.
-
-### Zadatak 10 (u izradi)
-
-Dat je server koji prihvata poruke u encrypt-and-mac modu. Server prvo proverava
-padding, a zatim MAC i vraća odgovarajuću grešku ukoliko je do nje došlo.
-
-Neka je data šifrovana poruka `todo`. Odrediti sadržaj poruke.
