@@ -18,6 +18,7 @@ from .conversions import (
     split_blocks,
     xor,
 )
+from .hash import md_f, MD_IV, MD_BLOCK_SIZE
 
 __all__ = [
     "AES_SBOX",
@@ -34,4 +35,7 @@ __all__ = [
     "spn_sbox",
     "spn_sinv",
     "xor",
+    "md_f",
+    "MD_IV",
+    "MD_BLOCK_SIZE",
 ]
