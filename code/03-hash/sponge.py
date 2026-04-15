@@ -27,4 +27,5 @@ def sponge(data, output_blocks):
     h.append(output)
   return blocks_to_bytes(h)
 
-print(sponge(b"Hello, world!", 4).hex())
+if __name__ == "__main__":
+    print(sponge(b"Hello, world!", 4).hex())

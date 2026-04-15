@@ -23,15 +23,16 @@ def mac_fixed(cipher, key: bytes, message: bytes) -> bytes:
 def verify_fixed(cipher, key: bytes, message: bytes, tag: bytes) -> bool:
     return mac_fixed(cipher, key, message) == tag
 
-poruka = b"ana voli milovana"
-key = b"matfcryptography"
-tag = mac(spn, key, modes.pad(spn, poruka))
+if __name__ == "__main__":
+    poruka = b"ana voli milovana"
+    key = b"matfmatf"
+    tag = mac(spn, key, modes.pad(spn, poruka))
 
-print(f"Tag: {tag.hex()}")
-print(verify(spn, key, modes.pad(spn, poruka), tag))
+    print(f"Tag: {tag.hex()}")
+    print(verify(spn, key, modes.pad(spn, poruka), tag))
 
-tag_fixed = mac_fixed(spn, key, modes.pad(spn, poruka))
+    tag_fixed = mac_fixed(spn, key, modes.pad(spn, poruka))
 
-print(f"Tag fixed: {tag_fixed.hex()}")
-print(verify_fixed(spn, key, modes.pad(spn, poruka), tag_fixed))
+    print(f"Tag fixed: {tag_fixed.hex()}")
+    print(verify_fixed(spn, key, modes.pad(spn, poruka), tag_fixed))
 

@@ -12,4 +12,5 @@ def md_hash(message: bytes) -> bytes:
         state = md_f(state, block)
     return state
 
-print(md_hash(b"Hello, world!").hex())
+if __name__ == "__main__":
+    print(md_hash(b"Hello, world!").hex())
