@@ -1,10 +1,6 @@
 # Python kodovi
 
-```python
-from kurs import bytes_to_bits, bits_to_bytes, xor, AES_SBOX
-```
-
-## Podesavanje (Linux)
+## Podešavanje
 
 Nakon kloniranja repozitorijuma (i svakog narednog povlačenja izmena) pokrenuti:
 
@@ -18,4 +14,14 @@ Naredna komanda pokreće python virtuelno okruženje, čime se učitavaju sve po
 
 ```bash
 source .venv/bin/activate
+```
+
+## Pomoćna bibilioteka
+
+U `src/kurs` nalazi se biblioteka sa svim pomoćnim funkcijama i konstantama
+korišćenim u okviru materijala. Unutar python virtuelnog okruženja moguće je
+uvući funkcije iz biblioteke na sledeći način:
+
+```python
+from kurs import xor
 ```
