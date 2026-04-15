@@ -20,3 +20,18 @@ def md_f(state: bytes, block: bytes) -> bytes:
     state = xor(state, block)
     state = sbox(state)
     return state
+
+SPONGE_BLOCK_SIZE = 8
+
+def sponge_f(state: bytes) -> bytes:
+    assert len(state) == SPONGE_BLOCK_SIZE
+    state = sbox(state)
+    state = pbox(state)
+    state = sbox(state)
+    state = pbox(state)
+    state = sbox(state)
+    state = pbox(state)
+    state = sbox(state)
+    state = pbox(state)
+    state = sbox(state)
+    return state
