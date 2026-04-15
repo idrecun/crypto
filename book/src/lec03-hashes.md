@@ -207,16 +207,19 @@ heš funkcije definisane na sledeći način:
 ~~~python
 import kurs
 
+def pad(message: bytes) -> bytes:
+    return message + b"\x00" * (-len(message) % kurs.MD_BLOCK_SIZE)
+
 def h(message: bytes) -> bytes:
-  state = kurs.md_iv
-  for block in bytes_to_blocks(message):
-    state = kurs.md_f(state, block)
-  return state
+    state = kurs.MD_IV
+    for block in kurs.bytes_to_blocks(pad(message), kurs.MD_BLOCK_SIZE):
+        state = kurs.md_f(state, block)
+    return state
 ~~~
 
 ### Zadatak 2
 
-Neka je data poruka `TODO` i njen tag `TODO` izračunat pomoću HMAC-a
+Neka je data poruka `Zdravo, HMAC!` i njen tag `0875db087d836f15` izračunat pomoću HMAC-a
 definisanog u nastavku. Bez poznavanja ključa, odrediti novu poruku čiji je tag
 validan za taj ključ.
 
@@ -228,24 +231,7 @@ def verify(key: bytes, message: bytes, tag: bytes) -> bool:
   return mac(key, message) == tag
 ~~~
 
-
 ### Zadatak 3
-
-Neka je data poruka `TODO` i njen tag `TODO` izračunat pomoću HMAC-a iz
-prethodnog zadatka. Bez poznavanja ključa, odrediti novu poruku čiji je tag
-validan za taj ključ.
-
-~~~python
-block_size = 16
-
-def mac(key: bytes, message: bytes) -> bytes:
-  return md_hash(pad10(key + message, block_size))
-
-def verify(key: bytes, message: bytes, tag: bytes) -> bool:
-  return mac(key, message) == tag
-~~~
-
-### Zadatak 4
 
 Definisana je šema za obavezivanje na sledeći način:
 
@@ -256,7 +242,7 @@ Definisana je šema za obavezivanje na sledeći način:
 Da li je ova šema bezbedna? Ako jeste, obrazložiti.
 Ako nije, navesti napad i predložiti ispravku.
 
-### Zadatak 5
+### Zadatak 4
 
 Korisnik se prilikom glasanja obavezuje za svoj glas iz skupa niski `DA`, `NE`,
 `SUZDRZAN` objavljivanjem vrednosti \\(c = h(m)\\), gde je \\(h\\) definisano
@@ -271,36 +257,22 @@ def h(message: string) -> bytes:
   return hashlib.sha256(message.encode()).digest()
 ~~~
 
+### Zadatak 5
+
+Implementirati protokol za održavanje aukcije sa skrivenim ponudama. Svaki
+učesnik može da ponudi neki iznos za predmet aukcije, ali ponudu ne otkvira do
+kraja aukcije. Nakon završetka aukcije, sve ponude se otkrivaju i pobednik je
+onaj učesnik sa najvećom ponudom.
+
 ### Zadatak 6
-
-U okviru peer-to-peer mreže potrebno je implementirati mehanizam za održavanje
-aukcije sa skrivenim ponudama. Svaki učesnik u mreži može da ponudi neki iznos
-za predmet aukcije, ali ponudu ne otkvira do kraja aukcije. Nakon završetka
-aukcije, sve ponude se otkrivaju i pobednik je onaj učesnik sa najvećom
-ponudom. Implementirati funkcije `bid` i `reveal` koje omogućavaju ovu
-funkcionalnost.
-
-~~~python
-TODO!
-~~~
-
-### Zadatak 7
 
 Implementirati igru Papir, kamen, makaze preko peer-to-peer konekcije.
 Obezbediti da igrači ne mogu da varaju.
 
-~~~python
-TODO!
-~~~
-
-### Zadatak 8
+### Zadatak 7
 
 U američkoj emisiji "The Price is Right", učesnici se takmiče u pogađanju cene
 proizvoda. Prikazuje se jedan proizvod, a učesnici redom pogađaju cenu.
-Učesniku nije dozvoljeno da predloži cenu koja je prethodno već predložena, a
-pobednik je onaj koji je najbliži stvarnoj ceni proizvoda bez da je premaši.
-Implementirati varijantu ove igre u okviru peer-to-peer mreže.
-
-~~~python
-TODO!
-~~~
+Pobednik je onaj koji je najbliži stvarnoj ceni proizvoda bez da je premaši.
+Implementirati protokol koji omogućava da se igra održi preko interneta, tako
+da niko ne može da vara.
