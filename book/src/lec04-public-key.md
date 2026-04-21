@@ -77,6 +77,13 @@ izračuna \\(k\\), osim rešavanjem problema diskretnog logaritma za \\(g^a=A\\)
 ili \\(g^b=B\\).
 
 ~~~python
+def generate_keys():
+  a = secrets.randbelow(p-2) + 1
+  A = pow(g, a, p)
+  return a, A
+
+def shared_key(a, B):
+  return pow(B, a, p)
 ~~~
 
 Jedan problem sa ovim protokolom je što je podložan tzv. *man-in-the-middle*
@@ -106,22 +113,26 @@ Slično kao kod Difi-Helman protokola, parametri protokola su ciklična grupa
 privatni ključ \\(a\\) slučajnim odabirom iz skupa \\(\{1, 2, \ldots, q-1\}\\)
 i računa svoj javni ključ \\(A = g^a\\).
 
-~~~python
-~~~
-
 Kada Boban želi da pošalje poruku Ani, on generiše slučajni broj \\(b\\) iz
 skupa \\(\{1, 2, \ldots, q-1\}\\). Na osnovu Aninog javnog ključa računa
 zajdednički Difi-Helman ključ \\(k = A^b\\). Poruku \\(m\\) šifruje množenjem
-sa \\(k\\) i kao šifrat šalje par vrednosti \\((c_{1}=B, c_{2}=km))\\) gde je
+sa \\(k\\) i kao šifrat šalje par vrednosti \\((c_{1}=B, c_{2}=km)\\) gde je
 \\(B = g^b\\).
 
 ~~~python
+def encrypt(m, A):
+  b, B = dh.generate_keys()
+  k = dh.shared_key(b, A)
+  return B, (k * m) % dh_p
 ~~~
 
 Ana dešifruje poruku tako što računa \\(c_{1}^a = B^a = k\\) i zatim deli
 \\(c_{2}=km\\) sa \\(k\\) u grupi \\(G\\).
 
 ~~~python
+def decrypt(B, c, a):
+  k = dh.shared_key(a, B)
+  return (c * pow(k, -1, dh_p)) % dh_p
 ~~~
 
 ElGamal enkripcija se oslanja na Difi-Helman razmenu ključa i samim tim na
@@ -139,12 +150,101 @@ RSA kriptosistem, slično ElGamalovom kriptosistemu, omogućava enkripciju poruk
 korišćenjem javnog ključa. Za razliku od prethodnih protokola, RSA se oslanja
 na problem faktorizacije.
 
+Korisnik (Ana) generiše svoj par privatnog i javnog ključa na sledeći način.
+Bira dva pseudoslučajna velika prosta broja \\(p\\) i \\(q\\) i računa \\(n =
+pq\\) i \\(\varphi(n) = (p-1)(q-1)\\). Zatim bira broj \\(1 < e < \varphi(n)\\)
+koji je uzajamno prost sa \\(\varphi(n)\\) i računa \\(d\\) takvo da je \\(d
+\equiv e^{-1} \mod \varphi(n)\\). Javni ključ je par \\((n, e)\\), a privatni
+ključ je broj \\(d\\). Vrednosti \\(p\\), \\(q\\) i \\(\varphi(n)\\) se
+odbacuju i ne smeju biti javno dostupni.
+
+~~~python
+def generate_keys():
+    p = number.getPrime(1024)
+    q = number.getPrime(1024)
+    n = p * q
+    phi = (p - 1) * (q - 1)
+
+    e = 0
+    while math.gcd(e, phi) != 1:
+        e = secrets.randbelow(phi - 2) + 2
+    d = pow(e, -1, phi)
+
+    return d, (n, e)
+~~~
+
+Kada Boban želi da pošalje poruku \\(0 \leq m < n\\) Ani, on koristi njen javni ključ za
+šifrovanje poruke tako što računa \\(c = m^e \mod n\\). Ana dešifruje poruku
+korišćenjem svog privatnog ključa računajući \\(m = c^d \mod n\\).
+
+~~~python
+def encrypt(m, e, n):
+    return pow(m, e, n)
+
+def decrypt(c, d, n):
+    return pow(c, d, n)
+~~~
+
+Korektnost RSA kriptosistema dolazi iz toga što \\(m^{ed} \equiv m \mod
+n\\):
+
+Pokažimo da \\(m^{ed} \equiv m \mod p\\) (i potpuno analogno \\(m^{ed} \equiv m
+\mod q\\)).
+
+ 1. Ako je \\(m\\) deljivo sa \\(p\\), tada je \\(m^{ed} \equiv 0 \equiv m \mod p\\).
+
+ 1. U suprotnom je \\(m^{p-1} \equiv 1 \mod p\\) po maloj Fermaovoj teoremi,
+    pa je \\(m^{ed} = m^{1 + k\varphi(n)} = m^{1+k(p-1)(q-1)} =
+    m(m^{p-1})^{k(q-1)} \equiv m \mod q\\).
+
+ Kako je \\(m^{ed} \equiv m \mod p\\) i \\(m^{ed} \equiv m \mod q\\), po
+ kineskoj teoremi o ostacima važi \\(m^{ed} \equiv m \mod n\\).
+
+Primetimo da se bezbednost RSA kriptosistema oslanja na težinu narednog
+problema:
+
+> Odrediti broj \\(m\\) takav da je \\(m^e \equiv c\mod n\\).
+
+Drugim rečima, potrebno je odrediti \\(e\\)-ti koren broja \\(c\\) po modulu
+\\(n\\). Najefikasniji trenutno poznati algoritmi za rešavanje ovog problema se
+oslanjaju na faktorizaciju broja \\(n\\). Naime, ako je poznato \\(n=pq\\),
+lako je izračunati \\(\varphi(n)\\) i odrediti \\(d \equiv e^{-1} \mod
+\varphi(n)\\). Onda je \\(m \equiv c^d \mod n\\).
+
 ## Zadaci
+
+### Zadatak 1
+
+Parametri ElGamalovog kriptosistema su:
+
+~~~python
+p = 804455613497485373990731588387
+g = 2
+~~~
+
+Poznato je da se poruka \\(m = 12\\) šifruje u:
+
+~~~python
+c1 = 93756064469162765164392542609
+c2 = 50862892537411255160254263767
+~~~
+
+Odrediti poruku \\(m'\\) čiji je šifrat:
+
+~~~python
+c1 = 93756064469162765164392542609
+c2 = 432677049653990478219958834048
+~~~
+
+### Zadatak 2
+
 
 <!--
 man in the middle
 mali eksponent
 elgamal nonce reuse
 elgamal malleability
-implementacije protokola (klijent/server)
+rsa malleability
+rsa without padding / nonce
+implementacije protokola (klijent/server) + AES
 -->
