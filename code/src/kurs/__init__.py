@@ -19,6 +19,7 @@ from .conversions import (
     xor,
 )
 from .hash import md_f, MD_IV, MD_BLOCK_SIZE, sponge_f, SPONGE_BLOCK_SIZE
+from .public_key import dh_g, dh_p
 
 __all__ = [
     "AES_SBOX",
@@ -40,4 +41,6 @@ __all__ = [
     "MD_BLOCK_SIZE",
     "SPONGE_BLOCK_SIZE",
     "sponge_f",
+    "dh_g",
+    "dh_p",
 ]
