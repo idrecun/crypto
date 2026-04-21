@@ -4,7 +4,7 @@ import math
 
 def generate_keys():
     p = number.getPrime(1024)
-    q = number.getPrime(1023)
+    q = number.getPrime(1024)
     n = p * q
     phi = (p - 1) * (q - 1)
 
