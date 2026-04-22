@@ -277,7 +277,7 @@ man-in-the-middle napad i prisluškuje komunikaciju između klijenata.
 Implementirati protokol koji omogućava klijentu i serveru da ostvare šifrovanu
 komunikaciju. Klijent generiše tajni ključ, enkriptuje ga ElGamal šifrom i šalje
 ga serveru. Nakon toga se komunikacija nastavlja korišćenjem AES enkripcije za
-razmenu poruka.
+slanje poruka serveru.
 
 ### Zadatak 5
 
