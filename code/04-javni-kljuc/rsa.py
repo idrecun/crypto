@@ -15,8 +15,17 @@ def generate_keys():
 
     return d, (n, e)
 
+def pad(m):
+    # Jedan bajt lufta na početku
+    padded_bytes = secrets.token_bytes(15) + m.to_bytes(240, "big")
+    return int.from_bytes(padded_bytes, "big")
+
+def unpad(m):
+    padded_bytes = m.to_bytes(255, "big")
+    return int.from_bytes(padded_bytes[15:], "big")
+
 def encrypt(m, e, n):
-    return pow(m, e, n)
+    return pow(pad(m), e, n)
 
 def decrypt(c, d, n):
-    return pow(c, d, n)
+    return unpad(pow(c, d, n))
