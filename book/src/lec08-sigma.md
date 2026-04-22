@@ -7,3 +7,5 @@
 ## Fiat–Šamir heuristika
 
 ## Zadaci
+
+<!-- helios voting? -->

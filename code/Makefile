@@ -10,7 +10,7 @@ setup:
 	@echo "[setup] Installing build backend (setuptools)"
 	$(PIP) install --progress-bar on --disable-pip-version-check "setuptools>=68"
 	@echo "[setup] Installing course runtime dependencies"
-	$(PIP) install --progress-bar on --disable-pip-version-check pycryptodome pillow
+	$(PIP) install --progress-bar on --disable-pip-version-check pycryptodome pillow sympy
 	@echo "[setup] Installing project in editable mode"
 	$(PIP) install --progress-bar on --disable-pip-version-check --no-build-isolation -e .
 

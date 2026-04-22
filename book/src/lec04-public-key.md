@@ -211,9 +211,75 @@ oslanjaju na faktorizaciju broja \\(n\\). Naime, ako je poznato \\(n=pq\\),
 lako je izračunati \\(\varphi(n)\\) i odrediti \\(d \equiv e^{-1} \mod
 \varphi(n)\\). Onda je \\(m \equiv c^d \mod n\\).
 
+Jedan problem sa direktnom primenom RSA kriptosistema je što se ista poruka
+uvek šifruje u isti šifrat. Zato je potrebno na neki način proširiti poruku
+pseudoslučajnim bitovima pre šifrovanja. Naglasimo da je u nastavku prikazan
+način proširivanja poruka nebezbedan i da se u praksi koriste složenije šeme.
+
+~~~python
+def pad(m):
+    # Jedan bajt lufta na početku
+    padded_bytes = secrets.token_bytes(15) + m.to_bytes(240, "big")
+    return int.from_bytes(padded_bytes, "big")
+
+def unpad(m):
+    padded_bytes = m.to_bytes(255, "big")
+    return int.from_bytes(padded_bytes[15:], "big")
+
+def encrypt(m, e, n):
+    return pow(pad(m), e, n)
+
+def decrypt(c, d, n):
+    return unpad(pow(c, d, n))
+~~~
+
+
 ## Zadaci
 
 ### Zadatak 1
+
+Implementirati protokol koji omogućava klijentu i serveru da ostvare šifrovanu
+komunikaciju. Tajni ključ se uspostavlja Difi-Helman razmenom. Nakon toga se
+komunikacija nastavlja korišćenjem AES enkripcije za slanje poruka serveru.
+
+### Zadatak 2
+
+Ana i Boban izvršavaju Difi-Helman razmenu ključa:
+
+~~~python
+A = 524347013556703057489464193864
+B = 672823340861902417431101467671
+~~~
+
+Eva kontroliše kanal i izvršava man-in-the-middle napad koristeći privatni ključ:
+
+~~~python
+e = 580068529088705669745084345056
+~~~
+
+Odrediti zajedničke ključeve koje Eva deli sa Anom i Bobanom ako su dati
+parametri protokola:
+
+~~~python
+p = 804455613497485373990731588387
+g = 2
+~~~
+
+### Zadatak 3
+
+Klijenti se povezuju na server kako bi razmenjivali poruke. Prilikom
+povezivanja, izvršavaju Difi-Helman razmenu ključa, nakon čega nastavljaju da
+razmenjuju poruke koristeći AES enkripciju. Implementirati server koji izvršava
+man-in-the-middle napad i prisluškuje komunikaciju između klijenata.
+
+### Zadatak 4
+
+Implementirati protokol koji omogućava klijentu i serveru da ostvare šifrovanu
+komunikaciju. Klijent generiše tajni ključ, enkriptuje ga ElGamal šifrom i šalje
+ga serveru. Nakon toga se komunikacija nastavlja korišćenjem AES enkripcije za
+razmenu poruka.
+
+### Zadatak 5
 
 Parametri ElGamalovog kriptosistema su:
 
@@ -236,15 +302,40 @@ c1 = 93756064469162765164392542609
 c2 = 432677049653990478219958834048
 ~~~
 
-### Zadatak 2
+### Zadatak 6
 
+Implementirati protokol koji omogućava klijentu da preuzme šifrovanu datoteku
+sa servera. Server generiše tajni ključ, enkriptuje ga RSA šifrom i šalje ga
+klijentu. Zatim koristi taj ključ za enkripciju datoteke AES šifrom i šalje ga
+klijentu.
 
-<!--
-man in the middle
-mali eksponent
-elgamal nonce reuse
-elgamal malleability
-rsa malleability
-rsa without padding / nonce
-implementacije protokola (klijent/server) + AES
--->
+### Zadatak 7
+
+Korišćen je RSA bez proširivanja poruke sa javnim ključem \\(e = 5\\) i
+\\(n=3225125342650157137441747827309271008554774656669170316841\\). Odrediti
+poruku \\(m\\) ako je poznato da se ona šifruje u
+\\(c=28294245410257430463566908142983628480617221151082271843\\).
+
+### Zadatak 8
+
+Korišćen je RSA sa proširivanjem poruke definisanim u nastavku. 
+
+~~~python
+def pad(m):
+    r = secrets.randbits(32)
+    return (m << 16) | r
+
+def unpad(m):
+    return m >> 16
+
+def encrypt(m, e, n):
+    return pow(pad(m), e, n)
+
+def decrypt(c, d, n):
+    return unpad(pow(c, d, n))
+~~~
+
+Odrediti poruku \\(m\\) šiforvanu javnim ključem \\(e = 5\\) i \\(n =
+3225125342650157137441747827309271008554774656669170316841\\) ako je poznato da
+se ona šifruje u \\(c = 414092455629355891057474807003843764215360074118451854843\\).
+
