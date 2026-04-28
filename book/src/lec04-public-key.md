@@ -6,6 +6,7 @@
 > enkriptovanu komunikaciju preko javnog kanala. Potrebno im je da uspostave
 > zajednički tajni ključ za simetričnu enkripciju. Kako to mogu da urade?
 
+<!-- TODO: Formalno uvesti Enc i Dec -->
 Asimetrična kriptografija, odnosno kriptografija javnog ključa, je pristup koji
 omogućava rešavanje prethodno opisanog problema. Osnovna ideja je da svaki
 korisnik ima svoj privatni ključ, koji je tajni podatak, kao i svoj javni
@@ -113,25 +114,25 @@ Slično kao kod Difi-Helman protokola, parametri protokola su ciklična grupa
 privatni ključ \\(a\\) slučajnim odabirom iz skupa \\(\{1, 2, \ldots, q-1\}\\)
 i računa svoj javni ključ \\(A = g^a\\).
 
-Kada Boban želi da pošalje poruku Ani, on generiše slučajni broj \\(b\\) iz
+Kada Boban želi da pošalje poruku Ani, on generiše slučajni broj \\(r\\) iz
 skupa \\(\{1, 2, \ldots, q-1\}\\). Na osnovu Aninog javnog ključa računa
-zajdednički Difi-Helman ključ \\(k = A^b\\). Poruku \\(m\\) šifruje množenjem
-sa \\(k\\) i kao šifrat šalje par vrednosti \\((c_{1}=B, c_{2}=km)\\) gde je
-\\(B = g^b\\).
+zajdnički Difi-Helman ključ \\(k = A^r\\). Poruku \\(m \in G\\) šifruje množenjem sa
+\\(k\\) i kao šifrat šalje par vrednosti \\((c_{1}=R, c_{2}=km)\\) gde je \\(R
+= g^r\\).
 
 ~~~python
 def encrypt(m, A):
-  b, B = dh.generate_keys()
-  k = dh.shared_key(b, A)
-  return B, (k * m) % dh_p
+  r, R = dh.generate_keys()
+  k = dh.shared_key(r, A)
+  return R, (k * m) % dh_p
 ~~~
 
-Ana dešifruje poruku tako što računa \\(c_{1}^a = B^a = k\\) i zatim deli
+Ana dešifruje poruku tako što računa \\(c_{1}^a = R^a = k\\) i zatim deli
 \\(c_{2}=km\\) sa \\(k\\) u grupi \\(G\\).
 
 ~~~python
-def decrypt(B, c, a):
-  k = dh.shared_key(a, B)
+def decrypt(R, c, a):
+  k = dh.shared_key(a, R)
   return (c * pow(k, -1, dh_p)) % dh_p
 ~~~
 
