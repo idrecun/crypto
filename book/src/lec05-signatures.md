@@ -26,7 +26,7 @@ def sign(m, d, n):
     return pow(m, d, n)
 
 def verify(m, s, e, n):
-    return m = pow(s, e, n)
+    return m == pow(s, e, n)
 ~~~
 
 Ukoliko bi napadač hteo da lažira potpis poruke \\(m\\), morao bi da pronađe
@@ -118,13 +118,13 @@ Jedan način da pokušamo to da postignemo je da nekako zamaskiramo vrednost
 \\(h(m)-a\\) slučajnim brojem. Odaberimo slučajnu vrednost \\(r\\) i
 izračunajmo \\(s = r^{-1}(h(m)-a)\\). Ako bismo uz vrednost \\(s\\) proizveli i
 vrednost \\(R = g^r\\), dobili bismo par vrednosti \\((R, s)\\) koji ispunjava
-sva četiri cilja. Autentičnost se može proveriti ispitivanjem jednakosti
+tri od četiri cilja. Autentičnost se može proveriti ispitivanjem jednakosti
 \\(g^{h(m)}=R^sA\\). Iz ovih vrednosti nije moguće odrediti vrednost \\(a\\)
 bez rešavanja problema diskretnog logaritma, jer je u najmanju ruku potrebno
 odrediti vrednost \\(r\\). Nažalost, moguće je lako lažirati par vrednosti koji
 ispunjava jednakost, npr. odabirom \\(R=g^{h(m)}A^{-1}\\) i \\(s=1\\).
 Prethodni pokušaj onda možemo popraviti dodatnim maskiranjem vrednosti \\(a\\),
-množenjem sa \\(R\\).
+množenjem sa \\(\phi(R)\\).
 
 ## Šnorov potpis
 
@@ -147,9 +147,6 @@ ne može unapred da zna vrednost izraza \\(RA^c\\), jedini način da pronađe
 odgovarajuće \\(s\\) je da reši problem diskretnog logaritma. Sa druge strane,
 jedini način da Boban otkrije Anin tajni ključ je da izračuna vrednost \\(r\\),
 a da bi to uradio, morao bi da reši problem diskretnog logaritma.
-
-~~~python
-~~~
 
 Šnorov potpis se konstruiše kao neinteraktivna verzija Šnorovog protokola.
 Ključno zapažanje je da Ana može sama sebi da generiše nepredvidiv izazov
@@ -177,16 +174,107 @@ def verify(m, R, s, A):
   return pow(g, s, p) == (R * pow(A, c, p)) % p
 ~~~
 
-Multisig?
+<!-- TODO: Multisig? -->
 
 ## Zadaci
+
+### Zadatak 1
+
+Neka je RSA potpis implementiran na sledeći način:
+
+~~~python
+def sign(m, d, n):
+    return pow(m, d, n)
+
+def verify(m, s, e, n):
+    return m == pow(s, e, n)
+~~~
+
+Poznate su poruke `m1=12345` sa RSA potpisom `s1=642633528765` i `m2=10000` sa
+potpisom `s2=73743664084` za javni ključ `e = 262722871823` i `m =
+780291688489`. Konstruisati novu poruku sa validnim RSA potpisom za taj javni
+ključ.
+
+### Zadatak 2
+
+Poznate su poruke `m1=Hello, world!` sa ElGamal potpisom
+`R1=337153912634787611310786958972`, `s1=203198881425351687104207477185` i
+`m2=Hello, matf!` sa potpisom `R2=337153912634787611310786958972`,
+`s2=678452672753114526815458651189`. Odrediti privatni ključ.
+
+### Zadatak 3
+
+Neka je ElGamalov potpis implementiran na sledeci nacin:
+
+~~~python
+def sign(m, a):
+  s = 0
+  while s == 0:
+    r = 0
+    while math.gcd(r, q) != 1:
+      r = secrets.randbelow(q-1) + 1
+    R = pow(g, r, p)
+    s = (pow(r, -1, q) * (m - a * R)) % q
+  return (R, s)
+
+def verify(m, R, s, A):
+  return pow(g, m, p) == (pow(R, s, p) * pow(A, R, p)) % p
+~~~
+
+Konstruisati poruku sa validnim potpisom za javni ključ `A=335275883964444880445558231962`.
+
+### Zadatak 4
+
+Poznate su poruke `m1=` sa Šnorovim potpisom `R, s1` i `m2=` sa potpisom `R, s2`. Odrediti privatni kljuc.
+
+### Zadatak 5
+
+Neka je Šnorov potpis implementiran na sledeći način:
+
+~~~python
+nonce++
+~~~
+
+Poznate su poruke `m1=` sa Šnorovim potpisom `R, s1` i `m2=` sa potpisom `R, s2`. Odrediti privatni kljuc.
+
+### Zadatak 6
+
+Neka je Šnorov potpis implementiran na sledeći način:
+
+~~~python
+h(m)
+~~~
+
+Konstruisati poruku sa validnim potpisom za javni kljuc A.
+
+### Zadatak 7
+
+Implementirati Difi-Helmanov protokol razmene ključa. Obezbediti da je protokol
+otporan na man-in-the-middle napad.
+
+### Zadatak 8
+
+Klijent se povezuje na server i preuzima najnoviju verziju softvera. Obezbediti
+da klijent može da proveri autentičnost preuzetog softvera.
+
+### Zadatak 9
+
+Implementirati server koji omogućava klijentima da se prijave bez korišćenja
+lozinke.
+
+### Zadatak 10
+
+Server izvršava transakcije prenosa novca između korisnika. Server prihvata
+transakciju samo ako je potpisana od strane korisnika koji prenosi novac i
+ukoliko korisnik ima dovoljno novca na računu. Obezbediti da napadač ne može
+da izvrši transakciju u kojoj se ne prenosi novac sa njegovog računa.
 
 <!--
 Diffie-Hellman with signing
 RSA combine signatures if no hash is used
 ElGamal nonce reuse
-ElGamal combine signatures if no hash is used
-ElGamal forgery if no hash is used?
+ElGamal combine signatures if no hash is used  (!)
+ElGamal forgery if no hash is used?  (!)
 ElGamal s = 0?
 Schnorr nonce reuse
 Schnorr without R in hash
@@ -194,5 +282,4 @@ Signed software update protocol
 ssh auth flow (sign challenge)
 certificates
 replay attack (currency transfer, solution - add nonce or timestamp)
-multisig (all must agree to launch missile)
 -->
