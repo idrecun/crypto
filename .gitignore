@@ -4,3 +4,5 @@ __pycache__
 *.egg-info
 ecb.enc
 *.img
+code/05-potpisi/zadatak*_keys.py
+code/05-potpisi/received_software.txt

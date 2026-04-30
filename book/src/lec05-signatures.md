@@ -268,25 +268,30 @@ Konstruisati poruku sa validnim potpisom za javni ključ
 
 ### Zadatak 7
 
-Implementirati Difi-Helmanov protokol razmene ključa. Obezbediti da je protokol
-otporan na man-in-the-middle napad.
+Implementirati protokol koji omogućava klijentu i serveru da ostvare šifrovanu
+komunikaciju razmenom Difi-Helman ključeva. Obezbediti da je protokol otporan
+na man-in-the-middle napade.
 
 ### Zadatak 8
 
-Klijent se povezuje na server i preuzima najnoviju verziju softvera. Obezbediti
-da klijent može da proveri autentičnost preuzetog softvera.
+Klijent se povezuje na server i preuzima najnoviju verziju softvera zajedno sa
+potpisom. Obezbediti da klijent može da proveri autentičnost preuzetog
+softvera.
 
 ### Zadatak 9
 
 Implementirati server koji omogućava klijentima da se prijave bez korišćenja
-lozinke.
+lozinke. Klijent dokazuje identitet izvršavanjem Šnorovog protokola
+identifikacije sa serverom. Pretpostaviti da server unapred zna javni ključ
+klijenta.
 
 ### Zadatak 10
 
-Server izvršava transakcije prenosa novca između korisnika. Server prihvata
-transakciju samo ako je potpisana od strane korisnika koji prenosi novac i
-ukoliko korisnik ima dovoljno novca na računu. Obezbediti da napadač ne može
-da izvrši transakciju u kojoj se ne prenosi novac sa njegovog računa.
+Implementirati server koji izvršava transakcije prenosa novca između korisnika.
+Server prihvata transakciju samo ako je potpisana potpisom korisnika koji
+prenosi novac i ako korisnik ima dovoljno novca na računu. Pretpostaviti da
+server unapred poznaje javne ključeve svih korisnika. Razmotriti napad ponovnim
+slanjem i implementirati rešenje.
 
 <!--
 Diffie-Hellman with signing
