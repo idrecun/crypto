@@ -221,11 +221,13 @@ def verify(m, R, s, A):
   return pow(g, m, p) == (pow(R, s, p) * pow(A, R, p)) % p
 ~~~
 
-Konstruisati poruku sa validnim potpisom za javni ključ `A=335275883964444880445558231962`.
+Konstruisati poruku sa validnim potpisom za javni ključ
+`A=335275883964444880445558231962`.
 
 ### Zadatak 4
 
-Poznate su poruke `m1=` sa Šnorovim potpisom `R, s1` i `m2=` sa potpisom `R, s2`. Odrediti privatni kljuc.
+Poznate su poruke `m1=` sa Šnorovim potpisom `R, s1` i `m2=` sa potpisom `R,
+s2`. Odrediti privatni kljuc.
 
 ### Zadatak 5
 
