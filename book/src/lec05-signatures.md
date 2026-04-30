@@ -8,10 +8,10 @@
 
 <!-- TODO: formalnije uvesti Sign i Verify -->
 
-Rešenje za ovaj problem nude digitalni potpisi. Svaki učesnik, kao i u slučaju
-enkripcije, ima par javnog i privatnog ključa. Privatni ključ se koristi za
-potpisivanje poruka, a bilo ko ko poznaje javni ključ može da proveri da li
-je poruka potpisana odgovarajućim privatnim ključem.
+Rešenje za problem autentifikacije nude digitalni potpisi. Svaki učesnik, kao i
+u slučaju enkripcije, ima par javnog i privatnog ključa. Privatni ključ se
+koristi za potpisivanje poruka, a bilo ko ko poznaje javni ključ može da
+proveri da li je poruka potpisana odgovarajućim privatnim ključem.
 
 ## RSA potpis
 
