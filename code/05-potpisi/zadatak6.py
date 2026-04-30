@@ -12,12 +12,11 @@ def generate_keys():
   return a, A
 
 def challenge(R, m):
-  b = R.to_bytes(192, "big") + m
-  h = hashlib.sha256(b).digest()
+  h = hashlib.sha256(m).digest()
   return int.from_bytes(h, "big") % q
 
 def sign(m, a):
-  r = 99999999
+  r = secrets.randbelow(q-1) + 1
   R = pow(g, r, p)
   c = challenge(R, m)
   s = (r + a * c) % q
@@ -28,15 +27,11 @@ def verify(m, R, s, A):
   return pow(g, s, p) == (R * pow(A, c, p)) % p
 
 a, A = generate_keys()
-m1 = b"Zdravo, svete!"
-R, s1 = sign(m1, a)
-m2 = b"Vozdra, svete!"
-R, s2 = sign(m2, a)
 print(A)
-print(R, s1, s2)
 
-# napad: oba potpisa koriste isto R, dakle isto r
-c1 = challenge(R, m1)
-c2 = challenge(R, m2)
-a_recovered = ((s1 - s2) * pow(c1 - c2, -1, q)) % q
-print(a_recovered == a)
+# napad: c ne zavisi od R, pa biramo proizvoljno m i s, i resimo R
+m = b"Lazirana poruka"
+c = challenge(0, m)
+s = 1
+R = (pow(g, s, p) * pow(A, -c, p)) % p
+print(verify(m, R, s, A))

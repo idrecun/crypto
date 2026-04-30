@@ -226,28 +226,45 @@ Konstruisati poruku sa validnim potpisom za javni ključ
 
 ### Zadatak 4
 
-Poznate su poruke `m1=` sa Šnorovim potpisom `R, s1` i `m2=` sa potpisom `R,
-s2`. Odrediti privatni kljuc.
+Poznate su poruke `m1=Zdravo, svete!` sa Šnorovim potpisom
+`R=183849108012164733417305462859`, `s1=548948698949370520837447260599` i
+`m2=Vozdra, svete!` sa potpisom `R=183849108012164733417305462859`,
+`s2=145102361266571118514964376433`. Javni ključ je
+`A=537788132761577003712801186261`. Odrediti privatni ključ.
 
 ### Zadatak 5
 
 Neka je Šnorov potpis implementiran na sledeći način:
 
 ~~~python
-nonce++
+r = 1000
+
+def sign(m, a):
+  r += 1
+  R = pow(g, r, p)
+  c = challenge(R, m)
+  s = (r + a * c) % q
+  return (R, s)
 ~~~
 
-Poznate su poruke `m1=` sa Šnorovim potpisom `R, s1` i `m2=` sa potpisom `R, s2`. Odrediti privatni kljuc.
+Poznate su poruke `m1=Zdravo, svete!` sa Šnorovim potpisom
+`R1=111363904694286227266861505255`, `s1=336143517230584486730326547926` i
+`m2=Vozdra, svete!` sa potpisom `R2=729591181082362914015977546335`,
+`s2=360002113235708705370255168750`. Javni ključ je
+`A=537788132761577003712801186261`. Odrediti privatni ključ.
 
 ### Zadatak 6
 
 Neka je Šnorov potpis implementiran na sledeći način:
 
 ~~~python
-h(m)
+def challenge(m):
+  h = hashlib.sha256(m).digest()
+  return int.from_bytes(h, "big") % q
 ~~~
 
-Konstruisati poruku sa validnim potpisom za javni kljuc A.
+Konstruisati poruku sa validnim potpisom za javni ključ
+`A=537788132761577003712801186261`.
 
 ### Zadatak 7
 
