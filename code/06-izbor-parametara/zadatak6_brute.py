@@ -1,7 +1,7 @@
 import hashlib
 import secrets
 
-from pohlig_hellman import pohlig_hellman
+from pohlig_hellman import dlp_naive
 
 g = 2
 p = 4712211801531972521576351639088809533078043
@@ -25,14 +25,8 @@ def sign(m, a):
     return (R, s)
 
 
-def verify(m, R, s):
-    c = challenge(R, m)
-    return pow(g, s, p) == (R * pow(A, c, p)) % p
-
-
-a = pohlig_hellman(g, A, p)
+a = dlp_naive(g, A, q, p)
 R, s = sign(M, a)
 
 print(f"R = {R}")
 print(f"s = {s}")
-print(f"provera: {verify(M, R, s)}")

@@ -1,11 +1,11 @@
-from pohlig_hellman import pohlig_hellman
+from pohlig_hellman import dlp_naive
 
 g = 2
 p = 7601624022030852444912481695317914837957
 A = 2211695542287328335118624827317758656022
 B = 6182657336541579015064991427667254728726
 
-a = pohlig_hellman(g, A, p)
+a = dlp_naive(g, A, p - 1, p)
 S = pow(B, a, p)
 
 print(f"S = {S}")
