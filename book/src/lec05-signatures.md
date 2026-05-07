@@ -124,7 +124,14 @@ bez rešavanja problema diskretnog logaritma, jer je u najmanju ruku potrebno
 odrediti vrednost \\(r\\). Nažalost, moguće je lako lažirati par vrednosti koji
 ispunjava jednakost, npr. odabirom \\(R=g^{h(m)}A^{-1}\\) i \\(s=1\\).
 Prethodni pokušaj onda možemo popraviti dodatnim maskiranjem vrednosti \\(a\\),
-množenjem sa \\(\phi(R)\\).
+množenjem sa \\(\phi(R)\\) (odnosno \\(R\\)).
+
+Napomenimo da kao i kod RSA potpisa, neophodno je potpis primeniti na heš
+poruke. U suprotnom, napadač koji pokušava da lažira potpis treba da odredi
+parametre tako da važi \\(g^m = R^s A^R\\). Jedan način da to izvede je da
+odabere \\(R = Ag^e\\) za proizvoljno \\(e\\) i \\(s = -R\\). Tada jednakost
+postaje \\(g^m = A^{-R}g^{-eR}A^R = g^{-eR}\\), pa je potpis \\((R, s)\\)
+validan za poruku \\(m = -eR = es\\).
 
 ## Šnorov potpis
 
@@ -274,9 +281,8 @@ na man-in-the-middle napade.
 
 ### Zadatak 8
 
-Klijent se povezuje na server i preuzima najnoviju verziju softvera zajedno sa
-potpisom. Obezbediti da klijent može da proveri autentičnost preuzetog
-softvera.
+Klijent se povezuje na server i preuzima najnoviju verziju softvera. Obezbediti
+da klijent može da proveri autentičnost preuzetog softvera.
 
 ### Zadatak 9
 
@@ -292,6 +298,10 @@ Server prihvata transakciju samo ako je potpisana potpisom korisnika koji
 prenosi novac i ako korisnik ima dovoljno novca na računu. Pretpostaviti da
 server unapred poznaje javne ključeve svih korisnika. Razmotriti napad ponovnim
 slanjem i implementirati rešenje.
+
+<!-- TODO za buducnost: mozda u zadacima imati jedan trusted public key koji
+igra ulogu CA, i onda u svim zadacima gde se razmenjuju javni kljucevi, moguce
+je koristiti javni kljuc potpisan od strane CA -->
 
 <!--
 Diffie-Hellman with signing
