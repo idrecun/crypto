@@ -344,3 +344,20 @@ A = 1603188968889680704645883369269027685268625
 Predstaviti se lažno kao Boban i poslati Ani potpisanu poruku `M = "Vozdra,
 svete!"`.
 
+### Zadatak 7
+
+Boban je Ani ponudio nekoliko kandidata za parametar \\(p\\) Difi-Helmanovog
+protokola. Odrediti koji su od ponuđenih kandidata bezbedni:
+
+```
+pA = 230914455703691489588482744432827805051
+pB = 1100412499263221912937307421102321256919
+pC = 275314703551481333360766958972593260039
+pD = 293720665814433582927735487060431957427
+```
+
+### Zadatak 8
+
+Implementirati funkciju koja generiše bezbedan prost broj \\(p\\) zadate
+veličine.
+
