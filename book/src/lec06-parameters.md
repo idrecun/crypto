@@ -334,11 +334,17 @@ matf!"`.
 
 ### Zadatak 6
 
-Boban koristi Šnorov potpis sa istim parametrima kao u prethodnom zadatku.
+Boban koristi Šnorov potpis sa parametrima:
+
+```
+g = 5
+p = 102930135201232568905447342456556663645567
+```
+
 Bobanov javni ključ je:
 
 ```
-A = 1603188968889680704645883369269027685268625
+A = 9662939937200861840582525885171675976500
 ```
 
 Predstaviti se lažno kao Boban i poslati Ani potpisanu poruku `M = "Vozdra,
