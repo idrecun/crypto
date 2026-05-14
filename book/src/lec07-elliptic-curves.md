@@ -120,21 +120,40 @@ za datu tačku \\((x, y)\\) jednostavno određujemo poruku \\(m\\) kao \\(\lfloo
 ## Protokoli zasnovani na eliptičkim krivama
 
 Kao javni parametar bilo kog protokola potrebno je odabrati eliptičku krivu nad
-nekim konačnim poljem. Biraju se parametri \\(p\\) (koji određuje konačno polje)
+nekim konačnim poljem. Biraju se parametri \\(p\\) (koji određuje konačno
+polje, uglavnom prost broj), \\(a, b \in \mathbb{F}_p\\) koji određuju krivu,
+tačka \\(G \in E(\mathbb{F}_p)\\) koja je generator ciklične podgrupe i broj
+\\(n\\) koji predstavlja red te podgrupe.
 
-### Generisanje ključeva
+### Generisanje i validacija ključeva
 
-Generisanje ključeva funkcioniše kao i u do sada opisanim protokolima zasnovanim na problemu diskretnog logaritma.
+Generisanje ključeva funkcioniše kao i u do sada opisanim protokolima
+zasnovanim na problemu diskretnog logaritma. Za tajni ključ bira se slučajan
+broj \\(a \in \{1, \ldots, n-1\}\\), a javni ključ se računa kao \\(A = aG\\).
 
-### Validacija javnog ključa
+Kada korisnik prihvati nečiji javni ključ, potrebno je da proveri da li je on
+validan. To podrazumeva da je ta tačka \\(A\\) zaista na krivoj, da pripada
+podgrupi generisanoj tačkom \\(G\\) i da nije tačka u beskonačnosti.
 
 ### Difi-Helman razmena ključa
 
+~~~python
+~~~
+
 ### ElGamal enkripcija
+
+~~~python
+~~~
 
 ### ElGamal potpis
 
+~~~python
+~~~
+
 ### Šnorov potpis
+
+~~~python
+~~~
 
 ## Zadaci
 
@@ -323,6 +342,7 @@ A = (1057509392935454215, 1290626223251531797)
 
 Odrediti Bobanov privatni ključ.
 
+<!--
 ### Zadatak 12
 
 Boban je Ani ponudio nekoliko kandidata za parametre eliptičke krive
@@ -335,3 +355,4 @@ p2, a2, b2 = 1015009, 264169, 456192
 p3, a3, b3 = 1606901, 1519467, 586263
 p4, a4, b4 = 670487, 386126, 380490
 ~~~
+-->
