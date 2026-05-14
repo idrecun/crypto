@@ -120,10 +120,13 @@ za datu tačku \\((x, y)\\) jednostavno određujemo poruku \\(m\\) kao \\(\lfloo
 ## Protokoli zasnovani na eliptičkim krivama
 
 Kao javni parametar bilo kog protokola potrebno je odabrati eliptičku krivu nad
-nekim konačnim poljem. Biraju se parametri \\(p\\) (koji određuje konačno
-polje, uglavnom prost broj), \\(a, b \in \mathbb{F}_p\\) koji određuju krivu,
-tačka \\(G \in E(\mathbb{F}_p)\\) koja je generator ciklične podgrupe i broj
-\\(n\\) koji predstavlja red te podgrupe.
+nekim konačnim poljem. Biraju se parametri \\(p\\), koji određuje konačno
+polje, \\(a, b \in \mathbb{F}_p\\) koji određuju krivu, tačka \\(G \in
+E(\mathbb{F}_p)\\) koja je generator ciklične podgrupe i broj \\(n\\) koji
+predstavlja red te podgrupe. Obično se objavljuje i broj \\(h=\frac{ \\#
+E(\mathbb{F}_p)}{n}\\) koji predstavlja indeks podgrupe \\(\langle G \rangle
+\\). Podgrupa se bira tako da je \\(n\\) veliki prost broj, kako protokol ne
+bi bio podložan napadima (npr. poput Polig-Helmanovog algoritma).
 
 ### Generisanje i validacija ključeva
 
@@ -132,8 +135,9 @@ zasnovanim na problemu diskretnog logaritma. Za tajni ključ bira se slučajan
 broj \\(a \in \{1, \ldots, n-1\}\\), a javni ključ se računa kao \\(A = aG\\).
 
 Kada korisnik prihvati nečiji javni ključ, potrebno je da proveri da li je on
-validan. To podrazumeva da je ta tačka \\(A\\) zaista na krivoj, da pripada
-podgrupi generisanoj tačkom \\(G\\) i da nije tačka u beskonačnosti.
+validan. To podrazumeva da je ta tačka \\(A\\) zaista na krivoj, da nije tačka
+u beskonačnosti i, u slučaju da je \\(h > 1\\), da pripada podgrupi generisanoj
+tačkom \\(G\\).
 
 ### Difi-Helman razmena ključa
 
