@@ -196,7 +196,7 @@ Pokažimo da \\(m^{ed} \equiv m \mod p\\) (i potpuno analogno \\(m^{ed} \equiv m
 
  1. U suprotnom je \\(m^{p-1} \equiv 1 \mod p\\) po maloj Fermaovoj teoremi,
     pa je \\(m^{ed} = m^{1 + k\varphi(n)} = m^{1+k(p-1)(q-1)} =
-    m(m^{p-1})^{k(q-1)} \equiv m \mod q\\).
+    m(m^{p-1})^{k(q-1)} \equiv m \mod p\\).
 
  Kako je \\(m^{ed} \equiv m \mod p\\) i \\(m^{ed} \equiv m \mod q\\), po
  kineskoj teoremi o ostacima važi \\(m^{ed} \equiv m \mod n\\).
