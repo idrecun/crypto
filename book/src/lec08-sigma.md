@@ -116,24 +116,43 @@ c_k'\\) nije moguće zaključiti koji se korisnik vezuje za koju vrednost.
 ### Zadatak 1
  
 Opisati sigma protokol za dokazivanje poznavanja rešenja problema 3-bojenja
-grafa. Transformisati ga u neinteraktivan dokaz pomoću Fiat–Šamir heuristike.
-Implementirati obe varijante.
+grafa i transformisati ga u neinteraktivan dokaz pomoću Fiat–Šamir heuristike.
 
 ### Zadatak 2
-izomorfizam grafova
+
+Opisati sigma protokol za dokazivanje poznavanja izomorfizma između dva grafa i
+transformisati ga u neinteraktivan dokaz pomoću Fiat–Šamir heuristike.
 
 ### Zadatak 3
-hamiltonov ciklus
+
+Opisati sigma protokol za dokazivanje poznavanja Hamiltonovog ciklusa u grafu i
+transformisati ga u neinteraktivan dokaz pomoću Fiat–Šamir heuristike.
 
 ### Zadatak 4
-sudoku
+
+Opisati sigma protokol za dokazivanje poznavanja rešenja sudoku slagalice i
+transformisati ga u neinteraktivan dokaz pomoću Fiat–Šamir heuristike.
 
 ### Zadatak 5
-shuffle + rerandomize
+
+Neka je dat niz Pedersenovih obaveza \\(P = (c_1, \dots, c_k)\\). Definišimo
+mešanje niza obaveza kao kompoziciju permutacije i rerandomizacije elemenata
+niza. Konkretno, neka je mešanje \\(\sigma\\) dato permutacijom \\(\pi\\) i
+slučajnim elementima \\(r_1, \dots, r_k\\). Tada se primenom mešanja
+\\(\sigma\\) na niz obaveza \\(P\\) dobija novi niz obaveza \\(\sigma(P) =
+(c_{\pi(1)} h^{r_1}, \dots, c_{\pi(k)} h^{r_k})\\).
+
+Opisati sigma protokol za dokazivanje poznavanja mešanja između dva niza
+Pedersenovih obaveza i transformisati ga u neinteraktivan dokaz pomoću
+Fiat–Šamir heuristike.
+
 
 ### Zadatak 6
-magicni kvadrat
 
+Opisati sigma protokol za dokazivanje poznavanja rešenja magičnog kvadrata i
+transformisati ga u neinteraktivan dokaz pomoću Fiat–Šamir heuristike.
+
+<!--
 ### Zadatak 7
 zbirovi po kolonama i vrstama
 
@@ -144,6 +163,7 @@ zbirovi po kolonama i vrstama
 ----
 abcd
 ~~~
+-->
 
 ## Rešenja
 
