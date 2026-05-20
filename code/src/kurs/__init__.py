@@ -18,7 +18,17 @@ from .conversions import (
     split_blocks,
     xor,
 )
-from .hash import md_f, MD_IV, MD_BLOCK_SIZE, sponge_f, SPONGE_BLOCK_SIZE
+from .hash import (
+    md_f,
+    MD_IV,
+    MD_BLOCK_SIZE,
+    sponge_f,
+    SPONGE_BLOCK_SIZE,
+    encode_obj,
+    hash_obj,
+    hash_to_bits,
+    hash_to_ints,
+)
 from .public_key import dh_g, dh_p, ec_p, ec_a, ec_b, ec_n, ec_G
 
 __all__ = [
@@ -41,6 +51,10 @@ __all__ = [
     "MD_BLOCK_SIZE",
     "SPONGE_BLOCK_SIZE",
     "sponge_f",
+    "encode_obj",
+    "hash_obj",
+    "hash_to_bits",
+    "hash_to_ints",
     "dh_g",
     "dh_p",
     "ec_p",
