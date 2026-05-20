@@ -1,6 +1,6 @@
 # Izbor parametara
 
-## Definicija problema
+## Opis problema
 
 > Na koji način se generišu i biraju veliki prosti brojevi za potrebe protokola
 > kriptografije javnog ključa?

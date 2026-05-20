@@ -1,6 +1,6 @@
 # Klasične i protočne šifre
 
-## Definicija problema
+## Opis problema
 
 > Ana i Boban žele da komuniciraju poverljivo putem javnog kanala (npr. pomoću
 > interneta). Eva, koja prisluškuje komunikaciju, ne sme da sazna sadržaj

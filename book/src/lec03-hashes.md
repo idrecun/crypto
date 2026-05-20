@@ -1,6 +1,6 @@
 # Heš funkcije i obavezivanja
 
-## Definicija problema
+## Opis problema
 
 > Ana ima neki podatak \\(m\\) koji želi kasnije da pošalje Bobanu, ali možda
 > ne želi odmah da ga otkrije. Boban želi da dobije garanciju od Ane da, kada

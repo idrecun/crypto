@@ -1,6 +1,6 @@
 # Eliptičke krive
 
-## Definicija problema
+## Opis problema
 
 > Da li postoji bolji izbor grupe \\(G\\) od \\(\mathbb{Z}_p^*\\) u protokolima
 > kriptografije javnog ključa zasnovaniom na problemu diskretnog logaritma?

@@ -1,6 +1,6 @@
 # Blok šifre, operacioni modovi i autentifikacija
 
-## Definicija problema
+## Opis problema
 
 > Ana i Boban žele da komuniciraju poverljivo putem nebezbednog javnog kanala
 > (npr. pomoću javne WiFi mreže). Eva, koja kontroliše kanal, može da

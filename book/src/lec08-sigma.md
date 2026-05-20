@@ -1,6 +1,6 @@
 # Sigma protokoli i Fiat–Šamir heuristika
 
-## Definicija problema
+## Opis problema
 
 > Ana želi da dokaže Bobanu da zna neku vrednost \\(x\\) koja predstavlja
 > rešenje nekog NP problema, bez otkrivanja same vrednosti \\(x\\).

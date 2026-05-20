@@ -1,6 +1,6 @@
 # Deljenje tajni
 
-## Definicija problema
+## Opis problema
 
 ## Šamir
 

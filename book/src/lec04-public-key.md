@@ -1,6 +1,6 @@
 # Enkripcija i razmena ključa
 
-## Definicija problema
+## Opis problema
 
 > Ana i Boban se nalaze na udaljenim krajevima planete i žele da uspostave
 > enkriptovanu komunikaciju preko javnog kanala. Potrebno im je da uspostave

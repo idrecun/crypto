@@ -1,6 +1,6 @@
 # Digitalni potpisi
 
-## Definicija problema
+## Opis problema
 
 > Ana želi da pošalje poruku Bobanu preko nebezbednog kanala. Ana i Boban
 > nemaju zajednički tajni ključ. Kako Ana može da dokaže Bobanu da je poruka
