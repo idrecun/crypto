@@ -33,6 +33,30 @@ polinome \\(l_2(x), \dots, l_k(x)\\). Tada je \\(f(x) = s_1 l_1(x) + \dots +
 s_k l_k(x)\\), odakle se jednostavno rekonstruiše \\(s = f(0)\\).
 
 ~~~python
+def eval_poly(coeffs, x):
+    y = 0
+    for c in reversed(coeffs):
+        y = (y * x + c) % q
+    return y
+
+def share(s, t, n):
+    coeffs = [s] + [secrets.randbelow(q) for _ in range(t)]
+    return [(i, eval_poly(coeffs, i)) for i in range(1, n + 1)]
+
+def lagrange(indices, x=0):
+    coeffs = {}
+    for i in indices:
+        num, den = 1, 1
+        for j in indices:
+            if j != i:
+                num = (num * (x - j)) % q
+                den = (den * (i - j)) % q
+        coeffs[i] = (num * pow(den, -1, q)) % q
+    return coeffs
+
+def reconstruct(parts):
+    coeffs = lagrange([i for i, _ in parts])
+    return sum(coeffs[i] * s_i for i, s_i in parts) % q
 ~~~
 
 ## Feldmanovo proverivo deljenje tajne
@@ -58,6 +82,15 @@ da je moguće koristiti Pedersenova obavezivanja za nešto jača svojstva
 protokola.
 
 ~~~python
+def commit(coeffs):
+    return [pow(g, c, p) for c in coeffs]
+
+def verify(part, commitments):
+    i, s_i = part
+    rhs = 1
+    for k, C in enumerate(commitments):
+        rhs = (rhs * pow(C, i ** k, p)) % p
+    return pow(g, s_i, p) == rhs
 ~~~
 
 ## Pedersenovo distribuirano generisanje ključa
@@ -81,6 +114,26 @@ Primetimo da su na ovaj način učesnici odredili polinom \\(f(x) = f_1(x) +
 vrši na isti način kao u Šamirovom deljenju tajne.
 
 ~~~python
+def run_dkg(n, t):
+    polys = [[secrets.randbelow(q) for _ in range(t + 1)] for _ in range(n)]
+    commitments = [commit(poly) for poly in polys]
+
+    # s_{i,j} = f_i(j): deo koji učesnik i šalje učesniku j
+    shares = [[eval_poly(polys[i], j) for j in range(1, n + 1)]
+              for i in range(n)]
+    for i in range(n):
+        for j in range(1, n + 1):
+            assert verify((j, shares[i][j - 1]), commitments[i])
+
+    # deo zajedničke tajne učesnika j: s_j = sum_i s_{i,j}
+    final = [(j, sum(shares[i][j - 1] for i in range(n)) % q)
+             for j in range(1, n + 1)]
+
+    # zajednički javni ključ: A = g^s = prod_i C_{i,0}
+    A = 1
+    for C in commitments:
+        A = (A * C[0]) % p
+    return final, A
 ~~~
 
 Moderne varijante ovog protokola imaju dodatna ojačanja. Na primer, pored
@@ -91,6 +144,17 @@ da namesti tajnu vrednost \\(s\\) izborom lažne obaveze \\(C _{i, 0} = g^s
 C^{-1}\\) gde je \\(C = \prod _{j \neq i} C _{j, 0} \\).
 
 ~~~python
+def prove_knowledge(a):
+    C = pow(g, a, p)
+    k = secrets.randbelow(q - 1) + 1
+    K = pow(g, k, p)
+    e = int.from_bytes(hash_obj((C, K)), "big") % q
+    return K, (k + e * a) % q
+
+def verify_knowledge(C, proof):
+    K, z = proof
+    e = int.from_bytes(hash_obj((C, K)), "big") % q
+    return pow(g, z, p) == (K * pow(C, e, p)) % p
 ~~~
 
 ## ElGamal enkripcija
@@ -110,6 +174,21 @@ poruku moguće dešifrovati kao \\(m = k^{-1}c\\). Primetimo da na ovaj način
 nije direktno rekonstruisana tajna vrednost \\(s\\).
 
 ~~~python
+def encrypt(m, A):
+    r = secrets.randbelow(q - 1) + 1
+    R = pow(g, r, p)
+    k = pow(A, r, p)
+    return R, (k * m) % p
+
+def partial_decrypt(R, s_i):
+    return pow(R, s_i, p)
+
+def combine(R, c, partials):
+    coeffs = lagrange(list(partials))
+    k = 1
+    for i, k_i in partials.items():
+        k = (k * pow(k_i, coeffs[i], p)) % p
+    return (c * pow(k, -1, p)) % p
 ~~~
 
 ## Šnorov potpis
@@ -124,7 +203,132 @@ s_i\\). Konačni potpis je \\(p = \sum_i p_i = \sum_i r_i + c \sum_i l_i(0) s_i
 = r + c s\\). Provera potpisa se vrši na standardni način.
 
 ~~~python
+def challenge(R, m):
+    return int.from_bytes(hash_obj((R, m)), "big") % q
+
+def sign(m, shares):
+    signers = list(shares)
+    rs = {i: secrets.randbelow(q - 1) + 1 for i in signers}
+    R = 1
+    for i in signers:
+        R = (R * pow(g, rs[i], p)) % p
+    c = challenge(R, m)
+    coeffs = lagrange(signers)
+    parts = {i: (rs[i] + c * coeffs[i] * shares[i]) % q for i in signers}
+    return R, sum(parts.values()) % q
+
+def verify(m, R, P, A):
+    c = challenge(R, m)
+    return pow(g, P, p) == (R * pow(A, c, p)) % p
 ~~~
 
 
 ## Zadaci
+
+U zadacima sa konkretnim brojevima (2, 6 i 7) koristi se ciklična podgrupa reda
+\\(q\\) grupe \\(\mathbb{Z}_p^*\\) sa generatorom \\(g\\):
+
+~~~python
+p = 1267650600228229401496703217287
+q = 633825300114114700748351608643
+g = 2
+~~~
+
+### Zadatak 1
+
+Posmatramo Šamirovo deljenje tajne u kome je za rekonstrukciju potrebno bilo
+koja \\(3\\) od ukupno \\(5\\) delova. Vi ste delilac i želite da sabotirate
+učesnika 2. Konstruisati delove tako da svaka grupa od tri učesnika koja ne
+sadrži učesnika 2 rekonstruiše ispravnu tajnu, dok svaka grupa koja sadrži
+učesnika 2 rekonstruiše pogrešnu vrednost. Objasniti zašto u običnom Šamirovom
+deljenju učesnik 2 ne može da utvrdi da je dobio neispravan deo.
+
+Zatim, pokazati kako učesnik 2 pomoću Feldmanovih obaveza može da otkrije da mu
+je deo neispravan. Objasniti i zašto delilac koji je objavio obaveze više ne
+može da napravi delove tako da različite grupe rekonstruišu različite tajne.
+
+### Zadatak 2
+
+Grupa od \\(n\\) učesnika generiše zajednički javni ključ tako što svaki učesnik
+\\(i\\) objavljuje doprinos \\(C_i = g^{a_i}\\), a zajednički ključ se računa kao
+\\(A = \prod_i C_i\\). Vi ste poslednji učesnik koji objavljuje svoj doprinos i u
+tom trenutku poznati su vam doprinosi svih ostalih učesnika. Izabrati svoj
+doprinos tako da zajednički javni ključ bude tačno \\(g^x\\) za vrednost \\(x\\)
+koju vi birate, čime jedino vi znate odgovarajući tajni ključ.
+
+~~~python
+others = [526504585288905119860786968747, 751429976279136810775446160289,
+          1174038313191067889758460100673, 646711060212620438228628540866]
+~~~
+
+Zatim, pretpostaviti da svaki učesnik uz svoj doprinos \\(C_i\\) objavljuje i
+Šnorov dokaz poznavanja vrednosti \\(a_i\\). Objasniti zašto u tom slučaju
+opisani napad više nije moguć.
+
+### Zadatak 3
+
+Implementirati osvežavanje delova tajne. Učesnici zajednički generišu novo
+deljenje vrednosti \\(0\\) (na primer Pedersenovim distribuiranim generisanjem),
+a zatim svaki učesnik svom postojećem delu dodaje deo dobijen iz tog deljenja.
+Time se dobijaju novi delovi iste tajne \\(s\\), dok stari delovi postaju
+beskorisni. Objasniti zašto napadač koji je prikupio nekoliko starih delova
+(manje od praga) ne može da ih kombinuje sa novim delovima kako bi rekonstruisao
+tajnu.
+
+### Zadatak 4
+
+Pri dešifrovanju ElGamal šifrata sa deljenom tajnom svaki učesnik \\(i\\)
+objavljuje delimični dešifrat \\(k_i = R^{s_i}\\). Zlonameran učesnik može da
+objavi pogrešnu vrednost i tako neprimetno pokvari rezultat dešifrovanja.
+Opisati sigma protokol kojim učesnik dokazuje da je njegov delimični dešifrat
+ispravan, odnosno da važi \\(\log_R k_i = \log_g A_i\\), gde je \\(A_i =
+g^{s_i}\\) javno poznata vrednost. Transformisati protokol u neinteraktivan
+dokaz pomoću Fiat–Šamir heuristike.
+
+### Zadatak 5
+
+Implementirati protokol u kome \\(n\\) servera Pedersenovim distribuiranim
+generisanjem ključa uspostavlja zajednički javni ključ i objavljuje ga
+klijentima. Klijent šalje poruku šifrovanu ElGamal enkripcijom, a serveri je
+dešifruju jedino ako bar \\(t+1\\) njih sarađuje. Tajna vrednost \\(s\\) se pri
+tome nikada ne rekonstruiše.
+
+### Zadatak 6
+
+Grupa učesnika koristi Šnorov potpis sa deljenom tajnom. Pri potpisivanju dve
+poruke pojedinačne slučajne vrednosti \\(r_i\\) učesnika su različite, ali im je
+zbir \\(r = \sum_i r_i\\) (a samim tim i zajedničko \\(R\\)) isti. Poznate su
+poruke `m1` i `m2` sa odgovarajućim potpisima i javni ključ \\(A\\). Odrediti
+deljenu tajnu \\(s\\).
+
+~~~python
+A = 566770316454856307829090272389
+R = 48782703516910801051292529125
+m1, p1 = b"Zdravo, svete!", 451936851426871684204850359794
+m2, p2 = b"Vozdra, svete!", 175413685088376135148001806143
+~~~
+
+### Zadatak 7
+
+Grupa učesnika koristi Šnorov potpis sa deljenom tajnom. Učesnik \\(i\\) je pri
+dva potpisivanja iskoristio istu slučajnu vrednost \\(r_i\\), dok su ostali
+učesnici koristili nove vrednosti (pa su zajednička \\(R\\) u dva potpisivanja
+različita). Poznati su delimični potpisi \\(p_i\\) učesnika \\(i\\) iz oba
+potpisivanja, odgovarajući izazovi, kao i skup učesnika koji potpisuju (na
+osnovu koga se računa Lagranžov koeficijent \\(l_i(0)\\)). Odrediti deo tajne
+\\(s_i\\) učesnika \\(i\\).
+
+~~~python
+signers = [1, 3, 5]  # indeksi učesnika koji potpisuju (za l_i(0))
+i = 3                # učesnik koji je ponovio r_i
+A_i = 1004631559607981823051483430116
+c1, pi1 = 4812911075131955971163679542, 431509380094865034067600365151
+c2, pi2 = 399861716824313323430540420606, 517878666659093061272355479587
+~~~
+
+### Zadatak 8
+
+Implementirati protokol u kome \\(n\\) učesnika generiše zajednički javni ključ,
+a zatim bilo kojih \\(t+1\\) učesnika može zajednički da proizvede Šnorov potpis
+poruke. Potpis se proverava na standardni način u odnosu na zajednički javni
+ključ.
