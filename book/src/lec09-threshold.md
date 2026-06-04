@@ -114,6 +114,17 @@ nije direktno rekonstruisana tajna vrednost \\(s\\).
 
 ## Šnorov potpis
 
+Ključevi za Šnorov potpis sa deljenom tajnom se generišu na isti način kao i
+kod ElGamal enkripcije. Potpisivanje zahteva \\(t+1\\) učesnika se vrši na
+sledeći način. Svaki učesnik \\(i\\) bira slučajan broj \\(r_i\\) i računa
+\\(R_i = g^{r_i}\\). Na osnovu ovoga se računa zajedničko \\(R = \prod_i R_i =
+g^r\\) gde je \\(r = \sum_i r_i\\). Određuje se jedan zajednični izazov \\(c =
+h(R, m)\\) i svaki učesnik računa svoj deo potpisa \\(p_i = r_i + c l_i(0)
+s_i\\). Konačni potpis je \\(p = \sum_i p_i = \sum_i r_i + c \sum_i l_i(0) s_i
+= r + c s\\). Provera potpisa se vrši na standardni način.
+
+~~~python
+~~~
 
 
 ## Zadaci
