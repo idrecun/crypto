@@ -81,8 +81,8 @@ print(f"# b = {B_PARAM}")
 print(f"# n = {N}")
 print(f"# G = {fmt(G)}")
 
-# === Task 5: MITM ECDH ===
-print("\n# === Task 5: MITM ECDH ===")
+# === Task 2: MITM ECDH ===
+print("\n# === Task 2: MITM ECDH ===")
 a5 = rand(N)
 A5 = mul(a5, G)
 b5 = rand(N)
@@ -94,8 +94,8 @@ print(f"e = {e5}")
 print(f"# K_alice = {fmt(mul(e5, A5))}")
 print(f"# K_bob   = {fmt(mul(e5, B5))}")
 
-# === Task 6: EC-ElGamal same R ===
-print("\n# === Task 6: EC-ElGamal same R ===")
+# === Task 3: EC-ElGamal same R ===
+print("\n# === Task 3: EC-ElGamal same R ===")
 a6 = rand(N)
 A6 = mul(a6, G)
 r6 = rand(N)
@@ -112,8 +112,8 @@ print(f"R2 = {fmt(R6)}")
 print(f"C2 = {fmt(C2)}")
 print(f"# M2 (private) = {fmt(M2)}")
 
-# === Task 7: EC-ElGamal signature nonce reuse ===
-print("\n# === Task 7: EC-ElGamal sig nonce reuse ===")
+# === Task 4: EC-ElGamal signature nonce reuse ===
+print("\n# === Task 4: EC-ElGamal sig nonce reuse ===")
 
 
 def H(s):
@@ -138,8 +138,8 @@ print(f"R2 = {fmt(R7)}")
 print(f"s2 = {s2_7}")
 print(f"# a (private) = {a7}")
 
-# === Task 8: EC-Schnorr nonce reuse ===
-print("\n# === Task 8: EC-Schnorr nonce reuse ===")
+# === Task 5: EC-Schnorr nonce reuse ===
+print("\n# === Task 5: EC-Schnorr nonce reuse ===")
 
 
 def Hch(R, m):
@@ -166,8 +166,8 @@ print(f"R2 = {fmt(R8)}")
 print(f"s2 = {s2_8}")
 print(f"# a (private) = {a8}")
 
-# === Task 9: EC-Schnorr without R in hash ===
-print("\n# === Task 9: EC-Schnorr no R in hash ===")
+# === Task 6: EC-Schnorr without R in hash ===
+print("\n# === Task 6: EC-Schnorr no R in hash ===")
 
 
 def Hm(m):
@@ -179,8 +179,8 @@ A9 = mul(a9, G)
 print(f"A = {fmt(A9)}")
 print(f"# a (private) = {a9}")
 
-# === Task 11: Pohlig-Hellman on smooth-order curve ===
-print("\n# === Task 11: Pohlig-Hellman ===")
+# === Task 8: Pohlig-Hellman on smooth-order curve ===
+print("\n# === Task 8: Pohlig-Hellman ===")
 
 
 def find_smooth_curve():
@@ -235,45 +235,3 @@ if found:
     print(f"G = {fmt(G11)}")
     print(f"A = {fmt(A11)}")
     print(f"# a (private) = {a_priv11}")
-
-# === Task 12: Safe parameter selection ===
-print("\n# === Task 12: Safe params ===")
-
-
-def order_naive(p, a, b):
-    count = 1  # point at infinity
-    for x in range(p):
-        rhs = (x * x * x + a * x + b) % p
-        if rhs == 0:
-            count += 1
-        elif pow(rhs, (p - 1) // 2, p) == 1:
-            count += 2
-    return count
-
-
-def find_curve_with_order_class(target):
-    """target: 'safe' (prime or 2*prime), 'unsafe' (smooth)."""
-    while True:
-        p = randprime(500_000, 2_000_000)
-        a = rnd.randrange(p)
-        b = rnd.randrange(p)
-        if (4 * a**3 + 27 * b**2) % p == 0:
-            continue
-        o = order_naive(p, a, b)
-        f = factorint(o)
-        max_factor = max(f.keys())
-        if target == "safe" and len(f) == 1 and list(f.values())[0] == 1:
-            return p, a, b, o, f
-        if target == "unsafe" and max_factor < 200:
-            return p, a, b, o, f
-
-
-print("# Generating 4 candidate curves...")
-labels = ["safe", "unsafe", "safe", "unsafe"]
-rnd.shuffle(labels)
-for i, lbl in enumerate(labels, 1):
-    p, a, b, o, f = find_curve_with_order_class(lbl)
-    print(f"# Curve {i} [{lbl}]: order={o}, factor={dict(f)}")
-    print(f"p{i} = {p}")
-    print(f"a{i} = {a}")
-    print(f"b{i} = {b}")

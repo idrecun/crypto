@@ -1,10 +1,10 @@
-# pre prvog pokretanja: python zadatak10_setup.py
+# pre prvog pokretanja: python zadatak7_setup.py
 from kurs.network import Listener
 from hashlib import sha256
 from Crypto.Cipher import AES
 import ecdh
 import ec_schnorr
-from zadatak10_keys import server_priv, client_pub
+from zadatak7_keys import server_priv, client_pub
 
 
 def point_bytes(P):

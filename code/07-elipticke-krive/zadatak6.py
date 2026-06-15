@@ -1,21 +1,28 @@
+import hashlib
+from kurs import ec_G, ec_n
 import ec
 
-# Anin javni kljuc, poznata poruka i njen sifrat
-A = (172555618972274937527774535265768735313,
-     10081883194550683330255804375487986898)
-M = (258195427694994240236789828875940887457,
-     337184816232937204958887835705857507231)
-R1 = (70317932819526710602903815804549240940,
-      36813546415559138349030471247361636124)
-C1 = (287066134838516450567688517941084959058,
-      218063401705308332321934229482059355773)
+A = (246691936285505052706352817197487175489,
+     10886859581935478975083534919891668598)
 
-# Sifrat nepoznate poruke (isto R kao iznad)
-R2 = (70317932819526710602903815804549240940,
-      36813546415559138349030471247361636124)
-C2 = (33302374266159024897512879673930207502,
-      336771186098399155523098592439895884956)
 
-# C - rA = M, isto R znaci isto rA, pa M' = C' - C + M
-M2 = ec.add(ec.sub(C2, C1), M)
-print(f"M' = {M2}")
+def challenge(m):
+    return int.from_bytes(hashlib.sha256(m).digest(), "big") % ec_n
+
+
+def verify(m, R, s, A):
+    c = challenge(m)
+    return ec.mul(s, ec_G) == ec.add(R, ec.mul(c, A))
+
+
+# napad: c ne zavisi od R, pa biramo proizvoljno s i resimo R
+# sG = R + cA  =>  R = sG - cA
+m = b"Vozdra, svete!"
+c = challenge(m)
+s = 1
+R = ec.sub(ec.mul(s, ec_G), ec.mul(c, A))
+
+print(f"m = {m!r}")
+print(f"R = {R}")
+print(f"s = {s}")
+print(f"provera: {verify(m, R, s, A)}")

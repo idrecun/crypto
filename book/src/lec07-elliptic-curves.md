@@ -192,6 +192,20 @@ validan. To podrazumeva da je ta tačka \\(A\\) zaista na krivoj, da nije tačka
 u beskonačnosti i, u slučaju da je \\(h > 1\\), da pripada podgrupi generisanoj
 tačkom \\(G\\).
 
+~~~python
+def generate_keys():
+  a = secrets.randbelow(n - 2) + 1
+  A = ec.mul(a, G)
+  return a, A
+
+def validate(A):
+  if A is None:
+    return False
+  if not ec.on_curve(A):
+    return False
+  return ec.mul(n, A) is None
+~~~
+
 ### Difi-Helman razmena ključa
 
 Oba korisnika šalju svoj javni ključ drugom korisniku. Ako korisnik ima svoj
@@ -199,11 +213,6 @@ privatni ključ \\(a\\) i prihvatio je javni ključ drugog korisnika \\(B\\),
 računa zajednički ključ kao \\(K = aB\\).
 
 ~~~python
-def generate_keys():
-  a = secrets.randbelow(n - 2) + 1
-  A = ec.mul(a, G)
-  return a, A
-
 def shared_key(a, B):
   return ec.mul(a, B)
 ~~~
@@ -300,30 +309,11 @@ n = 340282366762482138443322565580356624661
 
 ### Zadatak 1
 
-Implementirati klasu za rad sa tačkama eliptičke krive \\(y^2 = x^3 + ax + b\\)
-nad konačnim poljem \\(\mathbb{F}_p\\). Implementirati operacije sabiranja
-tačaka, oduzimanja, dupliranja i množenja skalarom korišćenjem efikasnog
-algoritma složenosti \\(O(\log k)\\).
-
-### Zadatak 2
-
-Implementirati funkciju koja proverava da li je data tačka validan javni ključ
-za zadate parametre eliptičke krive \\((p, a, b, G, n)\\). Funkcija treba da
-proveri da je tačka različita od tačke u beskonačnosti, da leži na krivoj i da
-pripada cikličnoj podgrupi reda \\(n\\) generisanoj sa \\(G\\).
-
-### Zadatak 3
-
-Implementirati Koblicovo enkodovanje koje preslikava poruku \\(m\\) u tačku na
-eliptičkoj krivoj, kao i odgovarajuće dekodovanje.
-
-### Zadatak 4
-
 Implementirati protokol koji omogućava klijentu i serveru da ostvare šifrovanu
 komunikaciju. Tajni ključ se uspostavlja ECDH razmenom. Nakon toga se
 komunikacija nastavlja korišćenjem AES enkripcije za slanje poruka serveru.
 
-### Zadatak 5
+### Zadatak 2
 
 Ana i Boban izvršavaju ECDH razmenu ključa. Njihovi javni ključevi su:
 
@@ -342,7 +332,7 @@ e = 99327691616788894527576870712013829048
 
 Odrediti zajedničke ključeve koje Eva deli sa Anom i Bobanom.
 
-### Zadatak 6
+### Zadatak 3
 
 Anin javni EC-ElGamal ključ je:
 
@@ -376,10 +366,9 @@ C2 = (33302374266159024897512879673930207502,
       336771186098399155523098592439895884956)
 ~~~
 
-### Zadatak 7
+### Zadatak 4
 
-Boban koristi EC-ElGamal potpis u kome se za preslikavanje tačke u skalar
-koristi \\(\phi(R) = R_x \mod n\\). Bobanov javni ključ je:
+Boban koristi EC-ElGamal potpis sa \\(\phi(R) = R_x\\). Bobanov javni ključ je:
 
 ~~~python
 A = (1446342285746087496322261997989149864,
@@ -404,11 +393,17 @@ s2 = 32731572252507648075677496446020975539
 
 Odrediti privatni ključ.
 
-### Zadatak 8
+### Zadatak 5
 
-Boban koristi EC-Šnorov potpis u kome se izazov računa kao
-\\(c = h(\text{"(R_x, R_y)"} \mathbin{||} m) \mod n\\) za heš funkciju
-SHA-256. Bobanov javni ključ je:
+Boban koristi EC-Šnorov potpis u kome se izazov računa na sledeći način:
+
+~~~python
+def challenge(R, m):
+  b = f"({R[0]},{R[1]})".encode() + m
+  return int.from_bytes(hashlib.sha256(b).digest(), "big") % n
+~~~
+
+Bobanov javni ključ je:
 
 ~~~python
 A = (109467063707252142941786888194056392558,
@@ -433,10 +428,10 @@ s2 = 22127400428374188013866090255927965142
 
 Odrediti privatni ključ.
 
-### Zadatak 9
+### Zadatak 6
 
-Boban koristi EC-Šnorov potpis u kome se izazov računa samo na osnovu poruke,
-bez vrednosti \\(R\\), kao \\(c = h(m) \mod n\\). Bobanov javni ključ je:
+Boban koristi EC-Šnorov potpis u kome se izazov računa kao \\(c = h(m) \mod
+n\\). Bobanov javni ključ je:
 
 ~~~python
 A = (246691936285505052706352817197487175489,
@@ -446,13 +441,13 @@ A = (246691936285505052706352817197487175489,
 Predstaviti se lažno kao Boban i poslati Ani potpisanu poruku
 `m = "Vozdra, svete!"`.
 
-### Zadatak 10
+### Zadatak 7
 
 Implementirati protokol koji omogućava klijentu i serveru da ostvare šifrovanu
 komunikaciju razmenom ECDH ključeva. Obezbediti da je protokol otporan na
 man-in-the-middle napade korišćenjem EC-Šnorovog potpisa.
 
-### Zadatak 11
+### Zadatak 8
 
 Boban koristi ECDH protokol nad krivom \\(y^2 = x^3 + 1\\) nad poljem
 \\(\mathbb{F}_p\\) sa parametrima:

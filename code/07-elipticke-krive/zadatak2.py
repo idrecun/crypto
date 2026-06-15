@@ -1,13 +1,13 @@
-from kurs import ec_G
-import validate
+import ec
 
-# Implementacija: validate.validate
+A = (38908903211101888278623563709835614940,
+     86414223312395224141852774166062813584)
+B = (210067491220345722062217915833545932319,
+     314595414076388517941891137742153277344)
+e = 99327691616788894527576870712013829048
 
-candidates = {
-    "G (validan)": ec_G,
-    "(1, 1) (nije na krivoj)": (1, 1),
-    "tacka u beskonacnosti": None,
-}
+Ka = ec.mul(e, A)
+Kb = ec.mul(e, B)
 
-for label, P in candidates.items():
-    print(f"{label}: {validate.validate(P)}")
+print(f"Zajednicki kljuc sa Anom:    {Ka}")
+print(f"Zajednicki kljuc sa Bobanom: {Kb}")

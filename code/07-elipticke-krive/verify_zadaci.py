@@ -44,14 +44,14 @@ def H(s):
     return int.from_bytes(hashlib.sha256(s.encode()).digest(), "big") % N
 
 
-# ===== Task 5 =====
+# ===== Task 2 =====
 A5 = (38908903211101888278623563709835614940, 86414223312395224141852774166062813584)
 B5 = (210067491220345722062217915833545932319, 314595414076388517941891137742153277344)
 e5 = 99327691616788894527576870712013829048
-print("Task 5 K_alice:", mul(e5, A5))
-print("Task 5 K_bob  :", mul(e5, B5))
+print("Task 2 K_alice:", mul(e5, A5))
+print("Task 2 K_bob  :", mul(e5, B5))
 
-# ===== Task 6 =====
+# ===== Task 3 =====
 A6 = (172555618972274937527774535265768735313, 10081883194550683330255804375487986898)
 M1 = (258195427694994240236789828875940887457, 337184816232937204958887835705857507231)
 R1 = (70317932819526710602903815804549240940, 36813546415559138349030471247361636124)
@@ -60,9 +60,9 @@ R2 = (70317932819526710602903815804549240940, 3681354641555913834903047124736163
 C2 = (33302374266159024897512879673930207502, 336771186098399155523098592439895884956)
 # M2 = C2 - C1 + M1 (since C-rA = M, so M2 - M1 = C2 - C1)
 M2 = add(add(C2, neg(C1)), M1)
-print("Task 6 M' =", M2)
+print("Task 3 M' =", M2)
 
-# ===== Task 7 (EC-ElGamal sig nonce reuse) =====
+# ===== Task 4 (EC-ElGamal sig nonce reuse) =====
 A7 = (1446342285746087496322261997989149864, 51899882338286411277127986568238557735)
 m1_7 = "Hello, world!"; m2_7 = "Hello, matf!"
 R7 = (91407655570239612505893793489075498927, 25538088875613710856623369771771322160)
@@ -74,10 +74,10 @@ phi_R7 = R7[0] % N
 # a = (h1 - r*s1)/phi(R)
 r7_rec = ((H(m1_7) - H(m2_7)) * pow((s1_7 - s2_7) % N, -1, N)) % N
 a7_rec = ((H(m1_7) - r7_rec * s1_7) * pow(phi_R7, -1, N)) % N
-print("Task 7 a =", a7_rec)
-assert mul(a7_rec, G) == A7, "Task 7 verify failed"
+print("Task 4 a =", a7_rec)
+assert mul(a7_rec, G) == A7, "Task 4 verify failed"
 
-# ===== Task 8 (EC-Schnorr nonce reuse) =====
+# ===== Task 5 (EC-Schnorr nonce reuse) =====
 A8 = (109467063707252142941786888194056392558, 283624804562688076124413520142906544564)
 R8 = (69191772370633742414484574291592789683, 150081736994045835000962439583877754103)
 m1_8 = "Zdravo, svete!"; m2_8 = "Vozdra, svete!"
@@ -88,10 +88,10 @@ def Hch(R, m):
     return int.from_bytes(hashlib.sha256(s.encode()).digest(), "big") % N
 c1_8 = Hch(R8, m1_8); c2_8 = Hch(R8, m2_8)
 a8_rec = ((s1_8 - s2_8) * pow((c1_8 - c2_8) % N, -1, N)) % N
-print("Task 8 a =", a8_rec)
-assert mul(a8_rec, G) == A8, "Task 8 verify failed"
+print("Task 5 a =", a8_rec)
+assert mul(a8_rec, G) == A8, "Task 5 verify failed"
 
-# ===== Task 9 (forge) =====
+# ===== Task 6 (forge) =====
 A9 = (246691936285505052706352817197487175489, 10886859581935478975083534919891668598)
 m9 = "Vozdra, svete!"
 def Hm(m):
@@ -101,9 +101,9 @@ s9 = 12345678901234567890  # arbitrary
 R9 = add(mul(s9, G), neg(mul(c9, A9)))
 # verify: s*G == R + c*A
 assert mul(s9, G) == add(R9, mul(c9, A9))
-print(f"Task 9 forge OK: R={R9}, s={s9}")
+print(f"Task 6 forge OK: R={R9}, s={s9}")
 
-# ===== Task 11 (Pohlig-Hellman) =====
+# ===== Task 8 (Pohlig-Hellman) =====
 p11 = 1940158473524142299
 A11_param, B11_param = 0, 1
 n11 = 1940158473524142300
@@ -147,26 +147,5 @@ for q, e in factors.items():
     xi = bsgs(Gi, Hi, qe, A11_param, p11)
     residues.append(xi); moduli.append(qe)
 a11_rec = crt(residues, moduli)
-print("Task 11 a =", a11_rec)
+print("Task 8 a =", a11_rec)
 assert mul(a11_rec, G11, A11_param, p11) == A11
-
-# ===== Task 12 (orders) =====
-def order_naive(p, a, b):
-    count = 1
-    for x in range(p):
-        rhs = (x*x*x + a*x + b) % p
-        if rhs == 0: count += 1
-        elif pow(rhs, (p-1)//2, p) == 1: count += 2
-    return count
-
-curves12 = [
-    (501367, 183559, 261029),
-    (1015009, 264169, 456192),
-    (1606901, 1519467, 586263),
-    (670487, 386126, 380490),
-]
-for i, (p, a, b) in enumerate(curves12, 1):
-    o = order_naive(p, a, b)
-    f = factorint(o)
-    safe = "SAFE" if (len(f) == 1 and list(f.values())[0] == 1) else "UNSAFE"
-    print(f"Task 12 curve {i}: order={o} {dict(f)} -> {safe}")
