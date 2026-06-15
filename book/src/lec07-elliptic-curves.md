@@ -243,11 +243,11 @@ def decrypt(R, C, a):
 
 ### ElGamal potpis
 
-Za potpisivanje poruke \\(m\\) bira se slučajan broj \\(r\\) iz skupa \\( 1,
-\ldots, n-1\\) i računa se tačka \\(R = rG\\). Ako potpisujemo poruku privatnim
-ključem \\(a\\), potpis se računa kao \\(s = r^{-1}(h(m) - a \phi(R)) \mod
-n\\), gde sada za \\(\phi\\) biramo preslikavanje iz skupa tačaka eliptičke
-krive u vrednost iz \\(\mathbb{Z}\\), konkretno \\(\phi(R) = R_x\\).
+Za potpisivanje poruke \\(m\\) bira se slučajan (invertibilan) broj \\(r\\) iz
+skupa \\( 1, \ldots, n-1\\) i računa se tačka \\(R = rG\\). Ako potpisujemo
+poruku privatnim ključem \\(a\\), potpis se računa kao \\(s = r^{-1}(h(m) - a
+\phi(R)) \mod n\\), gde sada za \\(\phi\\) biramo preslikavanje iz skupa tačaka
+eliptičke krive u vrednost iz \\(\mathbb{Z}\\), konkretno \\(\phi(R) = R_x\\).
 
 Provera potpisa se vrši proverom jednakosti \\(h(m)G = sR + \phi(R) A\\).
 Ukoliko je potpis validan, onda važi \\(sR + \phi(R)A = (rs + a\phi(R))G =
@@ -270,6 +270,12 @@ def sign(m, a):
 def verify(m, R, s, A):
   return ec.mul(hash(m), G) == ec.add(ec.mul(s, R), ec.mul(phi(R), A))
 ~~~
+
+Primetimo da je umesto slanja tačke \\(R\\) bilo moguće poslati samo \\(\phi(R)
+= R_x\\). Tada se provera potpisa svodi na izračunavanje tačke \\(R\\) formulom
+\\(R = s^{-1}(h(m)G - \phi(R)A)\\) i proveru da li je \\(R_x = \phi(R)\\). Ova
+varijanta, uz sabiranje umesto oduzimanja u formuli potpisa, se naziva ECDSA
+(eng. _Elliptic Curve Digital Signature Algorithm_).
 
 ### Šnorov potpis
 
