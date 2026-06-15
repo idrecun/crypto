@@ -22,9 +22,14 @@ pomenutu jednakost postoji i "beskonačno daleka tačka" \\(\mathcal{O}\\) (ovo
 je posledica toga da eliptičku krivu zapravo definišemo u projektivnoj ravni).
 
 ~~~python
+def on_curve(P):
+  if P is None:
+    return True
+  x, y = P
+  return (y * y - x * x * x - a * x - b) % p == 0
 ~~~
 
-### Izvođenje Vajerštrasove forme
+<!-- ### Izvođenje Vajerštrasove forme -->
 
 ### Sabiranje tačaka
 
@@ -62,6 +67,30 @@ tački \\(P\\). Ovo računamo diferenciranjem obe strane jednačine krive, odnos
 a}{2y_P}\\).
 
 ~~~python
+def neg(P):
+  if P is None:
+    return None
+  return (P[0], (-P[1]) % p)
+
+def add(P, Q):
+  if P is None:
+    return Q
+  if Q is None:
+    return P
+  if P == neg(Q):
+    return None
+  x1, y1 = P
+  x2, y2 = Q
+  if x1 != x2:
+    s = ((y2 - y1) * pow(x2 - x1, -1, p)) % p
+  else:
+    s = ((3 * x1 * x1 + a) * pow(2 * y1, -1, p)) % p
+  x3 = (s * s - x1 - x2) % p
+  y3 = (s * (x1 - x3) - y1) % p
+  return (x3, y3)
+
+def sub(P, Q):
+  return add(P, neg(Q))
 ~~~
 
 ### Množenje skalarom
@@ -73,6 +102,15 @@ računali \\(nP\\), složenost bi bila \\(O(n)\\). Umesto ovoga, možemo primeni
 isti algoritam kao za efikasno stepenovanje, čija je složenost \\(O(\log n)\\).
 
 ~~~python
+def mul(k, P):
+  R = None
+  Q = P
+  while k > 0:
+    if k & 1:
+      R = add(R, Q)
+    Q = add(Q, Q)
+    k >>= 1
+  return R
 ~~~
 
 ## Eliptičke krive nad \\(\mathbb{F}_q\\)
@@ -117,6 +155,21 @@ je mala šansa da \\(c_i\\) nije kvadrat ni za jedno \\(i\\). Sa druge strane,
 za datu tačku \\((x, y)\\) jednostavno određujemo poruku \\(m\\) kao \\(\lfloor
 \frac{x}{k} \rfloor\\).
 
+~~~python
+k = 1024
+
+def encode(m):
+  for i in range(k):
+    x = m * k + i
+    c = (x * x * x + a * x + b) % p
+    if pow(c, (p - 1) // 2, p) == 1:
+      y = pow(c, (p + 1) // 4, p)
+      return (x, y)
+
+def decode(P):
+  return P[0] // k
+~~~
+
 ## Protokoli zasnovani na eliptičkim krivama
 
 Kao javni parametar bilo kog protokola potrebno je odabrati eliptičku krivu nad
@@ -146,6 +199,13 @@ privatni ključ \\(a\\) i prihvatio je javni ključ drugog korisnika \\(B\\),
 računa zajednički ključ kao \\(K = aB\\).
 
 ~~~python
+def generate_keys():
+  a = secrets.randbelow(n - 2) + 1
+  A = ec.mul(a, G)
+  return a, A
+
+def shared_key(a, B):
+  return ec.mul(a, B)
 ~~~
 
 ### ElGamal enkripcija
@@ -162,6 +222,14 @@ i dešifruje poruku kao \\(M = C - K\\), koju napokon dekoduje iz tačke u
 vrednost \\(m\\).
 
 ~~~python
+def encrypt(M, A):
+  r, R = ecdh.generate_keys()
+  K = ecdh.shared_key(r, A)
+  return R, ec.add(M, K)
+
+def decrypt(R, C, a):
+  K = ecdh.shared_key(a, R)
+  return ec.sub(C, K)
 ~~~
 
 ### ElGamal potpis
@@ -177,6 +245,21 @@ Ukoliko je potpis validan, onda važi \\(sR + \phi(R)A = (rs + a\phi(R))G =
 (rr^{-1}(h(m) - a \phi(R)) + a \phi(R))G = h(m)G\\).
 
 ~~~python
+def phi(R):
+  return R[0] % n
+
+def sign(m, a):
+  s = 0
+  while s == 0:
+    r = 0
+    while math.gcd(r, n) != 1:
+      r = secrets.randbelow(n - 1) + 1
+    R = ec.mul(r, G)
+    s = (pow(r, -1, n) * (hash(m) - a * phi(R))) % n
+  return (R, s)
+
+def verify(m, R, s, A):
+  return ec.mul(hash(m), G) == ec.add(ec.mul(s, R), ec.mul(phi(R), A))
 ~~~
 
 ### Šnorov potpis
@@ -189,6 +272,16 @@ Provera potpisa se vrši proverom jednakosti \\(sG = R + cA\\). Ukoliko je
 potpis validan, onda važi \\(sG = (r + ac)G = rG + acG = R + cA\\).
 
 ~~~python
+def sign(m, a):
+  r = secrets.randbelow(n - 1) + 1
+  R = ec.mul(r, G)
+  c = hash(str(R) + m) % n
+  s = (r + a * c) % n
+  return (R, s)
+
+def verify(m, R, s, A):
+  c = hash(str(R) + m) % n
+  return ec.mul(s, G) == ec.add(R, ec.mul(c, A))
 ~~~
 
 ## Zadaci
