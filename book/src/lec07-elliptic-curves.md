@@ -141,20 +141,52 @@ tačkom \\(G\\).
 
 ### Difi-Helman razmena ključa
 
+Oba korisnika šalju svoj javni ključ drugom korisniku. Ako korisnik ima svoj
+privatni ključ \\(a\\) i prihvatio je javni ključ drugog korisnika \\(B\\),
+računa zajednički ključ kao \\(K = aB\\).
+
 ~~~python
 ~~~
 
 ### ElGamal enkripcija
+
+Šifrovanje se vrši tako što prvo generišemo slučajan broj \\(r\\) iz skupa
+\\(1, \ldots, n-1\\) i izračunamo tačku \\(R = rG\\). Ove vrednosti
+predstavljaju privremeni privatni i javni ključ za Difi-Helman razmenu.
+Računamo zajednički ključ \\(K = rA\\) gde je \\(A\\) javni ključ primaoca.
+Poruka \\(m\\) koju šifrujemo se enkoduje u tačku \\(M\\) na krivoj i šifrat se
+računa kao \\(C = M + K\\). Šalje se par vrednosti \\((R, C)\\).
+
+Dešifrovanje se vrši tako što primalac računa zajednički ključ kao \\(K = aR\\)
+i dešifruje poruku kao \\(M = C - K\\), koju napokon dekoduje iz tačke u
+vrednost \\(m\\).
 
 ~~~python
 ~~~
 
 ### ElGamal potpis
 
+Za potpisivanje poruke \\(m\\) bira se slučajan broj \\(r\\) iz skupa \\( 1,
+\ldots, n-1\\) i računa se tačka \\(R = rG\\). Ako potpisujemo poruku privatnim
+ključem \\(a\\), potpis se računa kao \\(s = r^{-1}(h(m) - a \phi(R)) \mod
+n\\), gde sada za \\(\phi\\) biramo preslikavanje iz skupa tačaka eliptičke
+krive u vrednost iz \\(\mathbb{Z}\\), konkretno \\(\phi(R) = R_x\\).
+
+Provera potpisa se vrši proverom jednakosti \\(h(m)G = sR + \phi(R) A\\).
+Ukoliko je potpis validan, onda važi \\(sR + \phi(R)A = (rs + a\phi(R))G =
+(rr^{-1}(h(m) - a \phi(R)) + a \phi(R))G = h(m)G\\).
+
 ~~~python
 ~~~
 
 ### Šnorov potpis
+
+Za potpisivanje poruke \\(m\\) bira se slučajan broj \\(r\\) iz skupa \\( 1,
+\ldots, n-1\\) i računa se tačka \\(R = rG\\). Izazov se računa kao \\(c =
+h(R_x, R_y, m)\\), a potpis se računa kao \\(s = r + ac \mod n\\).
+
+Provera potpisa se vrši proverom jednakosti \\(sG = R + cA\\). Ukoliko je
+potpis validan, onda važi \\(sG = (r + ac)G = rG + acG = R + cA\\).
 
 ~~~python
 ~~~
@@ -345,18 +377,3 @@ A = (1057509392935454215, 1290626223251531797)
 ~~~
 
 Odrediti Bobanov privatni ključ.
-
-<!--
-### Zadatak 12
-
-Boban je Ani ponudio nekoliko kandidata za parametre eliptičke krive
-\\((p, a, b)\\) za upotrebu u ECDH protokolu. Odrediti koji su od ponuđenih
-bezbedni:
-
-~~~python
-p1, a1, b1 = 501367, 183559, 261029
-p2, a2, b2 = 1015009, 264169, 456192
-p3, a3, b3 = 1606901, 1519467, 586263
-p4, a4, b4 = 670487, 386126, 380490
-~~~
--->
