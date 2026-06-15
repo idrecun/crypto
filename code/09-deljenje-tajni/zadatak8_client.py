@@ -1,27 +1,30 @@
-# pre pokretanja: python zadatak8_setup.py, pa pokrenuti bar t+1 servera
-from kurs.network import ClientConnection
+# pre pokretanja: bar t+1 učesnika (python zadatak8_server.py <i> 5 2)
 import schnorr
-from shamir import g, p, q
-from zadatak8_keys import A
+from shamir import p, q
+from kurs.network import connect_retry
 
 m = b"matf kripto"
 signers = [1, 3, 5]
 
-# Runda 1: prikupi R_i od svakog potpisnika i izračunaj zajedničko R = prod R_i.
+# Poveži se sa svim potpisnicima; svaki prvo šalje zajednički javni ključ A.
 conns = {}
-R = 1
+A = None
 for i in signers:
-    conn = ClientConnection.connect(port=12344 + i)
+    conns[i] = connect_retry(12344 + i)
+    A = conns[i].recv()
+
+# Runda 1: pošalji skup potpisnika i prikupi R_i; zajedničko R = prod R_i.
+R = 1
+for i, conn in conns.items():
     conn.send(signers)
     R = (R * conn.recv()) % p
-    conns[i] = conn
 
-# Runda 2: pošalji svima zajednički izazov c i saberi delimične potpise.
+# Runda 2: pošalji zajednički izazov c i saberi delimične potpise.
 c = schnorr.challenge(R, m)
 P = 0
-for i in signers:
-    conns[i].send(c)
-    P = (P + conns[i].recv()) % q
-    conns[i].close()
+for i, conn in conns.items():
+    conn.send(c)
+    P = (P + conn.recv()) % q
+    conn.close()
 
-print(f"validan potpis: {schnorr.verify(m, R, P, A)}")
+print(f"validan potpis: {schnorr.verify(m, R, P, A)}", flush=True)

@@ -1,6 +1,7 @@
 import pickle
 import socket
 import struct
+import time
 
 
 class Connection:
@@ -61,3 +62,43 @@ class ClientConnection(Connection):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((host, port))
         return cls(sock)
+
+
+def connect_retry(port, host="127.0.0.1", timeout=10.0):
+    """Kao ClientConnection.connect, ali ponavlja dok se server ne podigne
+    (korisno kada klijent krene pre nego što server počne da sluša)."""
+    deadline = time.monotonic() + timeout
+    while True:
+        try:
+            return ClientConnection.connect(host, port)
+        except ConnectionRefusedError:
+            if time.monotonic() > deadline:
+                raise
+            time.sleep(0.05)
+
+
+def connect_mesh(index, n, base_port=12344, timeout=10.0):
+    """Uspostavlja potpuno povezanu (full mesh) mrežu između n učesnika, bez
+    niti. Svaki učesnik prvo otvori svoj listener, zatim pozove sve učesnike sa
+    većim indeksom (veza se prihvata u TCP backlog i pre poziva accept, pošto su
+    svi već u listen stanju), a prihvati veze od svih sa manjim indeksom. Indeks
+    se šalje kao handshake da bi obe strane znale ko je ko.
+
+    Vraća (listener, peers) gde je peers rečnik {j: Connection} za svako j != i.
+    Listener ostaje otvoren (npr. za kasnije posluživanje klijenata)."""
+    listener = Listener(port=base_port + index)
+    listener.start()
+
+    peers = {}
+    # Pozovi sve sa većim indeksom (njihov listener je već aktivan).
+    for j in range(index + 1, n + 1):
+        conn = connect_retry(base_port + j, timeout=timeout)
+        conn.send(index)
+        peers[j] = conn
+
+    # Prihvati veze od svih sa manjim indeksom.
+    for _ in range(index - 1):
+        conn, _ = listener.accept()
+        peers[conn.recv()] = conn
+
+    return listener, peers

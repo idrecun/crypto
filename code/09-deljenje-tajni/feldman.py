@@ -23,12 +23,3 @@ def verify(part, commitments):
     for k, C in enumerate(commitments):
         rhs = (rhs * pow(C, i ** k, p)) % p
     return pow(g, s_i, p) == rhs
-
-
-if __name__ == "__main__":
-    parts, C = deal(1234567890, t=2, n=5)
-    print(f"svi delovi validni: {all(verify(part, C) for part in parts)}")
-
-    # Pokvaren deo ne prolazi proveru.
-    i, s_i = parts[2]
-    print(f"pokvaren deo validan: {verify((i, s_i + 1), C)}")

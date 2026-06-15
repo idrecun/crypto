@@ -52,12 +52,3 @@ def reconstruct(parts):
     """Rekonstruiši tajnu iz delova (i, s_i) Lagranžovom interpolacijom u 0."""
     coeffs = lagrange([i for i, _ in parts])
     return sum(coeffs[i] * s_i for i, s_i in parts) % q
-
-
-if __name__ == "__main__":
-    s = 1234567890
-    parts = share(s, t=2, n=5)
-    print(f"tajna: {s}")
-    print(f"rekonstrukcija iz delova 1,2,3: {reconstruct(parts[:3]) == s}")
-    print(f"rekonstrukcija iz delova 2,4,5: {reconstruct([parts[1], parts[3], parts[4]]) == s}")
-    print(f"rekonstrukcija iz samo 2 dela:  {reconstruct(parts[:2]) == s}")

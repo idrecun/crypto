@@ -26,17 +26,3 @@ def combine(R, c, partials):
     for i, k_i in partials.items():
         k = (k * pow(k_i, coeffs[i], p)) % p
     return (c * pow(k, -1, p)) % p
-
-
-if __name__ == "__main__":
-    s = 987654321
-    A = pow(g, s, p)
-    parts = shamir.share(s, t=2, n=5)
-
-    m = 42
-    R, c = encrypt(m, A)
-
-    # Tri učesnika sarađuju u dešifrovanju.
-    grupa = [parts[0], parts[2], parts[4]]
-    partials = {i: partial_decrypt(R, s_i) for i, s_i in grupa}
-    print(f"dešifrovano ispravno: {combine(R, c, partials) == m}")

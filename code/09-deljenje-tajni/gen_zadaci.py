@@ -1,7 +1,7 @@
-"""Generiše konkretne vrednosti za zadatke 2, 6 i 7 (napadi sa brojevima).
+"""Generiše konkretne vrednosti za zadatke 2 i 7 (napadi sa brojevima).
 
 Koristi manju grupu (videti preambulu zadataka u lekciji). Pokrenuti iz
-direktorijuma lekcije; izlaz se ubacuje u zadatak2/6/7.py i u tekst zadataka.
+direktorijuma lekcije; izlaz se ubacuje u zadatak2/7.py i u tekst zadataka.
 """
 import random as rnd
 from kurs import hash_obj
@@ -37,20 +37,8 @@ print("# === Zadatak 2: namestanje javnog kljuca (rogue key) ===")
 others = [pow(g, rand(), p) for _ in range(4)]
 print(f"others = {others}")
 
-print("\n# === Zadatak 6: isto zajednicko R ===")
-s6 = rand()
-A6 = pow(g, s6, p)
-r6 = rand()  # zajednicki zbir nonce-ova (isti u oba potpisivanja)
-R6 = pow(g, r6, p)
-m1, m2 = b"Zdravo, svete!", b"Vozdra, svete!"
-c1, c2 = challenge(R6, m1), challenge(R6, m2)
-print(f"A = {A6}")
-print(f"R = {R6}")
-print(f"p1 = {(r6 + c1 * s6) % q}")
-print(f"p2 = {(r6 + c2 * s6) % q}")
-print(f"# s (private) = {s6}")
-
 print("\n# === Zadatak 7: ponovljeno r_i jednog ucesnika ===")
+m1, m2 = b"Zdravo, svete!", b"Vozdra, svete!"
 signers, i = [1, 3, 5], 3
 si = rand()
 li = lagrange(signers)[i]

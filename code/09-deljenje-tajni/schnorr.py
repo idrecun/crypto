@@ -27,15 +27,3 @@ def sign(m, shares):
 def verify(m, R, P, A):
     c = challenge(R, m)
     return pow(g, P, p) == (R * pow(A, c, p)) % p
-
-
-if __name__ == "__main__":
-    s = 987654321
-    A = pow(g, s, p)
-    parts = dict(shamir.share(s, t=2, n=5))
-
-    m = b"matf kripto"
-    grupa = {1: parts[1], 3: parts[3], 5: parts[5]}
-    R, P = sign(m, grupa)
-    print(f"validan potpis: {verify(m, R, P, A)}")
-    print(f"potpis za drugu poruku: {verify(b'druga poruka', R, P, A)}")

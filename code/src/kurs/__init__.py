@@ -30,8 +30,10 @@ from .hash import (
     hash_to_ints,
 )
 from .public_key import dh_g, dh_p, ec_p, ec_a, ec_b, ec_n, ec_G
+from . import pairing
 
 __all__ = [
+    "pairing",
     "AES_SBOX",
     "bits_to_bytes",
     "blocks_to_bytes",

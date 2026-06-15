@@ -225,7 +225,7 @@ def verify(m, R, P, A):
 
 ## Zadaci
 
-U zadacima sa konkretnim brojevima (2, 6 i 7) koristi se ciklična podgrupa reda
+U zadacima sa konkretnim brojevima (2 i 7) koristi se ciklična podgrupa reda
 \\(q\\) grupe \\(\mathbb{Z}_p^*\\) sa generatorom \\(g\\):
 
 ~~~python
@@ -236,46 +236,36 @@ g = 2
 
 ### Zadatak 1
 
-Posmatramo Šamirovo deljenje tajne u kome je za rekonstrukciju potrebno bilo
-koja \\(3\\) od ukupno \\(5\\) delova. Vi ste delilac i želite da sabotirate
-učesnika 2. Konstruisati delove tako da svaka grupa od tri učesnika koja ne
-sadrži učesnika 2 rekonstruiše ispravnu tajnu, dok svaka grupa koja sadrži
-učesnika 2 rekonstruiše pogrešnu vrednost. Objasniti zašto u običnom Šamirovom
-deljenju učesnik 2 ne može da utvrdi da je dobio neispravan deo.
-
-Zatim, pokazati kako učesnik 2 pomoću Feldmanovih obaveza može da otkrije da mu
-je deo neispravan. Objasniti i zašto delilac koji je objavio obaveze više ne
-može da napravi delove tako da različite grupe rekonstruišu različite tajne.
+Implementirati server koji generiše delove tajne Šamirovim protokolom tako da
+je za rekonstrukciju potrebno \\(3\\) od \\(5\\) delova. Pritom, server treba
+da sabotira učesnika 2, odnosno bilo koji skup od tri učesnika koji uključuje
+učesnika 2 treba da prilikom rekonstrukcije dobije pogrešnu tajnu vrednost.
 
 ### Zadatak 2
 
-Grupa od \\(n\\) učesnika generiše zajednički javni ključ tako što svaki učesnik
-\\(i\\) objavljuje doprinos \\(C_i = g^{a_i}\\), a zajednički ključ se računa kao
-\\(A = \prod_i C_i\\). Vi ste poslednji učesnik koji objavljuje svoj doprinos i u
-tom trenutku poznati su vam doprinosi svih ostalih učesnika. Izabrati svoj
-doprinos tako da zajednički javni ključ bude tačno \\(g^x\\) za vrednost \\(x\\)
-koju vi birate, čime jedino vi znate odgovarajući tajni ključ.
+Grupa od \\(n\\) učesnika generiše zajednički javni ključ tako što svaki
+učesnik \\(i\\) objavljuje doprinos \\(C_i = g^{a_i}\\), a zajednički ključ se
+računa kao \\(A = \prod_i C_i\\). Ako su poznati doprinosi svih prethodnih učesnika,
+namestiti doprinos poslednjeg učesnika tako da odgovarajući zajednički tajni
+ključ bude \\(x = 1337\\).
 
 ~~~python
 others = [526504585288905119860786968747, 751429976279136810775446160289,
           1174038313191067889758460100673, 646711060212620438228628540866]
 ~~~
 
-Zatim, pretpostaviti da svaki učesnik uz svoj doprinos \\(C_i\\) objavljuje i
-Šnorov dokaz poznavanja vrednosti \\(a_i\\). Objasniti zašto u tom slučaju
-opisani napad više nije moguć.
-
 ### Zadatak 3
 
-Implementirati osvežavanje delova tajne. Učesnici zajednički generišu novo
-deljenje vrednosti \\(0\\) (na primer Pedersenovim distribuiranim generisanjem),
-a zatim svaki učesnik svom postojećem delu dodaje deo dobijen iz tog deljenja.
-Time se dobijaju novi delovi iste tajne \\(s\\), dok stari delovi postaju
-beskorisni. Objasniti zašto napadač koji je prikupio nekoliko starih delova
-(manje od praga) ne može da ih kombinuje sa novim delovima kako bi rekonstruisao
-tajnu.
+Predložiti način da se napad iz zadatka 2 spreči.
 
 ### Zadatak 4
+
+Opisati i implementirati postupak kojim је moguće osvežiti delove tajne,
+oslanjajući se na deljenje vrednosti \\(0\\). Potrebno je izmeniti delove tajne
+tako svi stari kompromitovani delovi tajne postanu neupotrebljivi, pod
+pretpostavkom da je bilo najviše \\(t\\) kompromitovanih.
+
+### Zadatak 5
 
 Pri dešifrovanju ElGamal šifrata sa deljenom tajnom svaki učesnik \\(i\\)
 objavljuje delimični dešifrat \\(k_i = R^{s_i}\\). Zlonameran učesnik može da
@@ -285,7 +275,7 @@ ispravan, odnosno da važi \\(\log_R k_i = \log_g A_i\\), gde je \\(A_i =
 g^{s_i}\\) javno poznata vrednost. Transformisati protokol u neinteraktivan
 dokaz pomoću Fiat–Šamir heuristike.
 
-### Zadatak 5
+### Zadatak 6
 
 Implementirati protokol u kome \\(n\\) servera Pedersenovim distribuiranim
 generisanjem ključa uspostavlja zajednički javni ključ i objavljuje ga
@@ -293,33 +283,16 @@ klijentima. Klijent šalje poruku šifrovanu ElGamal enkripcijom, a serveri je
 dešifruju jedino ako bar \\(t+1\\) njih sarađuje. Tajna vrednost \\(s\\) se pri
 tome nikada ne rekonstruiše.
 
-### Zadatak 6
-
-Grupa učesnika koristi Šnorov potpis sa deljenom tajnom. Pri potpisivanju dve
-poruke pojedinačne slučajne vrednosti \\(r_i\\) učesnika su različite, ali im je
-zbir \\(r = \sum_i r_i\\) (a samim tim i zajedničko \\(R\\)) isti. Poznate su
-poruke `m1` i `m2` sa odgovarajućim potpisima i javni ključ \\(A\\). Odrediti
-deljenu tajnu \\(s\\).
-
-~~~python
-A = 566770316454856307829090272389
-R = 48782703516910801051292529125
-m1, p1 = b"Zdravo, svete!", 451936851426871684204850359794
-m2, p2 = b"Vozdra, svete!", 175413685088376135148001806143
-~~~
-
 ### Zadatak 7
 
 Grupa učesnika koristi Šnorov potpis sa deljenom tajnom. Učesnik \\(i\\) je pri
 dva potpisivanja iskoristio istu slučajnu vrednost \\(r_i\\), dok su ostali
-učesnici koristili nove vrednosti (pa su zajednička \\(R\\) u dva potpisivanja
-različita). Poznati su delimični potpisi \\(p_i\\) učesnika \\(i\\) iz oba
-potpisivanja, odgovarajući izazovi, kao i skup učesnika koji potpisuju (na
-osnovu koga se računa Lagranžov koeficijent \\(l_i(0)\\)). Odrediti deo tajne
-\\(s_i\\) učesnika \\(i\\).
+učesnici koristili nove vrednosti. Poznati su delimični potpisi \\(p_i\\)
+učesnika \\(i\\) iz oba potpisivanja, odgovarajući izazovi, kao i skup učesnika
+koji potpisuju poruke. Odrediti deo tajne \\(s_i\\) učesnika \\(i\\).
 
 ~~~python
-signers = [1, 3, 5]  # indeksi učesnika koji potpisuju (za l_i(0))
+signers = [1, 3, 5]  # indeksi učesnika koji potpisuju poruke
 i = 3                # učesnik koji je ponovio r_i
 A_i = 1004631559607981823051483430116
 c1, pi1 = 4812911075131955971163679542, 431509380094865034067600365151
@@ -332,3 +305,11 @@ Implementirati protokol u kome \\(n\\) učesnika generiše zajednički javni klj
 a zatim bilo kojih \\(t+1\\) učesnika može zajednički da proizvede Šnorov potpis
 poruke. Potpis se proverava na standardni način u odnosu na zajednički javni
 ključ.
+
+## Rešenja
+
+### Zadatak 3
+
+### Zadatak 4
+
+### Zadatak 5
