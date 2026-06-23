@@ -310,6 +310,12 @@ ključ.
 
 ### Zadatak 3
 
+TODO
+
 ### Zadatak 4
 
+TODO
+
 ### Zadatak 5
+
+TODO

@@ -238,14 +238,18 @@ potpišemo samo jednu poruku. To je zato što sam potpis zahteva da otkrijemo de
 privatnog ključa, pa bi bilo nebezbedno koristiti isti par ključeva za
 potpisivanje više poruka. Jedan način da se ovo reši je upotrebom Merkle stabla.
 
+#### Merkle stablo
+
+TODO
+
 ## Zadaci
 
 ### Zadatak 1
 
-Grupa potpisnika pravi agregirani BLS potpis poruke sa zajedničkim ključem \\(A =
-\sum_i A_i\\). Pridružujete se poslednji i znate javne ključeve ostalih
+Grupa potpisnika pravi agregirani BLS potpis poruke sa zajedničkim ključem \\(A
+= \sum_i A_i\\). Pridružujete se poslednji i znate javne ključeve ostalih
 učesnika. Namestiti svoj ključ tako da samostalno možete da proizvedete validan
-multipotpis cele grupe za proizvoljnu poruku, a zatim predložiti odbranu.
+potpis cele grupe za proizvoljnu poruku, a zatim predložiti odbranu.
 
 ~~~python
 others = [(3253197710747319552652331051736, 2600547458541519107537085876347),
@@ -258,7 +262,7 @@ others = [(3253197710747319552652331051736, 2600547458541519107537085876347),
 
 Pri generisanju KZG parametara procurela je tajna vrednost \\(\tau\\). Data je
 obaveza \\(C_f\\) na nepoznat polinom stepena najviše \\(n\\). Koristeći
-\\(\tau\\), napraviti dokaz da je \\(f(5) = 1337\\) (netačno).
+\\(\tau\\), napraviti dokaz da je \\(f(5) = 1337\\).
 
 ~~~python
 tau = 808125594869607863673393924924
@@ -286,15 +290,13 @@ proof_g = (1947971255417175390759950296149, 5039343611747766020383206342099)
 
 ### Zadatak 4
 
-Posmatrajmo pojednostavljenu konstrukciju dokaza iz lekcije u kojoj se proverava
-samo jednačina kola u svakom redu tabele izvršavanja, ali ne i jednakosti između
-redova. Za kolo \\(w^3 + w + 5 = t\\), napraviti tabelu izvršavanja koja
-zadovoljava sve jednačine kola ali dokazuje netačno tvrđenje, a zatim navesti
-koje su jednakosti između redova neophodne da se takav napad spreči.
+Za kolo koje odgovara verifikatoru \\(w^3 + w + 5 = t\\) napraviti tabelu
+izvršavanja koja zadovoljava sve jednačine kola ali dokazuje netačno tvrđenje,
+a zatim navesti koje su jednakosti između redova neophodne da se takav napad
+spreči.
 
 ### Zadatak 5
 
 Isti par Lamportovih ključeva iskorišćen je za potpisivanje više poruka (javni
 ključ i potpisi su u datoteci `zadatak5_data.py`). Sklopiti validan potpis
-poruke „Kvantni pozdrav!”. Koliko bita izlaza heš funkcije je potrebno da bi
-šema bila otporna na Groverov algoritam na nivou bezbednosti od 128 bita?
+poruke „Kvantni pozdrav!”.
