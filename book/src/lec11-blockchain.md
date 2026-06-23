@@ -85,7 +85,11 @@ Jedan pristup održavanju stanja je da se vodi evidencija o računu svakog
 korisnika, odnosno da se održava mapiranje iz adrese u vrednost izraženu u
 valuti blokčejna (ovo je npr. pristup koji koristi Ethereum).
 
-![Model računa: mapiranje adresa u stanje](images/accounts.png)
+| Adresa | Stanje |
+|--------|--------|
+| A | 30 |
+| B | 12 |
+| C | 7  |
 
 U nastavku teksta ćemo se fokusirati na drugi pristup (koji koristi Bitcoin).
 Ovaj pristup održava skup nepotrošenih izlaza transakcija (eng. *unspent
@@ -305,13 +309,19 @@ P_n\\), od kojih je samo jedan pravi ulaz koji se troši. Umesto potpisa je
 moguće priložiti neinteraktivan ILI-dokaz koji dokazuje poznavanje tajnog
 ključa za jedan od tih \\(n\\) nepotrošenih izlaza.
 
-![Skrivanje pošiljaoca: prsten mogućih ulaza umesto jednog](images/ring1-keys.png)
-
-Na primer, za transakciju sa dva ulaza i pet izlaza, gde u svakom prstenu
-koristimo po dva lažna i jedan pravi ulaz, pošiljalac za \\(P\\) dokazuje da
-zna \\(p\\) tako da je \\(P_i = pG\\) za neko \\(i\\), bez otkrivanja
-\\(i\\). Analogno, za \\(Q\\) dokazuje da zna \\(q\\) tako da je
+Na primer, transakcija sa dva ulaza i pet izlaza, pri čemu koristimo po dva
+lažna i jedan pravi ulaz, je prikazana u nastavku. Pošiljalac za \\(P\\)
+dokazuje da zna \\(p\\) tako da je \\(P_i = pG\\) za neko \\(i\\), bez
+otkrivanja \\(i\\). Slično, za \\(Q\\) dokazuje da zna \\(q\\) tako da je
 \\(Q_j = qG\\) za neko \\(j\\), bez otkrivanja \\(j\\).
+
+~~~
+                O1
+P1, P2, P3      O2
+            ->  O3
+Q1, Q2, Q3      O4
+                O5
+~~~
 
 Da bi ovakav pristup funkcionisao, potrebno je da bude moguće dokazati da je
 vrednost trošenog ulaza jednaka zbiru vrednosti izlaza. Ovo nije bio problem
@@ -331,14 +341,23 @@ diskretnog logaritma \\(r_i - r\\). Ovo se izvodi Šnorovim dokazom. Dakle,
 ILI-dokaz treba da dokaže da, za jedan od \\(n\\) ulaza, poznajemo odgovarajući
 tajni ključ, kao i da za isti taj ulaz znamo \\(r_i - r\\).
 
-![Skrivanje pošiljaoca uz obaveze na vrednosti ulaza](images/ring2-commitments.png)
+Na primer, u sledećoj transakciji sa dva ulaza i pet izlaza bilo ko može da
+proveri da li je \\(D_P + D_Q = C_1 + C_2 + C_3 + C_4 + C_5\\). Pošiljalac za
+\\(P\\) dokazuje da zna \\(p\\) tako da je \\(P_i = pG\\) i da se \\(C_{P_i}\\)
+i \\(D_P\\) obavezuju na istu vrednost za neko \\(i\\), bez otkrivanja \\(i\\).
+Slično za \\(Q\\).
 
-Bilo ko može da proveri da je \\(D_P + D_Q = C_1 + C_2 + C_3 + C_4 + C_5\\).
-Pošiljalac za \\(P\\) dokazuje da zna \\(p\\) tako da je \\(P_i = pG\\)
-i da se \\(C_{P_i}\\) i \\(D_P\\) obavezuju na istu vrednost, za neko
-\\(i\\), bez otkrivanja \\(i\\). Analogno, za \\(Q\\) dokazuje da zna
-\\(q\\) tako da je \\(Q_j = qG\\) i da se \\(C_{Q_j}\\) i \\(D_Q\\)
-obavezuju na istu vrednost, za neko \\(j\\), bez otkrivanja \\(j\\).
+~~~
+P1, Cp1
+P2, Cp2
+P3, Cp3      O1, C1
+Dp           O2, C2
+         ->  O3, C3
+Q1, Cq1      O4, C4
+Q2, Cq2      O5, C5
+Q3, Cq3
+Dq
+~~~
 
 Postoji još jedan problem koji se javlja skrivanjem ulaza. U pitanju je
 sprečavanje ponovnog trošenja istog ulaza. Konkretno, u javnom UTXO modelu, ovo
@@ -356,15 +375,24 @@ samo poznavanje \\(p\\) koje odgovara javnom ključu \\(P\\) sa spiska, nego i
 da je zaista \\(I = p H(P)\\). Drugim rečima, neophodan je Čaum-Pedersen dokaz
 za tajni ključ \\(p\\) i probleme \\(P = pG\\) i \\(I = p H(P)\\).
 
-![Skrivanje pošiljaoca uz slike ključeva](images/ring3-keyimages.png)
+Na primeru naredne transakcije, pošiljalac za \\(P\\) dokazuje da zna \\(p\\)
+tako da je \\(P_i = pG\\) i \\(I_P = p H(P_i)\\) i da se \\(C_{P_i}\\) i
+\\(D_P\\) obavezuju na istu vrednost za neko \\(i\\), bez otkrivanja \\(i\\).
+Slično za \\(Q\\).
 
-Bilo ko može da proveri da je \\(D_P + D_Q = C_1 + C_2 + C_3 + C_4 + C_5\\).
-Pošiljalac za \\(P\\) dokazuje da zna \\(p\\) tako da je \\(P_i = pG\\)
-i \\(I_P = p H(P_i)\\), kao i da se \\(C_{P_i}\\) i \\(D_P\\) obavezuju
-na istu vrednost, za neko \\(i\\), bez otkrivanja \\(i\\). Analogno, za
-\\(Q\\) dokazuje da zna \\(q\\) tako da je \\(Q_j = qG\\) i
-\\(I_Q = q H(Q_j)\\), kao i da se \\(C_{Q_j}\\) i \\(D_Q\\) obavezuju
-na istu vrednost, za neko \\(j\\), bez otkrivanja \\(j\\).
+~~~
+P1, Cp1
+P2, Cp2
+P3, Cp3
+Dp           O1, C1
+Ip           O2, C2
+         ->  O3, C3
+Q1, Cq1      O4, C4
+Q2, Cq2      O5, C5
+Q3, Cq3
+Dq
+Iq
+~~~
 
 ### Dokaz o opsegu
 
