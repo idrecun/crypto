@@ -28,14 +28,14 @@ def _add(P, Q):
         return Q
     if Q is None:
         return P
+    if P == _neg(Q):
+        return None
     x1, y1 = P
     x2, y2 = Q
-    if x1 == x2:
-        if (y1 + y2) % ec_p == 0:
-            return None
-        s = ((3 * x1 * x1 + ec_a) * pow(2 * y1, -1, ec_p)) % ec_p
-    else:
+    if x1 != x2:
         s = ((y2 - y1) * pow(x2 - x1, -1, ec_p)) % ec_p
+    else:
+        s = ((3 * x1 * x1 + ec_a) * pow(2 * y1, -1, ec_p)) % ec_p
     x3 = (s * s - x1 - x2) % ec_p
     return (x3, (s * (x1 - x3) - y1) % ec_p)
 

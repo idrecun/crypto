@@ -19,14 +19,14 @@ def add(P, Q, a=ec_a, p=ec_p):
         return Q
     if Q is None:
         return P
+    if P == neg(Q, p):
+        return None
     x1, y1 = P
     x2, y2 = Q
-    if x1 == x2:
-        if (y1 + y2) % p == 0:
-            return None
-        s = ((3 * x1 * x1 + a) * pow(2 * y1, -1, p)) % p
-    else:
+    if x1 != x2:
         s = ((y2 - y1) * pow(x2 - x1, -1, p)) % p
+    else:
+        s = ((3 * x1 * x1 + a) * pow(2 * y1, -1, p)) % p
     x3 = (s * s - x1 - x2) % p
     y3 = (s * (x1 - x3) - y1) % p
     return (x3, y3)
