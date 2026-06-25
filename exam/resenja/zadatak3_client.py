@@ -4,6 +4,7 @@ from zadatak3_keys import client_priv
 
 conn = connect_retry(12345)
 challenge = conn.recv()
-conn.send(rsa.sign(challenge, client_priv))
+d, n = client_priv
+conn.send(rsa.sign(challenge, d, n))
 print("server:", "OK" if conn.recv() else "ODBIJEN")
 conn.close()

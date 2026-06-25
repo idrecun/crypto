@@ -1,10 +1,10 @@
-def generate_keys(bits=1024):
+def generate_keys():
     ...
 
 
-def sign(m, priv):
+def sign(m, d, n):
     ...
 
 
-def verify(m, s, pub):
+def verify(m, s, e, n):
     ...

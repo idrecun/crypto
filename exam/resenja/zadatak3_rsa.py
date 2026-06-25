@@ -1,25 +1,30 @@
-import hashlib
 from Crypto.Util import number
+import secrets
+import math
+import hashlib
 
 
-def generate_keys(bits=1024):
-    p = number.getPrime(bits)
-    q = number.getPrime(bits)
+def generate_keys():
+    p = number.getPrime(1024)
+    q = number.getPrime(1024)
     n = p * q
     phi = (p - 1) * (q - 1)
-    e = 65537
-    return (pow(e, -1, phi), n), (e, n)
+
+    e = 0
+    while math.gcd(e, phi) != 1:
+        e = secrets.randbelow(phi - 2) + 2
+    d = pow(e, -1, phi)
+
+    return d, (n, e)
 
 
 def _h(m):
     return int.from_bytes(hashlib.sha256(m).digest(), "big")
 
 
-def sign(m, priv):
-    d, n = priv
+def sign(m, d, n):
     return pow(_h(m), d, n)
 
 
-def verify(m, s, pub):
-    e, n = pub
-    return pow(s, e, n) == _h(m) % n
+def verify(m, s, e, n):
+    return _h(m) == pow(s, e, n)
