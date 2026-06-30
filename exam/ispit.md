@@ -1,4 +1,4 @@
-# Kriptografija — primer ispita
+# Kriptografija - primer ispita
 
 ## Zadatak 1 (8 poena)
 
