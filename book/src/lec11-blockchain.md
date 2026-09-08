@@ -371,8 +371,8 @@ troši. Umesto toga, ako su \\(p\\) i \\(P\\) odgovarajući tajni i javni ključ
 tog izlaza, upisuje se vrednost \\(I = p H(P)\\) (gde je \\(H\\) heš u tačku
 eliptičke krive) koju nazivamo slikom ključa tog izlaza. Korisnik uz svaki
 spisak ulaza transakcije prilaže i sliku ključa, a ILI-dokaz sada dokazuje ne
-samo poznavanje \\(p\\) koje odgovara javnom ključu \\(P\\) sa spiska, nego i
-da je zaista \\(I = p H(P)\\). Drugim rečima, neophodan je Čaum-Pedersen dokaz
+samo da poznajemo \\(p\\) koje odgovara javnom ključu \\(P\\) sa spiska, nego i
+da važi \\(I = p H(P)\\). Drugim rečima, neophodan je Čaum-Pedersen dokaz
 za tajni ključ \\(p\\) i probleme \\(P = pG\\) i \\(I = p H(P)\\).
 
 Na primeru naredne transakcije, pošiljalac za \\(P\\) dokazuje da zna \\(p\\)

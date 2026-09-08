@@ -18,11 +18,11 @@ polinoma koji prolaze kroz te tačke. Sa druge strane, ako je broj tačaka veći
 od stepena polinoma, moguće je tačno odrediti polinom.
 
 Šamirovo deljenje tajni se zasniva upravo na prethodnom svojstvu polinoma. Neka
-je \\(s \in \\mathbb{Z}_p\\) tajna vrednost i neka je potrebno podeliti je na
-\\(n\\) delova, pri čemu je za rekonstrukciju tajne potrebno bar \\(t + 1\\)
-delova. Biramo slučajan polinom \\(f(x)\\) stepena \\(t\\) takav da je \\(f(0)
-= s\\). Delovi tajne se biraju kao \\((i, s_i)\\) gde je \\(s_i = f(i)\\) za
-\\(1 \leq i \leq n\\).
+je \\(q\\) prost broj, neka je \\(s \in \mathbb{Z}_q\\) tajna vrednost i neka
+je potrebno podeliti je na \\(n\\) delova, pri čemu je za rekonstrukciju tajne
+potrebno bar \\(t + 1\\) delova. Biramo slučajan polinom \\(f(x)\\) stepena
+\\(t\\) nad \\(\mathbb{Z}_q\\) takav da je \\(f(0) = s\\). Delovi tajne se
+biraju kao \\((i, s_i)\\) gde je \\(s_i = f(i)\\) za \\(1 \leq i \leq n\\).
 
 Na osnovu \\(k = t + 1\\) delova \\((x_1, s_1), \dots, (x_k, s_k)\\), tajna se
 može rekonstruisati pomoću Lagranžove interpolacije. Definišemo \\(l_1(x)\\)
@@ -71,9 +71,9 @@ def reconstruct(parts):
 Feldmanovo deljenje tajne omogućava da svaki učesnik proveri da li je njegov
 deo validan. Tajni polinom se konstruiše na isti način kao u Šamirovom deljenju
 tajne, pri čemu se dodatno objavljuju obaveze koeficijenata polinoma. Ako je
-polinom \\(f(x) = ax^2 + bx + c\\) u grupi \\(\mathbb{Z}_p\\) (primetimo da je
+polinom \\(f(x) = ax^2 + bx + c\\) nad \\(\mathbb{Z}_q\\) (primetimo da je
 \\(c\\) tajna vrednost), onda se objavljuju obaveze \\(C_a = g^a, C_b = g^b,
-C_c = g^c\\) u nekoj grupi \\(G\\) generisanoj elementom \\(g\\) reda \\(p\\).
+C_c = g^c\\) u nekoj grupi \\(G\\) generisanoj elementom \\(g\\) reda \\(q\\).
 Učesnik koji je dobio deo \\((i, s_i)\\) proverava da li je zaista \\(s_i =
 f(i)\\), odnosno da li je \\(s_i = ai^2+bi+c\\) tako što proveri da li važi
 \\(g^{s_i} = C_a^{i^2} C_b^i C_c\\). Primetimo da smo ovde koristili svojstvo
@@ -101,7 +101,7 @@ def verify(part, commitments):
 
 Pedersenov protokol omogućava generisanje deljene tajne bez centralnog delioca.
 Svaki učesnik \\(i\\) generiše slučajan polinom \\(f_i (x)=a _{i, 0} + a _{i,
-1} x + \dots + a _{i, t} x^t\\) u grupi \\(\mathbb{Z}_p\\) i objavljuje njegove
+1} x + \dots + a _{i, t} x^t\\) nad \\(\mathbb{Z}_q\\) i objavljuje njegove
 obaveze \\(C _{i, 0}, \dots, C _{i, t}\\). Učesnik \\(i\\) šalje deo \\((j, s
 _{i, j})\\) učesniku \\(j\\) (gde je \\(s _{i, j} = f_i(j)\\)), a učesnik
 \\(j\\) proverava da li je zaista \\(s _{i, j} = f_i(j)\\) na isti način kao u
