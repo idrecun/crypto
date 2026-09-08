@@ -142,8 +142,8 @@ problem diskretnog logaritma za sigurnost.
 Primetimo da upotreba ElGamal kriptosistema za razmenu tajnog ključa nije
 podložna man-in-the-middle napadu na isti način kao Difi-Helman razmena
 ključa. Razlog je što pretpostavljamo da je Anin javni ključ autentičan, ili
-time što je poznat unapred, ili time što dolazi uz sertifikat garancije od
-strane nekog pouzdanog autoriteta (eng. certificate authority).
+time što je poznat unapred, ili time što dolazi uz sertifikat koji je izdao
+pouzdani sertifikacioni autoritet (eng. certificate authority).
 
 ## RSA (Rivest-Shamir-Adleman) enkripcija
 

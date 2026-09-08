@@ -101,7 +101,7 @@ r_y\\), bilo ko može da proveri da se on obavezao na vrednosti \\(x\\) i
 Neka je \\(c = g^x h^r\\) obaveza na \\(x\\). Tada je, za proizvoljno \\(r'\\),
 vrednost \\(c' = c h^{r'} = g^x h^{r + r'}\\) takođe obaveza na \\(x\\).
 Ovo omogućava korisnicima koji ne znaju vrednost \\(x\\) da generišu novu
-obavezu na istu vrednost \\(x\\). To je korisno u protokolima gde je potrebno
+obavezu na istu vrednost \\(x\\). To je korisno u protokolima u kojima je potrebno
 "promešati" obaveze više korisnika, kako bismo uklonili vezu između korisnika i
 njihovih obaveza.
 
@@ -270,7 +270,7 @@ e_k\\) kao bitove heš vrednosti \\(h(G, c_1, \dots, c_k)\\) gde su \\(c_1,
 
 ### Zadatak 4
 
-Pretpostavimo da dokazivač zna rešenje Sudoku slagalice. Možemo konstruisati sigma
+Pretpostavimo da dokazivač zna rešenje sudoku slagalice. Možemo konstruisati sigma
 protokol na sledeći način:
 
 Protokol se ponavlja \\(k\\) puta.

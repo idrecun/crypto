@@ -60,9 +60,9 @@ def pad(message: bytes) -> bytes:
 
 Neke od najpoznatijih heš funkcija, kao što su MD5 i SHA-1, su konstruisane
 Merkle-Damgard konstrukcijom. Zbog određenih slabosti njihovih funkcija \\(f\\)
-koje su otkrivene tokom godina, više se ne smatraju bezbednim. SHA-2 je primer
-heš funkcije konstruisane Merkle-Damgard konstrukcijom koja se još uvek smatra
-bezbednom i koja je još uvek u upotrebi.
+koje su otkrivene tokom godina, više se ne smatraju bezbednim. SHA-2 je
+familija heš funkcija konstruisanih Merkle-Damgard konstrukcijom, koje se i
+dalje smatraju bezbednim i u širokoj su upotrebi.
 
 ### Sunđer konstrukcija
 
@@ -81,8 +81,8 @@ f([r_{i-1} \oplus m_i, c_{i-1}])\\). Nakon upijanja svih blokova, vrednost heš
 funkcije se "istiskuje", odnosno čitaju se blokovi iz \\(r\\) do željene dužine heš
 vrednosti.
 
-Najpoznatiji primer heš funkcije konstruisane sunđer konstrukcijom je SHA-3,
-koja se takođe smatra bezbednom i koja je u širokoj upotrebi.
+Najpoznatiji primer sunđer konstrukcije je familija SHA-3, koja se takođe
+smatra bezbednom i u širokoj je upotrebi.
 
 <!-- TODO -->
 ~~~python
@@ -107,7 +107,7 @@ def sponge(data, output_blocks):
 ## HMAC
 
 Jedan pokušaj da se konstruiše MAC na osnovu heš funkcije \\(h\\) za poruku
-\\(m\\) i ključ \\(k\\) bi bio da se tag izračuna kao heš konkatenacije ključa
+\\(m\\) i ključ \\(k\\) bio bi da se tag izračuna kao heš konkatenacije ključa
 i poruke, tj. \\(h(k \mid m)\\). Ispostavlja se da za heš funkcije konstruisane
 Merkle-Damgard konstrukcijom ovaj pristup nije bezbedan.
 

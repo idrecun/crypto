@@ -202,7 +202,7 @@ vrednosti transakcije jednak zbiru izlaznih vrednosti.
 
 Kako bismo ispunili prvi uslov, možemo se osloniti na simetričnu enkripciju.
 Videli smo da prilikom skrivanja adrese pošiljalac i primalac vrše Difi-Helman
-razmenu da generišu tajnu vrednost \\(s\\) koju jedino oni znaju. To znači da
+razmenu kako bi generisali tajnu vrednost \\(s\\) koju jedino oni znaju. To znači da
 je moguće zameniti iznos \\(v\\) njegovim šifratom \\(E_s(v)\\) u izlazu
 transakcije.
 

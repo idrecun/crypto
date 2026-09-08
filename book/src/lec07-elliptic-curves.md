@@ -173,13 +173,17 @@ def decode(P):
 ## Protokoli zasnovani na eliptičkim krivama
 
 Kao javni parametar bilo kog protokola potrebno je odabrati eliptičku krivu nad
-nekim konačnim poljem. Biraju se parametri \\(p\\), koji određuje konačno
-polje, \\(a, b \in \mathbb{F}_p\\) koji određuju krivu, tačka \\(G \in
-E(\mathbb{F}_p)\\) koja je generator ciklične podgrupe i broj \\(n\\) koji
-predstavlja red te podgrupe. Obično se objavljuje i broj \\(h=\frac{ \\#
-E(\mathbb{F}_p)}{n}\\) koji predstavlja indeks podgrupe \\(\langle G \rangle
-\\). Podgrupa se bira tako da je \\(n\\) veliki prost broj, kako protokol ne
-bi bio podložan napadima (npr. poput Polig-Helmanovog algoritma).
+nekim konačnim poljem. Biraju se sledeći parametri:
+
+- \\(p\\), koji određuje konačno polje,
+- \\(a, b \in \mathbb{F}_p\\), koji određuju krivu,
+- tačka \\(G \in E(\mathbb{F}_p)\\), koja je generator ciklične podgrupe,
+- broj \\(n\\), koji predstavlja red te podgrupe.
+
+Obično se objavljuje i broj \\(h=\frac{ \\# E(\mathbb{F}_p)}{n}\\) koji
+predstavlja indeks podgrupe \\(\langle G \rangle \\). Podgrupa se bira tako da
+je \\(n\\) veliki prost broj, kako protokol ne bi bio podložan napadima (npr.
+poput Polig-Helmanovog algoritma).
 
 ### Generisanje i validacija ključeva
 

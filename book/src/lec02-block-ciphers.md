@@ -199,9 +199,9 @@ Primetimo da, ukoliko veličina poruke nije deljiva veličinom bloka, ne možemo
 direktno primeniti ovaj pristup. Zato se svaka poruka dopunjava (eng. padding)
 do veličine deljive veličinom bloka. Ovaj postupak mora biti invertibilan kako
 bismo mogli da uklonimo dopunu prilikom dešifrovanja. Jedan od najčešće
-korišćenih načina za dopunu poruke je PKCS#7 standard, gde ukoliko je potrebno
-dodati \\(p\\) bajtova dopune, dodajemo tih \\(p\\) bajtova na kraj poruke, a
-svaki od tih bajtova ima vrednost \\(p\\). Na primer, ako je veličina bloka 8
+korišćenih načina za dopunu poruke jeste PKCS#7 standard. Ukoliko je potrebno
+dodati \\(p\\) bajtova dopune, na kraj poruke se dodaje \\(p\\) bajtova, pri
+čemu svaki od njih ima vrednost \\(p\\). Na primer, ako je veličina bloka 8
 bajtova, poruka `48 45 4C 4C 4F` se dopunjuje sa tri bajta `03 03 03`. Kako bi
 dopuna bila invertibilna, u slučaju da je poruka već deljiva veličinom bloka,
 dodaje se ceo novi blok. Recimo da treba šifrovati poruku `57 4F 52 4C 44 03 03
