@@ -4,7 +4,7 @@
 
 > Ana ima tajni ključ koji ne želi da čuva kod sebe. Umesto toga, želi da ga
 > podeli na pet delova i svaki deo sakrije na posebno mesto (npr. kod kuće, u
-> banci, kod prijatelja, itd.). Želi da na osnovu bilo koja tri dela može da
+> banci, kod prijatelja itd.). Želi da na osnovu bilo koja tri dela može da
 > rekonstruiše ceo tajni ključ (za slučaj da se neki delovi zagube), ali takođe
 > da samo jedan ili dva dela ne otkrivaju ništa o tajnom ključu (za slučaj da
 > je neki deo kompromitovan). Na koji način ona može to da uradi?
@@ -165,7 +165,7 @@ delilac, on objavljuje javni ključ \\(g^s\\) koji se koristi za šifrovanje
 poruka. U slučaju Pedersenovog protokola, javni ključ se računa kao \\(g^s =
 \prod _{i=1}^n C _{i, 0}\\).
 
-Šiforvanje se vrši na standardni način tako da se dobije šifrat \\((R, c)\\)
+Šifrovanje se vrši na standardni način tako da se dobije šifrat \\((R, c)\\)
 gde je \\(R=g^r\\), \\(c = km\\) i \\(k = g^{rs}\\). Dešifrovanje zahteva
 \\(t+1\\) učesnika. Svaki učesnik \\(i\\) računa \\(k_i = R^{s_i}\\) gde je
 \\(s_i\\) njegov deo tajne, pa kako je \\(s = f(0) = s_1 l_1(0) + \dots +
@@ -194,7 +194,7 @@ def combine(R, c, partials):
 ## Šnorov potpis
 
 Ključevi za Šnorov potpis sa deljenom tajnom se generišu na isti način kao i
-kod ElGamal enkripcije. Potpisivanje zahteva \\(t+1\\) učesnika se vrši na
+kod ElGamal enkripcije. Potpisivanje koje zahteva \\(t+1\\) učesnika vrši se na
 sledeći način. Svaki učesnik \\(i\\) bira slučajan broj \\(r_i\\) i računa
 \\(R_i = g^{r_i}\\). Na osnovu ovoga se računa zajedničko \\(R = \prod_i R_i =
 g^r\\) gde je \\(r = \sum_i r_i\\). Određuje se jedan zajednični izazov \\(c =
@@ -262,7 +262,7 @@ Predložiti način da se napad iz zadatka 2 spreči.
 
 Opisati i implementirati postupak kojim је moguće osvežiti delove tajne,
 oslanjajući se na deljenje vrednosti \\(0\\). Potrebno je izmeniti delove tajne
-tako svi stari kompromitovani delovi tajne postanu neupotrebljivi, pod
+tako da svi stari kompromitovani delovi tajne postanu neupotrebljivi, pod
 pretpostavkom da je bilo najviše \\(t\\) kompromitovanih.
 
 ### Zadatak 5

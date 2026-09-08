@@ -10,7 +10,7 @@ Blokčejn je distribuirani sistem koji omogućava da grupa međusobno
 nepoverljivih učesnika vodi zajedničku evidenciju o izvršenim transakcijama.
 Ukratko, *blokčejn mreža* je peer-to-peer mreža u kojoj svaki čvor održava svoj
 lanac blokova, tj. *blokčejn*. Blok je struktura koja sadrži spisak
-transakcija. Čvorovi u mreži se dogovaraju o tome koji lanac je ispravan, što
+transakcija. Čvorovi u mreži se dogovaraju o tome koji je lanac ispravan, što
 znači da pod normalnim okolnostima svi čvorovi vide isti lanac blokova.
 
 ## Blokčejn
@@ -27,7 +27,7 @@ postoji nepoklapanje, smatramo da je lanac neispravan i odbacujemo ga.
 
 ![Lanac blokova povezan heševima](images/blockchain.png)
 
-Ukoliko korisnik želi da mu transkacija bude uključena u blokčejn, šalje je
+Ukoliko korisnik želi da mu transakcija bude uključena u blokčejn, šalje je
 jednom od čvorova u mreži. Čvor dalje propagira transakciju ostatku mreže.
 Svaki čvor održava spisak transakcija (*mempool*) koje još nisu uključene u
 blokčejn. Kada čvor odluči da predloži novi blok mreži, upisuje transakcije iz
@@ -44,7 +44,7 @@ od validnih lanaca je kanonski. Zbog ovoga se uvodi koncept "dokaza o radu".
 Ideja je da predlaganje novog bloka bude u nekoj meri "skupa" operacija.
 Definiše se težina rada \\(d\\) koja određuje sa koliko bitova nule mora da
 počinje heš predloženog bloka. Primetimo da je, pod pretpostavkama
-kriptografskih heš funkcija, jedin način da se ovakva heš vrednost efektivno
+kriptografskih heš funkcija, jedini način da se ovakva heš vrednost efektivno
 odredi korišćenjem brute-force pristupa. Jedno od polja u bloku je prirodan
 broj `nonce` i čvor koji predlaže blok, nakon popunjavanja ostalih polja,
 pokušava da namesti vrednost `nonce` polja tako da heš bloka ispunjava
@@ -98,7 +98,7 @@ prethodnih transakcija) i skup novih izlaza, pri čemu svaki izlaz ima adresu i
 iznos. Na primer, ako korisnik A ima dva nepotrošena izlaza sa iznosima 10 i
 20, a želi da izvede prenos u iznosu od 25 korisniku B, on troši oba svoja
 izlaza i kreira dva nova izlaza, jedan za korisnika B sa iznosom 25 i jedan za
-sebe sa kusurom u iznosu 5.
+sebe sa kusurom u iznosu od 5.
 
 ![UTXO transakcija: dva ulaza i dva izlaza](images/utxo.png)
 
@@ -176,7 +176,7 @@ Monero) koji omogućava sakrivanje svih ovih informacija.
 
 ### Skrivene adrese
 
-Prikažimo prvo način kojim možemo sakriti primaoca u transakciji. Ideja je da
+Prikažimo prvo način na koji možemo sakriti primaoca u transakciji. Ideja je da
 se umesto direktnog transfera novca na adresu primaoca koriste jednokratne,
 skrivene (eng. stealth) adrese. U javnom UTXO blokčejnu, jedan izlaz transakcije
 je par \\(B, v\\) javnog ključa primaoca i iznosa.
@@ -188,7 +188,7 @@ objavljuje \\(R = tG\\) i računa jednokratnu Difi-Helman tajnu \\(s = h(tB)\\)
 (gde je \\(h\\) heš funkcija). Jednokratni javni ključ izlaza je \\(P = sG +
 B\\). Primalac računa Difi-Helman tajnu kao \\(s = h(bR)\\) i računa
 jednokratni tajni ključ \\(p = s + b\\). Proverava da li je \\(P = pG\\) i ako
-jeste zna da je on primalac. Primetimo da bez poznavanja originalnog privatnog
+jeste, zna da je on primalac. Primetimo da bez poznavanja originalnog privatnog
 ključa \\(b\\) nije moguće odrediti \\(p\\) i nije moguće povezati javni ključ
 \\(P\\) sa javnim ključem \\(B\\). Dakle, izlaz transakcije je umesto para
 \\(B, v\\) sada trojka vrednosti \\(R, P, v\\).
@@ -221,7 +221,7 @@ r_2}\\). Konkretno, \\(r_2\\) bira slučajno i računa \\(r_1 = r - r_2\\). Tada
 važi \\(C_{v_1, r_1} + C_{v_2, r_2} = (v_1G + r_1H) + (v_2G + r_2H) = (v_1 +
 v_2)G + (r_1 + r_2)H = vG + rH = C_{v, r}\\). Dakle, proverom \\(C_{v, r} =
 C_{v_1, r_1} + C_{v_2, r_2}\\) bilo ko može da validira da je zbir ulaza jednak
-zbiru izlaza, bez da zna vrednosti ulaza i izlaza. Primetimo da se ovaj
+zbiru izlaza a da ne zna vrednosti ulaza i izlaza. Primetimo da se ovaj
 postupak lako uopštava na proizvoljan broj ulaza i izlaza.
 
 Naglasimo da je ovde izostavljen jedan važan detalj. Primera radi, neka je data
@@ -262,8 +262,8 @@ obavezivanja. Ovaj postupak se naziva simulacijom sigma protokola. Na primer,
 Šnorov dokaz je moguće simulirati tako što se izazov \\(c\\) i vrednost \\(s\\)
 slučajno generišu, a zatim se podesi \\(R = g^sA^{-c}\\).
 
-Opišimo sada opšti sigma protokol kojim je moguće dokazati poznavanje rešenje
-za bar jedan od nekih \\(n\\) problema Suština protokola je da proveravač koji
+Opišimo sada opšti sigma protokol kojim je moguće dokazati poznavanje rešenja
+za bar jedan od \\(n\\) problema. Suština protokola je da proveravač koji
 šalje izazov \\(c\\) očekuje da dobije po jedan validan dokaz za svaki problem,
 ali da dokazivač može da bira izazove \\(c_1, \ldots, c_n\\) koje koristi u
 dokazima. Jedini uslov koji ti izazovi moraju da ispune je da je \\(c_1 +
@@ -294,7 +294,7 @@ ponašanje učesnika u mreži. Kada primalac želi da potroši neki izlaz (odnos
 kada je on u ulozi pošiljaoca), transakciju potpisuje jednokratnim privatnim
 ključem. Primetimo da to znači da skoro niko na mreži ne može da poveže taj
 potpis sa njegovim originalnim javnim ključem. Ipak, ako je Ana Bobanu poslala
-taj iznos, i sada ga Boban troši, Ana će znati kada je taj iznos koji je
+taj iznos i sada ga Boban troši, Ana će znati kada je taj iznos koji je
 poslala Bobanu potrošen. Takođe, primetimo da je tok novca i dalje potpuno
 vidljiv celoj mreži, odnosno jasno je iz kojih ulaza su nastali koji izlazi i
 vidi se kompletan graf izvršenih transakcija.
@@ -332,8 +332,8 @@ dokazati i da će se zaista njegov iznos koristiti.
 
 Uvodi se takozvana pseudo-obaveza \\(D_{v, r}\\) na pravu vrednost ovog ulaza i
 ona se koristi prilikom validacije jednakosti zbirova ulaza i izlaza. Potrebno
-je onda, dodatno, dokazati da pored toga što znamo tajni ključ za jedan od
-ulaza (npr. za ulaz sa indeksom \\(i\\)), da važi i \\(v_i = v\\). Primetimo da
+je, dodatno, dokazati da, pored toga što znamo tajni ključ za jedan od
+ulaza (npr. za ulaz sa indeksom \\(i\\)), važi i \\(v_i = v\\). Primetimo da
 u tom slučaju važi \\(C_{v_i, r_i} - D_{v, r} = (v_i - v)G + (r_i - r)H
 = (r_i - r)H = C_{0, r_i - r}\\). Drugim rečima, dokazujemo da je \\(C_{v_i,
 r_i} - D_{v, r} = (r_i - r)H\\) obaveza na \\(0\\) i da znamo rešenje
@@ -369,7 +369,7 @@ Ideja je da se svaki potrošen izlaz upiše u skup potrošenih izlaza. Naravno,
 nije dovoljno upisati taj izlaz direktno, inače bi bilo jasno koji izlaz se
 troši. Umesto toga, ako su \\(p\\) i \\(P\\) odgovarajući tajni i javni ključ
 tog izlaza, upisuje se vrednost \\(I = p H(P)\\) (gde je \\(H\\) heš u tačku
-eliptičke krive) koji nazivamo slikom ključa tog izlaza. Korisnik uz svaki
+eliptičke krive) koju nazivamo slikom ključa tog izlaza. Korisnik uz svaki
 spisak ulaza transakcije prilaže i sliku ključa, a ILI-dokaz sada dokazuje ne
 samo poznavanje \\(p\\) koje odgovara javnom ključu \\(P\\) sa spiska, nego i
 da je zaista \\(I = p H(P)\\). Drugim rečima, neophodan je Čaum-Pedersen dokaz

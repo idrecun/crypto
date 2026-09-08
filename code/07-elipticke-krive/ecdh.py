@@ -4,7 +4,7 @@ import ec
 
 
 def generate_keys():
-    a = secrets.randbelow(ec_n - 2) + 1
+    a = secrets.randbelow(ec_n - 1) + 1
     A = ec.mul(a, ec_G)
     return a, A
 

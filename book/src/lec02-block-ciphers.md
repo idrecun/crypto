@@ -3,7 +3,7 @@
 ## Opis problema
 
 > Ana i Boban žele da komuniciraju poverljivo putem nebezbednog javnog kanala
-> (npr. pomoću javne WiFi mreže). Eva, koja kontroliše kanal, može da
+> (npr. pomoću javne Wi-Fi mreže). Eva, koja kontroliše kanal, može da
 > prisluškuje komunikaciju, ali i da menja sadržaj svake poruke. Na koji način
 > Ana i Boban mogu da ostvare poverljivu komunikaciju, a da pritom otkriju
 > ukoliko je bilo koja poruka izmenjena?
@@ -13,7 +13,7 @@ modernih šifarskih sistema. Osim što nude rešenje za problem poverljive
 komunikacije, takođe omogućavaju konstrukciju takozvane autentifikovane
 enkripcije.
 
-Formalno, blok šifra je šifra \\((E, D)\\) pri čemu je veličina poruke, odnosno
+Formalno, blok šifra je šifra \\((E, D)\\), pri čemu je veličina poruke, odnosno
 šifrata, fiksirana na \\(n\\) bitova. Kažemo da je \\(n\\) veličina bloka.
 Naglasimo da se, zbog tog uslova, blok šifrom ne mogu direktno šifrovati
 proizvoljne poruke. Za fiksirani ključ \\(k\\), funkcija \\(E_k(m) = E(k, m)\\)
@@ -70,7 +70,7 @@ kriptoanalizu i pokušaje napada. Nelinearnost podrazumeva da se izlazni bitovi
 ne mogu izraziti kao linearne funkcije ulaznih bitova. Za razliku od S-tabele,
 P-tabela je linearna transformacija, jer se svaki izlazni bit \\(y_j\\)
 predstavlja trivijalnom formulom \\(y_j = x_i\\) gde je \\(x_i\\) neki ulazni
-bit. U nastavku je primer S tabele koja preslikava 4 bita u 3 bita:
+bit. U nastavku je primer S-tabele koja preslikava 4 bita u 3 bita:
 
 ~~~text
 4 bita -> 3 bita (prvi bit određuje red, preostala tri kolonu)
@@ -158,7 +158,7 @@ def decrypt_block(key: bytes, block: bytes) -> bytes:
 ~~~
 
 AES je primer blok šifre zasnovane na SPN konstrukciji. Radi nad blokovima
-veličine 128 bita, sa ključevima veličine 128, 192 ili 256 bita i izvršava se u
+veličine 128 bitova, sa ključevima veličine 128, 192 ili 256 bitova i izvršava se u
 10, 12 ili 14 rundi, zavisno od veličine ključa. Supstitucija (SubBytes korak)
 u AES se radi nad bajtovima. Konstruisana je kao kombinacija multiplikativnog
 inverza u \\(F_{2^8}\\) i afine transformacije. Permutacija u AES se vrši u
@@ -195,7 +195,7 @@ def decrypt(key: bytes, ciphertext: bytes) -> bytes:
   return message
 ~~~
 
-Primetimo da ukoliko veličina poruke nije deljiva veličinom bloka, ne možemo
+Primetimo da, ukoliko veličina poruke nije deljiva veličinom bloka, ne možemo
 direktno primeniti ovaj pristup. Zato se svaka poruka dopunjava (eng. padding)
 do veličine deljive veličinom bloka. Ovaj postupak mora biti invertibilan kako
 bismo mogli da uklonimo dopunu prilikom dešifrovanja. Jedan od najčešće
@@ -205,8 +205,8 @@ svaki od tih bajtova ima vrednost \\(p\\). Na primer, ako je veličina bloka 8
 bajtova, poruka `48 45 4C 4C 4F` se dopunjuje sa tri bajta `03 03 03`. Kako bi
 dopuna bila invertibilna, u slučaju da je poruka već deljiva veličinom bloka,
 dodaje se ceo novi blok. Recimo da treba šifrovati poruku `57 4F 52 4C 44 03 03
-03`. Ako je ne bismo dopunili, ne bismo mogli da razlikujemo između originalne
-poruke i poruke `57 4F 52 4C 44` koja je dopunjena sa tri bajta `03 03 03`.
+03`. Ako je ne bismo dopunili, ne bismo mogli da razlikujemo originalnu
+poruku od poruke `57 4F 52 4C 44` koja je dopunjena sa tri bajta `03 03 03`.
 Stoga, poruka se dopunjuje blokom `08 08 08 08 08 08 08 08`.
 
 ~~~python
@@ -227,13 +227,13 @@ def check_and_remove_padding(message: bytes) -> bytes:
 
 Naglasimo da ECB mod nije bezbedan za upotrebu u praksi, zbog toga što se
 isti blokovi poruke šifruju u isti blok šifrata. Sledeća slika najbolje
-illustruje ovaj problem.
+ilustruje ovaj problem.
 
 ![ECB mod](images/ecb.png)
 
 ### CBC
 
-Jedan od načina da se prevaziđu nedostaci ECB moda je korišćenjem CBC (eng.
+Jedan od načina da se prevaziđu nedostaci ECB moda jeste korišćenje CBC (eng.
 Cipher Block Chaining) moda. Blok poruke se pre šifrovanja kombinuje sa
 prethodnim blokom šifrata pomoću xor operacije. Za prvi blok se koristi
 nasumični inicijalizacioni vektor (IV). Slično kao i kod ECB moda, poruka se
@@ -294,7 +294,7 @@ od pošiljaoca koji poseduje ključ.
 
 ### CBC-MAC
 
-Jedan od najjednostavnijih načina da se konstruše MAC je korišćenjem CBC
+Jedan od najjednostavnijih načina da se konstruiše MAC jeste korišćenje CBC
 operacionog moda. CBC-MAC se računa tako što se poruka transformiše u CBC modu
 sa inicijalizacionim vektorom postavljenim na nulu, a kao tag se uzima
 poslednji izračunat blok. Naglasimo da se ovde CBC mod ne koristi za šifrovanje
@@ -315,8 +315,8 @@ def verify(key: bytes, message: bytes, tag: bytes) -> bool:
 Napomenimo da je CBC-MAC u ovom obliku bezbedan samo za poruke fiksne dužine. U
 suprotnom, moguće je izvesti napade na autentičnost poruka. Neka su poznate dve
 poruke \\(m_{1}\\) i \\(m_{2}\\) sa odgovarajućim tagovima \\(t_{1}\\) i
-\\(t_{2}\\). Napadač može da konstruše novu poruku \\(m_{3} = m_{1} \parallel
-m_{2}^{\prime}\\) gde se \\(m_{2}^{\prime}\\) dobija od \\(m_{2}\\) tako što se
+\\(t_{2}\\). Napadač može da konstruiše novu poruku \\(m_{3} = m_{1} \parallel
+m_{2}^{\prime}\\), gde se \\(m_{2}^{\prime}\\) dobija od \\(m_{2}\\) tako što se
 prvi blok xor-uje sa \\(t_{1}\\). Odgovarajući tag \\(t_{3}\\) za ovu poruku
 biće jednak \\(t_{2}\\) zato što prilikom računanja CBC za prvi blok
 \\(b^{\prime}\\) poruke \\(m_{2}^{\prime}\\) važi \\(E(k, b^{\prime} \oplus
@@ -451,9 +451,9 @@ def sbox(block: bytes) -> bytes:
 # P-box permutuje bajtove
 pbox_table = [3, 0, 1, 2, 7, 4, 5, 6]
 
-# P tabela prvo rasporedjuje bitove tako da j-ti bit i-tog bajta
+# P-tabela prvo raspoređuje bitove tako da j-ti bit i-tog bajta
 # postane i-ti bit j-tog bajta
-# Zatim se vrsi permutacija bajtova
+# Zatim se vrši permutacija bajtova
 def pbox(block: bytes) -> bytes:
   bits = bytes_to_bits(block)
   shuffled = [0] * len(bits)

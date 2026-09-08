@@ -1,6 +1,6 @@
 # Pregled modernih tema
 
-## Uparivanja na eliptickim krivama
+## Uparivanja na eliptičkim krivama
 
 ### Definicija uparivanja
 
@@ -31,7 +31,7 @@ neophodno je generisati tajni parametar \\(\tau\\) i iz njega izvesti javne
 parametre \\(P, \tau P, \tau^2 P, \ldots, \tau^n P\\) za neko \\(n\\) i \\(Q,
 \tau Q\\). Tajni podatak \\(\tau\\) niko ne sme da poznaje. Ovo je moguće
 izvesti takozvanim *stepeni \\(\tau\\)* protokolom, koji funkcioniše po sličnom
-principu kao protokoli za distribuirano generisanjem tajne, sa pretpostavkom da
+principu kao protokoli za distribuirano generisanje tajne, sa pretpostavkom da
 je bar jedan od učesnika pošten i da je odbacio svoj doprinos tajnoj vrednosti.
 
 Neka je \\(f(x) = a_0 + a_1 x + \ldots + a_d x^d\\) polinom stepena \\(d \leq
@@ -67,10 +67,10 @@ koeficijent polinoma.
 U osmom poglavlju smo videli različite sigma protokole i njihove neinteraktivne
 varijante (dokaze sa nula znanja). Za svaki problem bilo je potrebno osmisliti
 poseban protokol. Ispostavlja se da je moguće konstruisati univerzalni protokol
-za dokazivanje bilo kog NP tvrđenja sa nula znanja. Prikazaćemo, jednu takvu
+za dokazivanje bilo kog NP tvrđenja sa nula znanja. Prikazaćemo jednu takvu
 konstrukciju, uz preskakanje ili pojednostavljivanje nekih tehničkih detalja.
 
-Ako je problem \\(L\\) u \\(NP\\) onda postoji program polinomijalne vremenske
+Ako je problem \\(L\\) u \\(NP\\), onda postoji program polinomijalne vremenske
 složenosti (tzv. verifikator) \\(V\\) takav da za ulaz \\(t\\) važi \\(t \in
 L\\) ako i samo ako postoji svedok \\(w\\) takav da je \\(V(t, w) = 1\\). Na
 primer, problem izomorfizma grafova je u NP zato što je moguće efikasno
@@ -141,7 +141,7 @@ je \\(f(x)\\) deljiv polinomom \\(z(x) = (x - x_1) \ldots (x - x_m)\\), odnosno
 Naglasimo da bi u pravoj konstrukciji takođe bilo neophodno enkodirati i
 određene jednakosti između redova kao polinome. Na primer, potrebno je dokazati
 da je \\(c(1) = a(3)\\) (oba su \\(w^2\\)). Ovo je moguće enkodovati polinomom
-\\(l_1(x) (c(x) - a(x + 2))\\) gde je \\(l_1(x)\\) polinom takav da je
+\\(l_1(x) (c(x) - a(x + 2))\\), gde je \\(l_1(x)\\) polinom takav da je
 \\(l_1(1) = 1\\) i \\(l_1(i) = 0\\) za ostale tačke \\(i\\). Ovakve polinome
 bi trebalo uključiti u definiciju polinoma \\(f(x)\\), za svaku jednakost
 koju je potrebno dokazati.
@@ -151,7 +151,7 @@ koju je potrebno dokazati.
 Dokazivač se obavezuje na polinome \\(a(x), b(x), c(x)\\) i \\(h(x)\\) KZG
 obavezama. U interaktivnoj varijanti protokola, proveravač zatim bira slučajni
 izazov \\(r\\). U neinteraktivnom dokazu, dokazivač koristi Fiat-Šamir
-heuristiku da izvračuna \\(r\\) kao heš vrednost transkripta kompletnog
+heuristiku da izračuna \\(r\\) kao heš vrednost transkripta kompletnog
 protokola do tog trenutka. Dokazivač koristi KZG dokaze da dokaže vrednosti
 \\(a(r), b(r), c(r)\\) i \\(h(r)\\). Proveravač proverava da li važi \\(f(r) =
 h(r)z(r)\\) i u slučaju da važi, zaključuje da je \\(f(x) = h(x)z(x)\\) sa
@@ -173,7 +173,7 @@ Kvantni računari su nov tip računara koji se oslanja na upotrebu kvantnih
 bitova, odnosno kubita, koji za razliku od klasičnih bitova mogu da budu u
 superpoziciji stanja. Zbog toga se mogućnosti kvantnih računara fundamentalno
 razlikuju od klasičnih računara. Jedna posledica je da za određene probleme
-postoje kvantni algoritmi kjoi su značajno efikasniji od najboljih poznatih
+postoje kvantni algoritmi koji su značajno efikasniji od najboljih poznatih
 klasičnih algoritama.
 
 Bitno je naglasiti da trenutno ne postoje kvantni računari koji mogu pouzdano
@@ -203,7 +203,7 @@ je isto kao i klasični algoritam sa 128-bitnim izlazom.
 *Šorov algoritam* omogućava rešavanje problema faktorizacije, kao i problema
 diskretnog logaritma u bilo kojoj konačnoj cikličnoj grupi u polinomijalnom
 vremenu. Problem faktorizacije broja \\(n\\) može se rešiti u vremenskoj
-složćenosti \\(O(\log^3 n)\\) na kvantnom računaru. Problem diskretnog logarima
+složenosti \\(O(\log^3 n)\\) na kvantnom računaru. Problem diskretnog logaritma
 u grupi \\(G\\) može se rešiti u vremenskoj složenosti \\(O(\log |G|)\\) na
 kvantnom računaru.
 
@@ -291,7 +291,7 @@ proof_g = (1947971255417175390759950296149, 5039343611747766020383206342099)
 ### Zadatak 4
 
 Za kolo koje odgovara verifikatoru \\(w^3 + w + 5 = t\\) napraviti tabelu
-izvršavanja koja zadovoljava sve jednačine kola ali dokazuje netačno tvrđenje,
+izvršavanja koja zadovoljava sve jednačine kola, ali dokazuje netačno tvrđenje,
 a zatim navesti koje su jednakosti između redova neophodne da se takav napad
 spreči.
 

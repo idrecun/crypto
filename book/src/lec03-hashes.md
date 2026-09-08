@@ -9,7 +9,7 @@
 
 Kriptografska heš funkcija je kriptografska primitiva koja nam omogućava da
 proizvoljnom podatku pridružimo kratak "otisak prsta". Formalnije,
-kriptografksa heš funkcija preslikava proizvoljnu poruku \\(m\\) u niz bitova
+kriptografska heš funkcija preslikava proizvoljnu poruku \\(m\\) u niz bitova
 \\(h(m)\\) fiksne dužine \\(n\\) (npr. 256), pri čemu mora da poseduje sledeća
 svojstva:
 
@@ -34,7 +34,7 @@ zavisnosti od konstrukcije.
 Merkle-Damgard konstrukcija koristi funkciju \\(f\\) koja preslikava par
 blokova veličine \\(n\\) u blok veličine \\(n\\). Poruka \\(m\\) se deli na
 blokove veličine \\(n\\) i računa se niz stanja \\(s_{i} = f(s_{i-1}, m_{i})\\)
-pri čemu se za \\(s_0\\) uzima algoritmom definisan inicializacioni vektor. Za
+pri čemu se za \\(s_0\\) uzima algoritmom definisan inicijalizacioni vektor. Za
 vrednost funkcije \\(h(m)\\) se uzima poslednje stanje \\(s_k\\). Kako bi
 funkcija \\(h\\) ispunjavala željena svojstva, dovoljno je da ih zadovoljava i
 funkcija \\(f\\).
@@ -120,7 +120,7 @@ počevši od stanja \\(t\\) za produžetak \\(e\\) poruke. Poslednje stanje
 \\(t'\\) je validan tag za poruku \\(m'\\) i ključ \\(k\\), iako napadač ne zna
 vrednost ključa.
 
-Jedan način da se reši ovaj problem je korišćenjem HMAC konstrukcije. HMAC se
+Jedan način da se reši ovaj problem jeste korišćenje HMAC konstrukcije. HMAC se
 računa kao \\(h((k \oplus opad) \mid h((k \oplus ipad) \mid m))\\), gde su \\(opad\\)
 i \\(ipad\\) predefinisane konstante. Ova konstrukcija je bezbedna čak i kada
 se koristi sa heš funkcijama konstruisanim Merkle-Damgard konstrukcijom.
@@ -130,10 +130,10 @@ se koristi sa heš funkcijama konstruisanim Merkle-Damgard konstrukcijom.
 Heš funkcije imaju široku primenu u kriptografiji. Jedna od tipičnih primena je
 identifikacija velikih podataka. Na primer, česta je pojava da se različiti
 softverski paketi (npr. distribucije Linuxa) mogu preuzeti pomoću BitTorrent
-protokla. Proizvođači softvera u tom slučaju objavljuju heš vrednost
+protokola. Proizvođači softvera u tom slučaju objavljuju heš vrednost
 instalacionog fajla, a korisnici fajl mogu preuzeti od bilo kojih učesnika u
 mreži. U integritet preuzetih podataka moguće je uveriti se izračunavanjem heš
-vrednost preuzetog fajla i upoređivanjem sa objavljenom hešom. Na ovaj način
+vrednosti preuzetog fajla i upoređivanjem sa objavljenim hešom. Na ovaj način
 korisnik ne mora verovati drugim učesnicima u mreži, kao ni konkretnoj
 implementaciji BitTorrent klijenta, da bi se uverio da je preuzeo željeni fajl
 u potpunosti.
@@ -143,14 +143,14 @@ pomoću lozinke. Najjednostavniji način da se omogući prijavljivanje pomoću
 lozinke je da se u bazi podataka uz nalog čuva i sama lozinka. Ovo naravno nije
 bezbedno, jer bilo koji napadač koji dobije pristup bazi podataka automatski
 dobija pristup lozinkama svih korisnika. Bolji pristup je čuvanje heš vrednosti
-loozinke. Prilikom prijavljivanja, korisnik unosi lozinku, a server računa heš
+lozinke. Prilikom prijavljivanja, korisnik unosi lozinku, a server računa heš
 vrednost unete lozinke i omogućava pristup korisniku ukoliko se dobijena
 vrednost poklapa sa vrednošću iz baze.
 
 ## Kriptografsko obavezivanje
 
 Kriptografska šema za obavezivanje (eng. *commitment scheme*) je postupak koji
-omogućava korisniku da se obaveže na neki podatak, bez da mora taj podatak
+omogućava korisniku da se obaveže na neki podatak a da ne mora taj podatak
 odmah da otkrije. Sastoji se iz dve faze:
 
 1. *Vezivanje*: Korisnik objavljuje vrednost \\(c\\) koja je na neki način
@@ -159,7 +159,7 @@ odmah da otkrije. Sastoji se iz dve faze:
 2. *Otkrivanje*: Korisnik otkriva podatak \\(m\\) i dokazuje da je \\(c\\)
    izveden iz \\(m\\).
 
-Vrednost \\(c\\) je potrebno odabrati tako da je sakriva podatak \\(m\\),
+Vrednost \\(c\\) je potrebno izračunati tako da sakriva podatak \\(m\\),
 odnosno da se na osnovu \\(c\\) ne može izračunati \\(m\\) (svojstvo
 sakrivanja), ali i da nije moguće lažirati vezivanje, odnosno da nije moguće
 pronaći podatak \\(m'\\) iz kojeg se takođe izvodi obavezujuća vrednost \\(c\\)
@@ -235,9 +235,9 @@ def verify(key: bytes, message: bytes, tag: bytes) -> bool:
 
 Definisana je šema za obavezivanje na sledeći način:
 
-1. Korisnik objavljuje par vrednost \\((c, r)\\) gde je \\(c = h(m \mid r)\\),
+1. Korisnik objavljuje par vrednosti \\((c, r)\\) gde je \\(c = h(m \mid r)\\),
    a \\(r\\) je pseudoslučajna vrednost.
-2. Korisnik otkvira vrednost \\(m\\) i proverava se da li je \\(c = h(m \mid r)\\).
+2. Korisnik otkriva vrednost \\(m\\) i proverava se da li je \\(c = h(m \mid r)\\).
 
 Da li je ova šema bezbedna? Ako jeste, obrazložiti.
 Ako nije, navesti napad i predložiti ispravku.
@@ -260,7 +260,7 @@ def h(message: string) -> bytes:
 ### Zadatak 5
 
 Implementirati protokol za održavanje aukcije sa skrivenim ponudama. Svaki
-učesnik može da ponudi neki iznos za predmet aukcije, ali ponudu ne otkvira do
+učesnik može da ponudi neki iznos za predmet aukcije, ali ponudu ne otkriva do
 kraja aukcije. Nakon završetka aukcije, sve ponude se otkrivaju i pobednik je
 onaj učesnik sa najvećom ponudom.
 
@@ -273,6 +273,6 @@ Obezbediti da igrači ne mogu da varaju.
 
 U američkoj emisiji "The Price is Right", učesnici se takmiče u pogađanju cene
 proizvoda. Prikazuje se jedan proizvod, a učesnici redom pogađaju cenu.
-Pobednik je onaj koji je najbliži stvarnoj ceni proizvoda bez da je premaši.
+Pobednik je onaj koji je najbliži stvarnoj ceni proizvoda a da je ne premaši.
 Implementirati protokol koji omogućava da se igra održi preko interneta, tako
 da niko ne može da vara.

@@ -58,7 +58,7 @@ Na ovaj način veličina poruke koju možemo potpisati nije ograničena. Sada,
 ukoliko bi napadač hteo da iskoristi par potpisanih poruka da izvede napad,
 jedino što bi mogao da izračuna je \\(s \equiv s_1 s_2 \equiv (h(m_1) h(m_2))^d
 \mod n\\). Kako bi odredio poruku \\(m\\) za koju \\(s\\) predstavlja validan
-potpis, moramo bi da pronadje vrednost takvu da je \\(h(m) \equiv h(m_1) h(m_2)
+potpis, morao bi da pronađe vrednost takvu da je \\(h(m) \equiv h(m_1) h(m_2)
 \mod n\\), odnosno morao bi da pronađe inverznu sliku heš funkcije, što
 pretpostavljamo da je težak problem.
 
@@ -66,7 +66,7 @@ pretpostavljamo da je težak problem.
 
 Slično kao i u slučaju enkripcije, u osnovi ElGamal potpisa je problem
 diskretnog logaritma. Bira se ciklična grupa \\(G\\) reda \\(q\\) generisana
-elementom \\(g\\), u kojoj je problem diskrenog logaritma težak, a par ključeva
+elementom \\(g\\), u kojoj je problem diskretnog logaritma težak, a par ključeva
 se generiše na isti način. Bira se slučajan broj \\(a\\) iz skupa \\(\\{1,
 \\ldots, q-1\\}\\) i računa se \\(A = g^a\\). Pretpostavljamo da potpisujemo
 heš vrednost poruke \\(h(m)\\) kao i u slučaju RSA potpisa.
@@ -100,7 +100,7 @@ def verify(m, R, s, A):
   return pow(g, hash(m), p) == (pow(R, s, p) * pow(A, R, p)) % p
 ~~~
 
-Kako bismo bolje razumeli definiciju potpis, pokušajmo da ga konstruišemo korak
+Kako bismo bolje razumeli definiciju potpisa, pokušajmo da ga konstruišemo korak
 po korak. Ciljevi konstrukcije potpisa su:
 
 1. Potpis mora biti vezan za poruku \\(m\\)
@@ -198,7 +198,7 @@ def verify(m, s, e, n):
 ~~~
 
 Poznate su poruke `m1=12345` sa RSA potpisom `s1=642633528765` i `m2=10000` sa
-potpisom `s2=73743664084` za javni ključ `e = 262722871823` i `m =
+potpisom `s2=73743664084` za javni ključ `e = 262722871823` i `n =
 780291688489`. Konstruisati novu poruku sa validnim RSA potpisom za taj javni
 ključ.
 
@@ -211,7 +211,7 @@ Poznate su poruke `m1=Hello, world!` sa ElGamal potpisom
 
 ### Zadatak 3
 
-Neka je ElGamalov potpis implementiran na sledeci nacin:
+Neka je ElGamalov potpis implementiran na sledeći način:
 
 ~~~python
 def sign(m, a):

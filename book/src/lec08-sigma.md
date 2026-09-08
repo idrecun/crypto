@@ -58,8 +58,8 @@ Primenom Fiat-Šamir heuristike na Šnorov protokol dobijamo Šnorov potpis:
 ## Pedersenovo obavezivanje
 
 Videli smo da je moguće realizovati obavezivanje na neku vrednost \\(x\\)
-pomoću heš funkcije. Još jedan način da konstruišemo šemu obavezivanja je
-oslanjajući se na problem diskretnog logaritma.
+pomoću heš funkcije. Još jedan način da konstruišemo šemu obavezivanja jeste
+da se oslonimo na problem diskretnog logaritma.
 
 ### Definicija
 
@@ -191,8 +191,8 @@ pravilno da odgovori na izazov, a da se pritom nije obavezao na validno
 Dovoljno je ponoviti protokol npr. \\(k=1000\\) puta kako bi lažiranje dokaza
 bilo praktično nemoguće. Kako dokazivač ne bi otkrio nikakvu informaciju o bojenju,
 pre svakog ponavljanja menja bojenje slučajnim permutovanjem boja (na primer
-svi čvorovi obojeni crvenu postaju plavi i obrnuto). Na taj način, jedinu
-informaciju koju proveravač dobija je da su boje različite, ali ne i koje su
+svi čvorovi obojeni crveno postaju plavi i obrnuto). Na taj način, jedina
+informacija koju proveravač dobija jeste da su boje različite, ali ne i koje su
 boje (početnog bojenja) u pitanju. Dakle, ispravljen protokol izgleda ovako:
 
 Protokol se ponavlja \\(k\\) puta.

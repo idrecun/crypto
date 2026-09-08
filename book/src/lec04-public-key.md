@@ -15,7 +15,7 @@ ključ, koji je dostupan svima.
 ## Problemi u osnovi kriptografije javnog ključa
 
 Izdvajamo dva problema na kojima se zasniva sigurnost protokola kriptografije
-javnog ključa. Sigurnost dolazi iz predpostavke da su ovi problemi teški za
+javnog ključa. Sigurnost dolazi iz pretpostavke da su ovi problemi teški za
 rešavanje, odnosno da ne postoji efikasan algoritam koji ih može rešiti u
 razumnom vremenu.
 
@@ -89,11 +89,11 @@ def shared_key(a, B):
 
 Jedan problem sa ovim protokolom je što je podložan tzv. *man-in-the-middle*
 napadu. Recimo da Eva kontroliše kanal kojim Ana i Boban komuniciraju. Eva može
-Ani da se predstavi kao Boban, i Bobanu da se predstavi kao Ana, i sa oboje
+Ani da se predstavi kao Boban, i Bobanu da se predstavi kao Ana, i sa oboma
 može da izvrši Difi-Helman razmenu ključa. Time dobija tajni ključ \\(k_{1}\\)
 za komunikaciju sa Anom i tajni ključ \\(k_{2}\\) za komunikaciju sa Bobanom.
 Kada Ana pošalje poruku Bobanu, ona je šifruje ključem \\(k_{1}\\), Eva je
-prihvata i dešifruje, pročita, i šifruje ključem \\(k_{2}\\) pre nego što je
+prihvata i dešifruje, pročita i šifruje ključem \\(k_{2}\\) pre nego što je
 pošalje Bobanu. Na ovaj način, Eva može da prisluškuje i menja poruke između
 Ane i Bobana bez njihovog znanja. U praksi, ovaj problem se rešava nekim vidom
 autentifikacije, o čemu će biti reči u kasnijim lekcijama.
@@ -116,7 +116,7 @@ i računa svoj javni ključ \\(A = g^a\\).
 
 Kada Boban želi da pošalje poruku Ani, on generiše slučajni broj \\(r\\) iz
 skupa \\(\{1, 2, \ldots, q-1\}\\). Na osnovu Aninog javnog ključa računa
-zajdnički Difi-Helman ključ \\(k = A^r\\). Poruku \\(m \in G\\) šifruje množenjem sa
+zajednički Difi-Helman ključ \\(k = A^r\\). Poruku \\(m \in G\\) šifruje množenjem sa
 \\(k\\) i kao šifrat šalje par vrednosti \\((c_{1}=R, c_{2}=km)\\) gde je \\(R
 = g^r\\).
 
@@ -140,12 +140,12 @@ ElGamal enkripcija se oslanja na Difi-Helman razmenu ključa i samim tim na
 problem diskretnog logaritma za sigurnost.
 
 Primetimo da upotreba ElGamal kriptosistema za razmenu tajnog ključa nije
-podložan na man-in-the-middle napad na isti način kao Difi-Helman razmena
+podložna man-in-the-middle napadu na isti način kao Difi-Helman razmena
 ključa. Razlog je što pretpostavljamo da je Anin javni ključ autentičan, ili
 time što je poznat unapred, ili time što dolazi uz sertifikat garancije od
 strane nekog pouzdanog autoriteta (eng. certificate authority).
 
-## RSA (Rivest-Shamir-Adelman) enkripcija
+## RSA (Rivest-Shamir-Adleman) enkripcija
 
 RSA kriptosistem, slično ElGamalovom kriptosistemu, omogućava enkripciju poruka
 korišćenjem javnog ključa. Za razliku od prethodnih protokola, RSA se oslanja
@@ -157,7 +157,7 @@ pq\\) i \\(\varphi(n) = (p-1)(q-1)\\). Zatim bira broj \\(1 < e < \varphi(n)\\)
 koji je uzajamno prost sa \\(\varphi(n)\\) i računa \\(d\\) takvo da je \\(d
 \equiv e^{-1} \mod \varphi(n)\\). Javni ključ je par \\((n, e)\\), a privatni
 ključ je broj \\(d\\). Vrednosti \\(p\\), \\(q\\) i \\(\varphi(n)\\) se
-odbacuju i ne smeju biti javno dostupni.
+odbacuju i ne smeju biti javno dostupne.
 
 ~~~python
 def generate_keys():
@@ -336,7 +336,7 @@ def decrypt(c, d, n):
     return unpad(pow(c, d, n))
 ~~~
 
-Odrediti poruku \\(m\\) šiforvanu javnim ključem \\(e = 5\\) i \\(n =
+Odrediti poruku \\(m\\) šifrovanu javnim ključem \\(e = 5\\) i \\(n =
 3225125342650157137441747827309271008554774656669170316841\\) ako je poznato da
 se ona šifruje u \\(c = 414092455629355891057474807003843764215360074118451854843\\).
 

@@ -21,7 +21,7 @@ pokušaja da generišemo prost broj.
 Sa druge strane, poznato je da je problem ispitivanja da li je broj prost rešiv
 u polinomijalnom vremenu u odnosu na broj bitova. Najbolji trenutno poznat
 algoritam je AKS test, čija je vremenska složenost \\(O(\log^6 n)\\). Sa druge
-strane, postoje probabalistički testovi koji su mnogo brži, sa kompromisom da
+strane, postoje probabilistički testovi koji su mnogo brži, sa kompromisom da
 postoji mala verovatnoća da proglase složen broj prostim. Jedan takav test je
 Miler-Rabin test.
 
@@ -32,12 +32,12 @@ Podsetimo se male Fermaove teoreme:
 > Neka je \\(p\\) prost broj i \\(0 < a < p\\). Tada važi \\(a^{p-1} \equiv 1
 > \mod p\\).
 
-Jedan pokušaj da konstruišemo probabalistički test je da za dato \\(n\\)
+Jedan pokušaj da konstruišemo probabilistički test je da za dato \\(n\\)
 odaberemo nasumično \\(1 < a < n - 1\\) i proverimo da li važi \\(a^{n-1}
 \equiv 1 \mod n\\). Ukoliko kongruencija ne važi, onda je \\(n\\) složen broj.
 Pretpostavka je da ako odaberemo dovoljno različitih \\(a\\) i izvršimo ovu
 proveru za svako od njih, možemo sa velikom verovatnoćom biti sigurni da je
-\\(n\\) prost. Nažalost, postoji klasa složenih brojeva, tzv. Karlmajklovi
+\\(n\\) prost. Nažalost, postoji klasa složenih brojeva, tzv. Karmajklovi
 brojevi, koji zadovoljavaju ovu kongruenciju za svako \\(a\\) koje je uzajamno
 prosto sa \\(n\\).
 
@@ -60,7 +60,7 @@ Predstavimo \\(n-1\\) kao \\(2^s d\\). Jasno je da ako važi \\(a^{n-1} \equiv 1
 \mod n\\), onda počevši od nekog \\(j\\) važi i \\(a^{2^rd} \equiv 1 \mod n\\)
 za svako \\(j \leq r \leq s\\). Ukoliko je \\(j > 0\\) i \\(a^{2^{j-1}d}
 \not\equiv -1 \mod n\\), onda \\(\mathbb{Z}_n\\) ne može biti polje, zato što
-je \\((a^{2^{j-1}})^2 \equiv a^{2^jd} \equiv 1 \mod n\\), odnosno zato što je
+je \\((a^{2^{j-1}d})^2 \equiv a^{2^jd} \equiv 1 \mod n\\), odnosno zato što je
 \\(a^{2^{j-1}d}\\) rešenje kongruencije \\(x^2 \equiv 1 \mod n\\).
 
 Posmatrajmo nekoliko primera. Ako je \\(n = 21\\), broj \\(n-1=20\\)
@@ -109,7 +109,6 @@ def miller_rabin(n, k):
 
   for _ in range(k):
     a = random.randint(2, n - 2)
-    x = pow(a, d, n)
     if not test(a, s, d, n):
       return False
 
@@ -131,20 +130,20 @@ Definišimo \\(b\\)-gladak broj (eng. \\(b\\)-powersmooth):
 > ili jednaki \\(b\\), odnosno ako je \\(n = p_1^{e_1} \cdots p_k^{e_k}\\) i
 > \\(p_i^{e_i} \leq b\\) za svako \\(i\\).
 
-### Polardov \\(p-1\\) algoritam za faktorijzaciju
+### Polardov \\(p-1\\) algoritam za faktorizaciju
 
 Neka \\(p\\) deli \\(n\\). Tada za bilo koji broj \\(x\\) deljiv sa \\(p\\)
-važi da je \\(\gcd (x, n)\\) takođe deljivo sa \\(p\\). Primetimo da je broj
+važi da je \\(\gcd (x, n)\\) takođe deljiv sa \\(p\\). Primetimo da je broj
 oblika \\(a^{k(p-1)} - 1\\) deljiv sa \\(p\\) za bilo koje \\(1 < a < p\\) i
 \\(k \geq 1\\), na osnovu male Fermaove teoreme. Ukoliko je \\(p - 1\\)
 \\(b\\)-gladak, to znači da je \\(M=\operatorname{lcm} (1, \ldots, b)\\) deljiv
-sa \\(p-1\\) (jer sadrži sve stepene prostih brojeva manje ili jednake \\(b\\),
+sa \\(p-1\\) (jer sadrži sve stepene prostih brojeva manje ili jednake \\(b\\)),
 odnosno \\(M = k(p-1)\\) za neko \\(k\\). Ukoliko je \\(1 < \gcd (a^M - 1, n) <
 n \\), tada je \\( \gcd (a^M - 1, n)\\) netrivijalni delilac broja \\(n\\).
 
 Algoritam funkcioniše na sledeći način. Biramo osnovu \\(a\\), npr. \\(a =
 2\\). Redom računamo \\(M_i = \operatorname{lcm} (1, \dots, i)\\) i za svaku
-iteraciju račuanmo \\(g = \gcd (a^{M_i} - 1, n)\\). Ukoliko je \\(1 < g < n\\),
+iteraciju računamo \\(g = \gcd (a^{M_i} - 1, n)\\). Ukoliko je \\(1 < g < n\\),
 vraćamo \\(g\\) kao rezultat. Ukoliko nismo pronašli takvo \\(g\\), možemo
 pokušati ili sa drugom granicom \\(b\\) ili osnovom \\(a\\). U slučaju da je
 \\(g = n\\), veća vrednost za \\(M\\) neće pomoći, pa u tom slučaju treba ili

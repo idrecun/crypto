@@ -12,7 +12,7 @@ dogovoriti o šifri i ključu koji će koristiti. Pod ključem podrazumevamo nek
 tajni podatak koji je poznat samo Ani i Bobanu, a pod šifrom podrazumevamo
 algoritam koji proizvoljnu poruku uz dati ključ transformiše u nisku koju
 nije moguće protumačiti i razlikovati od slučajne niske. Takvu nisku nazivamo
-šifrovana poruka ili šifrat.
+šifrovanom porukom ili šifratom.
 
 Formalnije, šifra je par algoritama \\((E, D)\\), gde je \\(E\\) algoritam
 šifrovanja odnosno enkripcije, a \\(D\\) algoritam dešifrovanja odnosno
@@ -104,17 +104,17 @@ ključ `SECRET`, odgovarajući pomeraji su dati u sledećoj tabeli:
 
 |  S |  E |  C |  R |  E |  T |
 |----|----|----|----|----|----|
-| 17 |  4 |  2 | 16 |  4 | 18 |
+| 18 |  4 |  2 | 17 |  4 | 19 |
 
 Onda se poruka `HELLO` šifruje tako što se `H` šifruje Cezarovom šifrom sa
-pomerajem 17, `E` šifruje Cezarovom šifrom sa pomerajem 4, itd. Rezultat
+pomerajem 18, `E` šifruje Cezarovom šifrom sa pomerajem 4, itd. Rezultat
 šifrovanja je `ZINCS`. U slučaju da je poruka duža od ključa, možemo zamisliti
 da se ključ ponavlja dovoljan broj puta da pokrije celu poruku.
 
 Vižnerova šifra je znatno bezbednija od Cezarove šifre, ali i dalje postoje
 efikasni napadi na nju. Na primer, možemo pokušati takozvani napad rečnikom.
 Ako je ključ kratak i poznatog je oblika (npr. jedna reč engleskog jezika, ili
-neka reč sa spiska korišćenih i otkrivenić ključeva), možemo pokušati da
+neka reč sa spiska korišćenih i otkrivenih ključeva), možemo pokušati da
 dešifrujemo poruku svim rečima iz rečnika. Zbog ovoga je najbolje koristiti
 nasumične, dugačke ključeve i ne upotrebljavati isti ključ više puta.
 
@@ -305,17 +305,17 @@ def decrypt(key: bytes, ciphertext: bytes) -> bytes:
 
 Kako bismo rešili problem ponovnog korišćenja ključa, moramo osigurati da LFSR
 ne koristi isto početno stanje za različite poruke. Jedan od načina da se to
-izbegne je korišćenjem inicijalizacionog vektora (IV). Inicializacioni vektor
+izbegne je korišćenjem inicijalizacionog vektora (IV). Inicijalizacioni vektor
 je slučajni niz bitova koji se koristi zajedno sa ključem da bi se generisalo
 početno stanje LFSR. Na primer, početno stanje registra se može inicijalizovati
-kao konkatenacija ključa i inicijalizacionog vektora. Inicializacioni vektor se
+kao konkatenacija ključa i inicijalizacionog vektora. Inicijalizacioni vektor se
 šalje zajedno sa šifratom kao javno dostupan podatak, kako bi primalac mogao da
 rekonstruiše početno stanje LFSR i dešifruje poruku. Ovo ne umanjuje bezbednost
 šifre, već samo osigurava da se za različite poruke koristi različito početno
 stanje LFSR.
 
 Naredne funkcije implementiraju enkripciju i dekripciju pomoću LFSR sa
-inicializacionim vektorom. Veličina registra treba da bude jednaka zbiru
+inicijalizacionim vektorom. Veličina registra treba da bude jednaka zbiru
 veličine ključa i veličine inicijalizacionog vektora.
 
 ~~~python
@@ -435,7 +435,7 @@ b83f0d7f825185019662f52865572129
 ~~~
 
 Odrediti ID svih korisnika iz LOGIN poruka, ako je poznato da je dužina ID-a 6
-bajta.
+bajtova.
 
 ### Zadatak 3
 
@@ -455,7 +455,7 @@ Dat je šifrat `dfa9dfc3a06c9506b6fcc1ad0d290af6fb92047d` dobijen šifrovanjem
 poruke pomoću LFSR kom odgovara polinom \\(x^{16}+x^{15}+x^{13}+x^4+1\\), sa
 četvorobitnim inicijalnim vektorom `7`. Poznat je deo poruke
 `.........d617...........................`. Odrediti dvanaestobitni ključ i
-dešifrovati `2c3641c356038d362309704493c938221789db47` sa inicializacionim
+dešifrovati `2c3641c356038d362309704493c938221789db47` sa inicijalizacionim
 vektorom `9`.
 
 ### Zadatak 6

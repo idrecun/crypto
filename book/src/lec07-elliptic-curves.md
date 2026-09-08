@@ -3,7 +3,7 @@
 ## Opis problema
 
 > Da li postoji bolji izbor grupe \\(G\\) od \\(\mathbb{Z}_p^*\\) u protokolima
-> kriptografije javnog ključa zasnovaniom na problemu diskretnog logaritma?
+> kriptografije javnog ključa zasnovanim na problemu diskretnog logaritma?
 
 Eliptičke krive nam daju potvrdan odgovor na prethodno pitanje.
 
@@ -11,7 +11,7 @@ Eliptičke krive nam daju potvrdan odgovor na prethodno pitanje.
 
 Posmatrajmo za početak eliptičke krive u skupu realnih brojeva. To su krive
 određene skupom tačaka koje ispunjavaju jednakost \\(y^2 = x^3 + ax + b\\), za
-neke \\(a, b \in \mathbb{R}\\). Kako kriva ne bila degenerisana, potebno je da
+neke \\(a, b \in \mathbb{R}\\). Kako kriva ne bi bila degenerisana, potrebno je da
 važi \\(4a^3 + 27b^2 \neq 0\\).
 
 ![Eliptičke krive](images/ec.png)
@@ -44,8 +44,8 @@ različite, u drugom je \\(P = Q\\), u trećem je \\(R = \mathcal{O}\\), a u
 ![Sabiranje tačaka na eliptičkoj krivoj](images/ec_add.png)
 
 Na osnovu ovoga možemo izvesti formule za sabiranje tačaka na eliptičkoj
-krivoj. Ako je \\(P = \mathcal{O}\\) onda je \\(P + Q = Q\\), a ako je \\(Q =
-\mathcal{O}\\) onda je \\(P + Q = P\\). Drugim rečima, \\(\mathcal{O}\\) je
+krivoj. Ako je \\(P = \mathcal{O}\\), onda je \\(P + Q = Q\\), a ako je \\(Q =
+\mathcal{O}\\), onda je \\(P + Q = P\\). Drugim rečima, \\(\mathcal{O}\\) je
 neutral za sabiranje tačaka.
 
 Neka su date koordinate različitih tačaka \\(P: (x_P, y_P)\\) i \\(Q: (x_Q,
@@ -138,7 +138,7 @@ znatno manje ključeve nego u \\(\mathbb{Z}_p^*\\).
 
 Kako bismo koristili eliptičke krive u kriptografiji, potrebno je da imamo
 način da preslikamo proizvoljnu poruku \\(m\\) u tačku na eliptičkoj krivoj, i
-obrnuto. Prikazaćemo jedan od načina koje je opisao Koblic.
+obrnuto. Prikazaćemo jedan od načina koji je opisao Koblic.
 
 Pretpostavimo da radimo sa krivom \\(E(\mathbb{F}_p)\\) za prost broj \\(p\\)
 takav da je \\(p \equiv 3 \mod 4\\). Neka je broj \\(m\\) poruka koju želimo da
@@ -194,7 +194,7 @@ tačkom \\(G\\).
 
 ~~~python
 def generate_keys():
-  a = secrets.randbelow(n - 2) + 1
+  a = secrets.randbelow(n - 1) + 1
   A = ec.mul(a, G)
   return a, A
 
@@ -222,7 +222,7 @@ def shared_key(a, B):
 Šifrovanje se vrši tako što prvo generišemo slučajan broj \\(r\\) iz skupa
 \\(1, \ldots, n-1\\) i izračunamo tačku \\(R = rG\\). Ove vrednosti
 predstavljaju privremeni privatni i javni ključ za Difi-Helman razmenu.
-Računamo zajednički ključ \\(K = rA\\) gde je \\(A\\) javni ključ primaoca.
+Računamo zajednički ključ \\(K = rA\\), gde je \\(A\\) javni ključ primaoca.
 Poruka \\(m\\) koju šifrujemo se enkoduje u tačku \\(M\\) na krivoj i šifrat se
 računa kao \\(C = M + K\\). Šalje se par vrednosti \\((R, C)\\).
 
@@ -274,7 +274,7 @@ def verify(m, R, s, A):
 Primetimo da je umesto slanja tačke \\(R\\) bilo moguće poslati samo \\(\phi(R)
 = R_x\\). Tada se provera potpisa svodi na izračunavanje tačke \\(R\\) formulom
 \\(R = s^{-1}(h(m)G - \phi(R)A)\\) i proveru da li je \\(R_x = \phi(R)\\). Ova
-varijanta, uz sabiranje umesto oduzimanja u formuli potpisa, se naziva ECDSA
+varijanta, uz sabiranje umesto oduzimanja u formuli potpisa, naziva se ECDSA
 (eng. _Elliptic Curve Digital Signature Algorithm_).
 
 ### Šnorov potpis
