@@ -70,12 +70,13 @@ Sunđer konstrukcija se oslanja na funkciju \\(f\\) koja je bijekcija i koja ima
 svojstva pseudoslučajne permutacije. Tokom konstrukcije održava se stanje \\(s
 = [ r, c ]\\), gde \\(r\\) predstavlja deo stanja koji se direktno kombinuje
 sa ulaznom porukom operacijom xor, dok \\(c\\) predstavlja unutrašnje stanje
-heša.
+heša. Napomenimo da se u literaturi oznake \\(r\\) i \\(c\\) obično koriste za
+označavanje veličina ovih delova stanja.
 
 ![Sunđer konstrukcija](images/sponge.png)
 
 Heš funkcija se dobija tako što se prvo "upija" poruka, odnosno tako što se
-svaki blok poruke XOR-uje sa trenutnim \\(r\\). Između svaka dva bloka se
+svaki blok poruke XOR-uje sa trenutnim \\(r\\). Nakon svakog bloka se
 stanje \\([ r, c ]\\) transformiše funkcijom \\(f\\), odnosno \\(s_i = [r_i, c_i] =
 f([r_{i-1} \oplus m_i, c_{i-1}])\\). Nakon upijanja svih blokova, vrednost heš
 funkcije se "istiskuje", odnosno čitaju se blokovi iz \\(r\\) do željene dužine heš
