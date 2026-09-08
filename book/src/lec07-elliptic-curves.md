@@ -21,14 +21,6 @@ Skup tačaka eliptičke krive \\(E\\) zadate pomenutom jednakošću označavamo 
 pomenutu jednakost postoji i "beskonačno daleka tačka" \\(\mathcal{O}\\) (ovo
 je posledica toga da eliptičku krivu zapravo definišemo u projektivnoj ravni).
 
-~~~python
-def on_curve(P):
-  if P is None:
-    return True
-  x, y = P
-  return (y * y - x * x * x - a * x - b) % p == 0
-~~~
-
 <!-- ### Izvođenje Vajerštrasove forme -->
 
 ### Sabiranje tačaka
@@ -66,7 +58,28 @@ tački \\(P\\). Ovo računamo diferenciranjem obe strane jednačine krive, odnos
 \frac{dy}{dx} = 3x^2 + a\\), odnosno \\(s = \frac{dy}{dx} = \frac{3x_P^2 +
 a}{2y_P}\\).
 
+## Eliptičke krive nad \\(\mathbb{F}_p\\)
+
+Eliptičke krive možemo definisati i nad konačnim poljem \\(\mathbb{F}_p\\), za
+prost broj \\(p\\), na isti način, pri čemu su sve vrednosti iz \\(\mathbb{F}_p\\). Za razliku od
+eliptičkih kriva nad realnim brojevima, eliptičke krive nad konačnim poljima
+nemaju jasnu geometrijsku strukturu. Ovo ih čini pogodnim za upotrebu u
+kriptografiji.
+
+![Eliptičke krive nad konačnim poljima](images/ec_fp.png)
+
+Operaciju sabiranja tačaka možemo definisati korišćenjem istih formula kao i u
+slučaju krivih nad realnim brojevima. Iako se prethodno opisana geometrijska
+interpretacija gubi, skup tačaka \\(E(\mathbb{F}_p)\\) eliptičke krive \\(E\\)
+zajedno sa ovako definisanom operacijom sabiranja čini grupu.
+
 ~~~python
+def on_curve(P):
+  if P is None:
+    return True
+  x, y = P
+  return (y * y - x * x * x - a * x - b) % p == 0
+
 def neg(P):
   if P is None:
     return None
@@ -93,6 +106,17 @@ def sub(P, Q):
   return add(P, neg(Q))
 ~~~
 
+Poznato je da je broj tačaka \\(n\\) na eliptičkoj krivoj nad
+\\(\mathbb{F}_p\\) ograničen sa \\(|n - (p + 1)| \leq 2\sqrt{p}\\). Ovaj
+rezultat je poznat kao Haseova teorema.
+
+Problem diskretnog logaritma na eliptičkim krivama je problem rešavanja
+jednačine \\(xG = H\\) gde su \\(G, H \in E(\mathbb{F}_p)\\). Za razliku od
+problema diskretnog logaritma u \\( \mathbb{Z}_p^* \\), najefikasniji algoritmi
+za njegovo rešavanje imaju eksponencijalnu složenost \\(O(\sqrt{n})\\) gde je
+\\(n\\) veličina grupe. Zbog ovoga, u \\(E(\mathbb{F}_p)\\) je moguće koristiti
+znatno manje ključeve nego u \\(\mathbb{Z}_p^*\\).
+
 ### Množenje skalarom
 
 Na osnovu sabiranja možemo jednostavno definisati množenje tačke prirodnim
@@ -112,27 +136,6 @@ def mul(k, P):
     k >>= 1
   return R
 ~~~
-
-## Eliptičke krive nad \\(\mathbb{F}_q\\)
-
-Eliptičke krive možemo definisati i nad konačnim poljem \\(\mathbb{F}_q\\) na
-isti način, pri čemu su sve vrednosti iz \\(\mathbb{F}_q\\). Za razliku od
-eliptičkih kriva nad realnim brojevima, eliptičke krive nad konačnim poljima
-nemaju jasnu geometrijsku strukturu. Ovo ih čini pogodnim za upotrebu u
-kriptografiji.
-
-![Eliptičke krive nad konačnim poljima](images/ec_fp.png)
-
-Poznato je da je broj tačaka \\(n\\) na eliptičkoj krivoj nad
-\\(\mathbb{F}_q\\) ograničen sa \\(|n - (q + 1)| \leq 2\sqrt{q}\\). Ovaj
-rezultat je poznat kao Haseova teorema.
-
-Problem diskretnog logaritma na eliptičkim krivama je problem rešavanja
-jednačine \\(xG = H\\) gde su \\(G, H \in E(\mathbb{F}_q)\\). Za razliku od
-problema diskretnog logaritma u \\( \mathbb{Z}_p^* \\), najefikasniji algoritmi
-za njegovo rešavanje imaju eksponencijalnu složenost \\(O(\sqrt{n})\\) gde je
-\\(n\\) veličina grupe. Zbog ovoga, u \\(E(\mathbb{F}_q)\\) je moguće koristiti
-znatno manje ključeve nego u \\(\mathbb{Z}_p^*\\).
 
 ## Enkodovanje poruke na eliptičkoj krivoj
 
