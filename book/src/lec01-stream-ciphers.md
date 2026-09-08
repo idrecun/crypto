@@ -171,7 +171,7 @@ gaps = []
 for i in range(len(ciphertext) - L + 1):
   substring = ciphertext[i : i + L]
   gaps.extend(
-    match.start() - i for match in re.finditer(substring, ciphertext[i + 1 :])
+    match.start() + 1 for match in re.finditer(substring, ciphertext[i + 1 :])
   )
 
 divisors = {}
