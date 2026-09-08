@@ -210,12 +210,15 @@ poruku od poruke `57 4F 52 4C 44` koja je dopunjena sa tri bajta `03 03 03`.
 Stoga, poruka se dopunjuje blokom `08 08 08 08 08 08 08 08`.
 
 ~~~python
-def bytes_to_blocks(message: bytes) -> list[bytes]:
-  padding = block_size - (len(message) % block_size)
-  message += bytes([padding] * padding)
-  return [message[i:i+block_size] for i in range(0, len(message), block_size)]
+def bytes_to_blocks(data: bytes) -> list[bytes]:
+  assert len(data) % block_size == 0
+  return [data[i:i+block_size] for i in range(0, len(data), block_size)]
 
-def check_and_remove_padding(message: bytes) -> bytes:
+def pad(message: bytes) -> bytes:
+  padding = block_size - (len(message) % block_size)
+  return message + bytes([padding] * padding)
+
+def unpad(message: bytes) -> bytes:
   padding = message[-1]
   if padding < 1 or padding > block_size:
     raise ValueError("Invalid padding")
@@ -223,6 +226,10 @@ def check_and_remove_padding(message: bytes) -> bytes:
     if message[-i] != padding:
       raise ValueError("Invalid padding")
   return message[:-padding]
+
+
+ciphertext = encrypt(key, pad(message))
+message = unpad(decrypt(key, ciphertext))
 ~~~
 
 Naglasimo da ECB mod nije bezbedan za upotrebu u praksi, zbog toga što se
@@ -310,6 +317,9 @@ def mac(key: bytes, message: bytes) -> bytes:
 
 def verify(key: bytes, message: bytes, tag: bytes) -> bool:
   return mac(key, message) == tag
+
+
+tag = mac(key, pad(message))
 ~~~
 
 Napomenimo da je CBC-MAC u ovom obliku bezbedan samo za poruke fiksne dužine. U
