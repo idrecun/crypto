@@ -12,3 +12,5 @@ modernije teme u kriptografiji i neke njihove primene.
 Svako poglavlje sadrži kratak teorijski uvod, praćen detaljnim objašnjenjima
 protokola i algoritama zajedno sa njihovom implementacijom. Na kraju svakog
 poglavlja nalaze se i rešeni zadaci za vežbanje.
+
+*Ivan Drecun, 2026.*
